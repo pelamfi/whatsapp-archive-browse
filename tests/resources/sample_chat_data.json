@@ -6,6 +6,7 @@
                     "timestamp": "2022-03-12T14:08:18",
                     "sender": "Matias Virtanen",
                     "content": "Hello World",
+                    "year": 2022,
                     "media": {
                         "size": 12345,
                         "input_path": "input.jpg",

@@ -10,11 +10,19 @@ class MediaReference:
 
 @dataclass
 class Message:
+    # The timestamp of the message, stored verbatim without square brackets.
     timestamp: str
+    # The sender of the message.
     sender: str
+    # The content of the message.
     content: str
+    # The year extracted from the timestamp, used to determine the HTML file.
+    year: int
+    # Optional media reference associated with the message.
     media: Optional[MediaReference] = None
+    # The input file where the message was found.
     input_file: str = ""
+    # Relative path to the possible per year HTML file where the message is placed.
     html_file: Optional[str] = None
 
 @dataclass
