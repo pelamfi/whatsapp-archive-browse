@@ -9,9 +9,10 @@ class TestParser(unittest.TestCase):
         resource_dir = os.path.join(os.path.dirname(__file__), 'resources')
         input_file = os.path.join(resource_dir, '_chat.txt')
         output_file = os.path.join(resource_dir, 'chat.json')
+        base_dir = os.path.dirname(resource_dir)  # Set base directory
 
         # Parse the _chat.txt file
-        chat_data = parse_chat_txt(input_file)
+        chat_data = parse_chat_txt(input_file, base_dir=base_dir)
 
         # Serialize to JSON
         serialized_data = chat_data.to_json()

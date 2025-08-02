@@ -4,9 +4,14 @@ import json
 
 @dataclass
 class MediaReference:
-    size: int
-    input_path: str
-    output_path: str
+    # The raw file name extracted from the content.
+    raw_file_name: str
+    # The size of the media file, if known.
+    size: int = 0
+    # The input path of the media file, if known.
+    input_path: Optional[str] = None
+    # The output path of the media file, if known.
+    output_path: Optional[str] = None
 
 @dataclass
 class Message:
@@ -55,7 +60,19 @@ class ChatData:
             del chat_dict['chat_name']
             return chat_dict
 
-        return json.dumps(self, default=lambda o: {"chats": {encode_key(k): encode_chat(v) for k, v in o.chats.items()}} if isinstance(o, ChatData) else o.__dict__, indent=4)
+        def default_serializer(obj):
+            if isinstance(obj, Message):
+                return obj.__dict__
+            if isinstance(obj, MediaReference):
+                return obj.__dict__
+            raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
+
+        return json.dumps(
+            {"chats": {encode_key(k): encode_chat(v) for k, v in self.chats.items()}},
+            indent=4,
+            sort_keys=True,
+            default=default_serializer
+        )
 
     @staticmethod
     def from_json(data: str) -> 'ChatData':

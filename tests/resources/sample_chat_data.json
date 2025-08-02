@@ -3,17 +3,18 @@
         "Space Rocket": {
             "messages": [
                 {
-                    "timestamp": "2022-03-12T14:08:18",
-                    "sender": "Matias Virtanen",
                     "content": "Hello World",
-                    "year": 2022,
-                    "media": {
-                        "size": 12345,
-                        "input_path": "input.jpg",
-                        "output_path": "output.jpg"
-                    },
+                    "html_file": "2022.html",
                     "input_file": "_chat.txt",
-                    "html_file": "2022.html"
+                    "media": {
+                        "input_path": "inputfolder/input.jpg",
+                        "output_path": "outputfolder/input.jpg",
+                        "raw_file_name": "input.jpg",
+                        "size": 12345
+                    },
+                    "sender": "Matias Virtanen",
+                    "timestamp": "2022-03-12T14:08:18",
+                    "year": 2022
                 }
             ]
         }

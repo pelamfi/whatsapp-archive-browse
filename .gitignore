@@ -60,6 +60,5 @@ ENV/
 *.orig
 
 # Generated files
-*.json
 *.html
 *.css
