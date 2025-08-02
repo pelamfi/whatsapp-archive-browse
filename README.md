@@ -1,8 +1,25 @@
 ## Whatsapp Archive Browseability Generator
 
-This tool scans a directory for whatsapp archives, zipped or otherwise and
-generates a clean static HTML folder where backed up whatsapp chats can be
+This tool scans a directory for exported Whatsapp archives, zipped or otherwise and
+generates a clean static HTML folder where backed up Whatsapp chats can be
 viewed.
+
+This project is generated with the help of GPT-4o / Copilot.
+
+NOTE: Work in progress! Only basic parsing code exists now.
+
+
+## General Plan
+
+Following plan is pure human output. I wrote it to get started with
+the project and organize my own thoughts.
+
+Then after 2 iterations with GPT-4o / Copilot we have [PLAN.md](./PLAN.md) 
+for a more detailed step wise plan that makes it easy to ask AI agent to
+work on a certain part of the plan.
+
+Also see [FORMAT.md](./FORMAT.md) for the description of the Whatsapp `_chat.txt`
+format.
 
 Parameters:
   - Input folder containing whatsapp archives either still in .zip files or
@@ -96,6 +113,8 @@ To run the tests for this project, use the following command:
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-This will automatically discover and run all test files in the `tests` directory that match the pattern `test_*.py`. Ensure you have Python 3 installed and are in the project root directory when running this command.
+This will automatically discover and run all test files in the `tests` directory
+that match the pattern `test_*.py`. Ensure you have Python 3 installed and are
+in the project root directory when running this command.
 
 
