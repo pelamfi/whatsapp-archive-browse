@@ -88,4 +88,14 @@ ChatData specification:
     - Relative path to the possible per year HTML file where the message is
       placed in if the HTML file is already generated
 
+## Running Tests
+
+To run the tests for this project, use the following command:
+
+```
+python -m unittest discover -s tests -p "test_*.py"
+```
+
+This will automatically discover and run all test files in the `tests` directory that match the pattern `test_*.py`. Ensure you have Python 3 installed and are in the project root directory when running this command.
+
 
