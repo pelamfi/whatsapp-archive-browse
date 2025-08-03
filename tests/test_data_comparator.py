@@ -1,5 +1,3 @@
-import pytest
-
 from src.chat_data import Chat, ChatName, Message, OutputFile
 from src.data_comparator import find_years_needing_update, get_message_years
 

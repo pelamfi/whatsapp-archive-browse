@@ -2,9 +2,7 @@ import os
 import shutil
 from datetime import datetime
 
-import pytest
-
-from src.chat_data import Chat, ChatFile, ChatName, Message
+from src.chat_data import Chat, ChatName, Message
 from src.input_scanner import find_chat_files, remove_duplicate_messages, scan_input_directory
 
 

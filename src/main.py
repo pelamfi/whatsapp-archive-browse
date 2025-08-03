@@ -75,7 +75,8 @@ Notes:
     # and reuse data from the output directory instead of re-parsing or unzipping files.
     input_data = scan_input_directory(args.input_folder)  # TODO: Add output_data support later
 
-    # Step 3: Compare and merge data: Detects which YYYY.html files need to be (re)generated, this information is embeded in ChatData for simplicity.
+    # Step 3: Compare and merge data: Detects which YYYY.html files need to be (re)generated.
+    # This information is embedded in ChatData for simplicity.
     merged_data = merge_chat_data(input_data, output_data)
 
     # Set timestamp

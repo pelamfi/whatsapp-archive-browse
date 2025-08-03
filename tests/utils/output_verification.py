@@ -38,14 +38,12 @@ intentionally changes, and that such changes should be reviewed as part of code 
 
 import os
 import shutil
+import warnings
 
 
 def get_reference_dir(name: str) -> str:
     """Get the path to a reference directory."""
     return os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "reference_output", name)
-
-
-import warnings
 
 
 def compare_or_update_reference(output_path: str, reference_path: str) -> bool:
@@ -203,8 +201,8 @@ def verify_output_directory(output_dir: str, reference_dir: str):
     if files_created:
         warnings.warn(
             f"\nReference files created in {reference_dir}:\n"
-            f"  " + "\n  ".join(files_created) + "\n"
-            f"Please verify the contents of these files before committing.",
+            "  " + "\n  ".join(files_created) + "\n"
+            "Please verify the contents of these files before committing.",
             RuntimeWarning,
         )
     if files_compared:

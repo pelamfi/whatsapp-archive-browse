@@ -3,8 +3,6 @@ Unit tests for HTML generation helper functions.
 Full HTML generation tests will be added in step 11.
 """
 
-import pytest
-
 from src.chat_data import Chat, ChatName, MediaReference, Message
 from src.html_generator import (
     create_chat_index_html,

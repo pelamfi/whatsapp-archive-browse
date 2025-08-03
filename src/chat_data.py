@@ -1,6 +1,6 @@
 import json
 from dataclasses import dataclass, field
-from typing import Dict, List, NotRequired, Optional, TypedDict
+from typing import Any, Dict, List, NotRequired, Optional, TypedDict, Union
 
 
 class ChatFileDict(TypedDict):
@@ -97,9 +97,6 @@ class OutputFile:
     @staticmethod
     def from_dict(data: OutputFileDict) -> "OutputFile":
         return OutputFile(year=data["year"], generate=data.get("generate", False))
-
-
-from typing import Any, Dict, List, Optional, Union
 
 
 def messages_factory() -> List[Message]:

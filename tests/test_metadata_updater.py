@@ -5,8 +5,6 @@ Full integration tests will be added in step 10.
 
 import os
 
-import pytest
-
 from src.chat_data import Chat, ChatData, ChatName, Message
 from src.metadata_updater import update_metadata
 

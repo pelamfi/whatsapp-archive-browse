@@ -13,10 +13,9 @@ The main tasks are:
    - Updated media references from input
 """
 
-from datetime import datetime
-from typing import Dict, Optional, Set
+from typing import Optional, Set
 
-from src.chat_data import Chat, ChatData, ChatName, Message, OutputFile
+from src.chat_data import Chat, ChatData, OutputFile
 
 
 def get_message_years(messages) -> Set[int]:
