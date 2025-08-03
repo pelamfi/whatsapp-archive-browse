@@ -1,6 +1,6 @@
 import unittest
 import os
-from src.chat_data import ChatData, Message, MediaReference, ChatName, Chat
+from src.chat_data import ChatData, Message, MediaReference, ChatName, Chat, ChatFile
 
 class TestChatData(unittest.TestCase):
     maxDiff = None
@@ -66,6 +66,55 @@ class TestChatData(unittest.TestCase):
 
         # Assert the serialized output matches the original JSON byte by byte
         self.assertEqual(json_data.strip(), serialized_data.strip())
+
+    def test_chat_file_serialization(self):
+        chat_file = ChatFile(
+            path="example.txt",
+            parent_zip="archive.zip",
+            modification_timestamp="2025-08-03T12:00:00",
+            size=1024,
+        )
+        serialized = chat_file.to_dict()
+        deserialized = ChatFile.from_dict(serialized)
+
+        self.assertEqual(deserialized.path, chat_file.path)
+        self.assertEqual(deserialized.parent_zip, chat_file.parent_zip)
+        self.assertEqual(deserialized.modification_timestamp, chat_file.modification_timestamp)
+        self.assertEqual(deserialized.size, chat_file.size)
+
+    def test_message_with_chatfile(self):
+        chat_file = ChatFile(
+            path="example.txt",
+            parent_zip="archive.zip",
+            modification_timestamp="2025-08-03T12:00:00",
+            size=1024,
+        )
+        message = Message(
+            timestamp="2022-03-12T14:08:18",
+            sender="Matias Virtanen",
+            content="Hello World",
+            year=2022,
+            input_file=chat_file,
+            html_file="2022.html"
+        )
+
+        self.assertEqual(message.input_file, chat_file)
+
+    def test_media_reference_with_chatfile(self):
+        chat_file = ChatFile(
+            path="media.jpg",
+            parent_zip=None,
+            modification_timestamp="2025-08-03T12:00:00",
+            size=2048,
+        )
+        media_reference = MediaReference(
+            raw_file_name="media.jpg",
+            size=2048,
+            input_path=chat_file,
+            output_path="outputfolder/media.jpg"
+        )
+
+        self.assertEqual(media_reference.input_path, chat_file)
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,6 @@
 import os
 import re
-from src.chat_data import ChatData, Chat, ChatName, Message, MediaReference
+from src.chat_data import ChatData, Chat, ChatName, Message, MediaReference, ChatFile
 
 def parse_chat_txt(file_path, base_dir):
     chat_data = ChatData()
@@ -45,3 +45,18 @@ def parse_chat_txt(file_path, base_dir):
             chat_data.chats[chat_name].messages.append(message)
 
     return chat_data
+
+def parse_chat_files(file_paths, locale):
+    chat_files = []
+    for file_path in file_paths:
+        chat_file = ChatFile(
+            path=file_path,
+            parent_zip=None,  # Update logic if file is inside a zip
+            modification_timestamp=None,  # Replace with actual timestamp
+            size=None,  # Replace with actual file size
+        )
+        # Example usage in Message and MediaReference
+        message = Message(input_file=chat_file)
+        media_reference = MediaReference(input_path=chat_file)
+        chat_files.append(chat_file)
+    return chat_files

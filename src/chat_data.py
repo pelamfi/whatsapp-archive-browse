@@ -3,13 +3,35 @@ from typing import List, Optional, Dict
 import json
 
 @dataclass
+class ChatFile:
+    path: str  # Relative path to the file
+    parent_zip: str = None  # Path to the parent zip file, if any
+    modification_timestamp: str = None  # Timestamp of last modification
+    size: int = None  # Size of the file in bytes
+
+    def to_dict(self):
+        return {
+            "path": self.path,
+            "parent_zip": self.parent_zip,
+            "modification_timestamp": self.modification_timestamp,
+            "size": self.size,
+        }
+
+    @staticmethod
+    def from_dict(data):
+        return ChatFile(
+            path=data["path"],
+            parent_zip=data.get("parent_zip"),
+            modification_timestamp=data.get("modification_timestamp"),
+            size=data.get("size"),
+        )
+
+@dataclass
 class MediaReference:
     # The raw file name extracted from the content.
     raw_file_name: str
-    # The size of the media file, if known.
-    size: int = 0
-    # The input path of the media file, if known.
-    input_path: Optional[str] = None
+    # The input path of the media file, if known. Input file can be lost to time, so it is optional.
+    input_path: Optional[ChatFile] = None
     # The output path of the media file, if known.
     output_path: Optional[str] = None
 
@@ -21,12 +43,12 @@ class Message:
     sender: str
     # The content of the message.
     content: str
-    # The year extracted from the timestamp, used to determine the HTML file.
+    # The year extracted from the timestamp, used to determine the output HTML file.
     year: int
     # Optional media reference associated with the message.
     media: Optional[MediaReference] = None
-    # The input file where the message was found.
-    input_file: str = ""
+    # The input file where the message was found. Input file can be lost to time, so it is optional.
+    input_file: Optional[ChatFile] = None
     # Relative path to the possible per year HTML file where the message is placed.
     html_file: Optional[str] = None
 
