@@ -6,6 +6,15 @@ import shutil
 import tempfile
 from pathlib import Path
 from typing import Optional
+from datetime import datetime
+import time
+
+# Predefined timestamps for consistent file modification times across systems
+TIMESTAMPS = {
+    "BASE": datetime(2020, 1, 1, 0, 0, 0).timestamp(),  # 2020-01-01 00:00:00
+    "BACKUP1": datetime(2020, 2, 1, 0, 0, 0).timestamp(),  # 2020-02-01 00:00:00
+    "BACKUP2": datetime(2020, 3, 1, 0, 0, 0).timestamp(),  # 2020-03-01 00:00:00
+}
 
 class ChatTestEnvironment:
     """
@@ -30,10 +39,17 @@ class ChatTestEnvironment:
         self._created_dirs.add(dir_path)
         return dir_path
 
-    def copy_demo_chat(self, to_dir: Optional[Path] = None) -> Path:
+    def copy_demo_chat(self, to_dir: Optional[Path], timestamp: float) -> Path:
         """
-        Copy demo chat data to specified directory or to a new input directory.
-        Returns the directory containing the copied data.
+        Copy demo chat data to specified directory or to a new input directory
+        and set modification times for all copied files.
+
+        Args:
+            to_dir: Target directory for the copy, or None to create a new input dir
+            timestamp: Unix timestamp to set for all copied files (use TIMESTAMPS)
+
+        Returns:
+            Path to the directory containing the copied data
         """
         if to_dir is None:
             to_dir = self.create_input_dir()
@@ -41,6 +57,7 @@ class ChatTestEnvironment:
         demo_path = (Path(__file__).parent.parent.parent / "demo-chat")
         if demo_path.exists():
             shutil.copytree(demo_path, to_dir, dirs_exist_ok=True)
+            self.set_chat_timestamps(to_dir, timestamp)
         return to_dir
 
     def duplicate_chat(self, source_dir: Path, new_name: str) -> Path:
@@ -58,6 +75,53 @@ class ChatTestEnvironment:
         Create a backup copy of a chat directory, simulating a second backup of the same chat.
         """
         return self.duplicate_chat(original_dir, f"{original_dir.name}{suffix}")
+
+    def set_file_timestamps(self, file_path: Path, timestamp: float) -> None:
+        """
+        Set both access and modification times of a file to a specific timestamp.
+        
+        Args:
+            file_path: Path to the file to modify
+            timestamp: Unix timestamp to set (can use TIMESTAMPS dictionary)
+        """
+        os.utime(file_path, (timestamp, timestamp))
+
+    def set_chat_timestamps(self, chat_dir: Path, timestamp: float) -> None:
+        """
+        Set timestamps for all files in a chat directory.
+        
+        Args:
+            chat_dir: Path to the chat directory
+            timestamp: Unix timestamp to set (can use TIMESTAMPS dictionary)
+        """
+        for root, _, files in os.walk(chat_dir):
+            for file in files:
+                file_path = Path(root) / file
+                self.set_file_timestamps(file_path, timestamp)
+
+    def filter_chat_lines(self, chat_dir: Path, start_line: int, end_line: int, timestamp: float) -> None:
+        """
+        Filter the _chat.txt file to keep line 1 (chat name) and the specified line range.
+        Updates the file modification time after editing.
+        
+        Args:
+            chat_dir: Directory containing the _chat.txt file
+            start_line: First line to keep (1-based, excluding the chat name line)
+            end_line: Last line to keep (1-based, excluding the chat name line)
+            timestamp: Unix timestamp to set after modifying (use TIMESTAMPS)
+        """
+        chat_file = chat_dir / "_chat.txt"
+        with open(chat_file, "r") as f:
+            lines = f.readlines()
+        
+        # Always keep first line (chat name) and the specified range
+        selected_lines = [lines[0]] + lines[start_line - 1:end_line]
+        
+        with open(chat_file, "w") as f:
+            f.writelines(selected_lines)
+        
+        # Update timestamps after modification
+        self.set_chat_timestamps(chat_dir, timestamp)
 
     @property
     def path(self) -> Path:
