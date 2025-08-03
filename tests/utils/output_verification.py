@@ -217,8 +217,29 @@ def verify_output_directory(output_dir: str, reference_dir: str):
         # Check chat CSS and media directory presence
         assert os.path.exists(os.path.join(output_chat_dir, 'browseability-generator.css')), \
             f"CSS file missing from chat directory {chat_dir}"
-        assert os.path.exists(os.path.join(output_chat_dir, 'media')), \
+        
+        # Check and compare media files
+        output_media_dir = os.path.join(output_chat_dir, 'media')
+        reference_media_dir = os.path.join(reference_chat_dir, 'media')
+        assert os.path.exists(output_media_dir), \
             f"Media directory missing from chat directory {chat_dir}"
+        
+        # Create reference media directory if it doesn't exist
+        os.makedirs(reference_media_dir, exist_ok=True)
+        
+        # Compare all media files
+        for media_file in os.listdir(output_media_dir):
+            safe_compare(
+                os.path.join(output_media_dir, media_file),
+                os.path.join(reference_media_dir, media_file)
+            )
+        
+        # Check for extra files in reference that don't exist in output
+        reference_media_files = set(os.listdir(reference_media_dir))
+        output_media_files = set(os.listdir(output_media_dir))
+        assert reference_media_files == output_media_files, \
+            f"Media files don't match in {chat_dir}/media. " \
+            f"Output has {output_media_files}, reference has {reference_media_files}"
 
         # Compare all year files
         for year_file in os.listdir(reference_chat_dir):
