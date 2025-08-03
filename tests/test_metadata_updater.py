@@ -26,9 +26,7 @@ def test_metadata_update(tmp_path):
     # First update - creates new file
     update_metadata(chat_data, str(tmp_path))
     assert os.path.exists(os.path.join(tmp_path, "browseability-generator-chat-data.json"))
-    assert not os.path.exists(
-        os.path.join(tmp_path, "browseability-generator-chat-data-BACKUP.json")
-    )
+    assert not os.path.exists(os.path.join(tmp_path, "browseability-generator-chat-data-BACKUP.json"))
 
     # Second update - should create backup
     chat_data.chats[ChatName("Test")].messages.append(
@@ -45,9 +43,7 @@ def test_metadata_update(tmp_path):
     assert os.path.exists(os.path.join(tmp_path, "browseability-generator-chat-data-BACKUP.json"))
 
     # Third update - should replace old backup
-    old_backup_time = os.path.getmtime(
-        os.path.join(tmp_path, "browseability-generator-chat-data-BACKUP.json")
-    )
+    old_backup_time = os.path.getmtime(os.path.join(tmp_path, "browseability-generator-chat-data-BACKUP.json"))
     chat_data.chats[ChatName("Test")].messages.append(
         Message(timestamp="12:02", sender="Alice", content="Bye", year=2025)
     )
@@ -58,9 +54,7 @@ def test_metadata_update(tmp_path):
     time.sleep(0.1)
     update_metadata(chat_data, str(tmp_path))
 
-    new_backup_time = os.path.getmtime(
-        os.path.join(tmp_path, "browseability-generator-chat-data-BACKUP.json")
-    )
+    new_backup_time = os.path.getmtime(os.path.join(tmp_path, "browseability-generator-chat-data-BACKUP.json"))
     assert new_backup_time > old_backup_time
 
     # Verify the final content

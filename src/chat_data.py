@@ -118,9 +118,7 @@ def chats_factory() -> Dict[ChatName, "Chat"]:
 class Chat:
     chat_name: ChatName
     messages: List[Message] = field(default_factory=messages_factory)
-    output_files: Dict[int, OutputFile] = field(
-        default_factory=output_files_factory
-    )  # year -> OutputFile
+    output_files: Dict[int, OutputFile] = field(default_factory=output_files_factory)  # year -> OutputFile
 
 
 class ChatDict(TypedDict):
@@ -140,9 +138,7 @@ class ChatData:
         def encode_chat(chat: Chat) -> ChatDict:
             chat_dict = chat.__dict__.copy()
             del chat_dict["chat_name"]
-            chat_dict["output_files"] = {
-                str(year): file.to_dict() for year, file in chat.output_files.items()
-            }
+            chat_dict["output_files"] = {str(year): file.to_dict() for year, file in chat.output_files.items()}
             return ChatDict(messages=chat_dict["messages"], output_files=chat_dict["output_files"])
 
         def default_serializer(obj: Union[Message, MediaReference, ChatFile]) -> dict[str, Any]:

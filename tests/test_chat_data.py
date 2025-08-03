@@ -33,11 +33,7 @@ def test_serialization():
         html_file="2022.html",
     )
     chat_data = ChatData(
-        chats={
-            ChatName(name="Space Rocket"): Chat(
-                chat_name=ChatName(name="Space Rocket"), messages=[message]
-            )
-        }
+        chats={ChatName(name="Space Rocket"): Chat(chat_name=ChatName(name="Space Rocket"), messages=[message])}
     )
 
     json_data = chat_data.to_json()

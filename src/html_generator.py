@@ -90,9 +90,7 @@ def format_message_html(message: Message) -> str:
     media_html = ""
     if message.media:
         if message.media.output_path:
-            media_html = (
-                f'<div class="media"><img src="{message.media.output_path}" alt="Media"></div>'
-            )
+            media_html = f'<div class="media"><img src="{message.media.output_path}" alt="Media"></div>'
         else:
             media_html = '<div class="media">[Media file not available]</div>'
 
@@ -153,8 +151,7 @@ def create_chat_index_html(chat: Chat, years: Set[int]) -> str:
 def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str) -> str:
     """Generate main index.html listing all chats."""
     chats_html = "\n".join(
-        f'<li><a href="{escape_html(name)}/index.html">{escape_html(name)}</a></li>'
-        for name in sorted(chats.keys())
+        f'<li><a href="{escape_html(name)}/index.html">{escape_html(name)}</a></li>' for name in sorted(chats.keys())
     )
     return f"""<!DOCTYPE html>
 <html>

@@ -103,9 +103,7 @@ class ChatTestEnvironment:
                 file_path = Path(root) / file
                 self.set_file_timestamps(file_path, timestamp)
 
-    def filter_chat_lines(
-        self, chat_dir: Path, start_line: int, end_line: int, timestamp: float
-    ) -> None:
+    def filter_chat_lines(self, chat_dir: Path, start_line: int, end_line: int, timestamp: float) -> None:
         """
         Filter the _chat.txt file to keep 2 first lines (chat name) and the specified line range.
         Updates the file modification time after editing.
@@ -129,9 +127,7 @@ class ChatTestEnvironment:
         # Update timestamps after modification
         self.set_chat_timestamps(chat_dir, timestamp)
 
-    def insert_chat_lines(
-        self, chat_dir: Path, after_line: int, lines_to_insert: list[str], timestamp: float
-    ) -> None:
+    def insert_chat_lines(self, chat_dir: Path, after_line: int, lines_to_insert: list[str], timestamp: float) -> None:
         """
         Insert lines into the _chat.txt file after the specified line number.
         Updates the file modification time after editing.

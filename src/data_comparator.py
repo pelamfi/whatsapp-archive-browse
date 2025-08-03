@@ -54,12 +54,8 @@ def find_years_needing_update(input_chat: Chat, output_chat: Optional[Chat]) -> 
 
     # 2. Check years that exist in both for message differences
     for year in input_years & output_years:
-        input_msgs = {
-            (m.timestamp, m.sender, m.content) for m in input_chat.messages if m.year == year
-        }
-        output_msgs = {
-            (m.timestamp, m.sender, m.content) for m in output_chat.messages if m.year == year
-        }
+        input_msgs = {(m.timestamp, m.sender, m.content) for m in input_chat.messages if m.year == year}
+        output_msgs = {(m.timestamp, m.sender, m.content) for m in output_chat.messages if m.year == year}
 
         if input_msgs != output_msgs:
             needs_update.add(year)
@@ -92,9 +88,7 @@ def merge_chat_data(input_data: ChatData, output_data: Optional[ChatData] = None
         output_chat = output_data.chats.get(chat_name) if output_data else None
 
         # Create merged chat with input messages
-        merged_chat = Chat(
-            chat_name=chat_name, messages=input_chat.messages.copy(), output_files={}
-        )
+        merged_chat = Chat(chat_name=chat_name, messages=input_chat.messages.copy(), output_files={})
 
         # Add all known output files from output chat
         if output_chat:

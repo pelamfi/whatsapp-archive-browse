@@ -42,9 +42,7 @@ import shutil
 
 def get_reference_dir(name: str) -> str:
     """Get the path to a reference directory."""
-    return os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "resources", "reference_output", name
-    )
+    return os.path.join(os.path.dirname(os.path.dirname(__file__)), "resources", "reference_output", name)
 
 
 import warnings
@@ -79,8 +77,7 @@ def compare_or_update_reference(output_path: str, reference_path: str) -> bool:
         # Reference doesn't exist - create it
         shutil.copy2(output_path, reference_path)
         warnings.warn(
-            f"\nReference file created: {reference_path}\n"
-            f"Please verify its contents before committing.",
+            f"\nReference file created: {reference_path}\n" f"Please verify its contents before committing.",
             RuntimeWarning,
         )
         return False
@@ -215,20 +212,14 @@ def verify_output_directory(output_dir: str, reference_dir: str):
 
     # Now verify structure matches
     # Check CSS presence
-    assert os.path.exists(
-        os.path.join(output_dir, "browseability-generator.css")
-    ), "CSS file missing from output root"
+    assert os.path.exists(os.path.join(output_dir, "browseability-generator.css")), "CSS file missing from output root"
 
     # Verify final structure
     output_chat_dirs = {
-        d
-        for d in os.listdir(output_dir)
-        if os.path.isdir(os.path.join(output_dir, d)) and d != "media"
+        d for d in os.listdir(output_dir) if os.path.isdir(os.path.join(output_dir, d)) and d != "media"
     }
     reference_chat_dirs = {
-        d
-        for d in os.listdir(reference_dir)
-        if os.path.isdir(os.path.join(reference_dir, d)) and d != "media"
+        d for d in os.listdir(reference_dir) if os.path.isdir(os.path.join(reference_dir, d)) and d != "media"
     }
 
     # Verify output has exactly the same chat directories as reference
@@ -256,9 +247,7 @@ def verify_output_directory(output_dir: str, reference_dir: str):
         # Check and compare media files
         output_media_dir = os.path.join(output_chat_dir, "media")
         reference_media_dir = os.path.join(reference_chat_dir, "media")
-        assert os.path.exists(
-            output_media_dir
-        ), f"Media directory missing from chat directory {chat_dir}"
+        assert os.path.exists(output_media_dir), f"Media directory missing from chat directory {chat_dir}"
 
         # Create reference media directory if it doesn't exist
         os.makedirs(reference_media_dir, exist_ok=True)

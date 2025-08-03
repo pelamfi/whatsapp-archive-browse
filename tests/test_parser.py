@@ -37,9 +37,7 @@ def test_parse_chat_file():
     if os.path.getsize(output_file) == 0:
         with open(output_file, "w") as file:
             file.write(serialized_data)
-        pytest.fail(
-            "chat.json was empty. It has been updated. Please verify its contents and re-run the test."
-        )
+        pytest.fail("chat.json was empty. It has been updated. Please verify its contents and re-run the test.")
 
     # Compare with the existing chat.json
     with open(output_file, "r") as file:

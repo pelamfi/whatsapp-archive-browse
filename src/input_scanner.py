@@ -218,9 +218,7 @@ def find_missing_media(chat_data: ChatData, input_dir: str) -> None:
                     size=os.path.getsize(media_path),
                 )
             else:
-                still_missing.append(
-                    (filename, msg.input_file.path if msg.input_file else "unknown _chat.txt")
-                )
+                still_missing.append((filename, msg.input_file.path if msg.input_file else "unknown _chat.txt"))
 
     # Log details about still-missing files
     if still_missing:
