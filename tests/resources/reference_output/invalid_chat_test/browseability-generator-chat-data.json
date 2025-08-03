@@ -6,7 +6,7 @@
                     "content": "Viestit ja puhelut ovat t\u00e4ysin salattuja. Vain t\u00e4m\u00e4n keskustelun j\u00e4senet voivat lukea, kuunnella tai jakaa niit\u00e4.",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -20,7 +20,7 @@
                     "content": "Matias Virtanen muutti ryhm\u00e4n nimeksi Space Rocket",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -34,7 +34,7 @@
                     "content": "~\u202fJuuso Kivi lis\u00e4ttiin",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -48,7 +48,7 @@
                     "content": "Matias Virtanen lis\u00e4ttiin",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -62,7 +62,7 @@
                     "content": "Blah blah",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -76,7 +76,7 @@
                     "content": "h\u00f6p\u00f6 h\u00f6p\u00f6",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -90,7 +90,7 @@
                     "content": "Yeaah",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -104,7 +104,7 @@
                     "content": "Olet nyt yll\u00e4pit\u00e4j\u00e4",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -118,7 +118,7 @@
                     "content": "~\u202fJuuso Kivi lis\u00e4si henkil\u00f6n ~\u202fAleksi Luoto",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -132,7 +132,7 @@
                     "content": "\ud83d\udc4b",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -146,7 +146,7 @@
                     "content": "\ud83d\udc4b",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -160,7 +160,7 @@
                     "content": "Blah Blah",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -174,19 +174,19 @@
                     "content": "",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
                     },
                     "media": {
                         "input_path": {
-                            "modification_timestamp": "1577829600.0",
+                            "modification_timestamp": 1577829600.0,
                             "parent_zip": null,
                             "path": "chat/00000074-PHOTO-2022-03-13-14-17-25.jpg",
                             "size": 13673
                         },
-                        "output_path": null,
+                        "output_path": "media/00000074-PHOTO-2022-03-13-14-17-25.jpg",
                         "raw_file_name": "00000074-PHOTO-2022-03-13-14-17-25.jpg"
                     },
                     "sender": "Sami Str\u00f6m",
@@ -197,7 +197,7 @@
                     "content": "\ud83d\udcaa",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -211,7 +211,7 @@
                     "content": "foo bar seli seli",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
@@ -225,7 +225,7 @@
                     "content": "\ud83d\ude31\ud83e\udd70",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1577829600.0",
+                        "modification_timestamp": 1577829600.0,
                         "parent_zip": null,
                         "path": "chat/_chat.txt",
                         "size": 1315
