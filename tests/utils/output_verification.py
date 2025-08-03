@@ -129,11 +129,11 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
     Structure based on README.md:
     - Top level folder:
         - index.html (compared)
-        - browseability-generator.css (presence checked)
+        - browseability-generator.css (compared)
         - browseability-generator-chat-data.json (compared)
         - Chat Name/
             - index.html (compared)
-            - browseability-generator.css (presence checked)
+            - browseability-generator.css (compared)
             - YYYY.html (compared)
             - media/ (presence checked)
 
@@ -172,6 +172,12 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
     )
 
     safe_compare(os.path.join(output_dir, "index.html"), os.path.join(reference_dir, "index.html"))
+    
+    # Compare and copy CSS file
+    safe_compare(
+        os.path.join(output_dir, "browseability-generator.css"),
+        os.path.join(reference_dir, "browseability-generator.css"),
+    )
 
     # Process all chat directories in output
     for chat_dir in os.listdir(output_dir):
@@ -185,6 +191,12 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
         safe_compare(
             os.path.join(output_chat_dir, "index.html"),
             os.path.join(reference_chat_dir, "index.html"),
+        )
+        
+        # Compare chat CSS file
+        safe_compare(
+            os.path.join(output_chat_dir, "browseability-generator.css"),
+            os.path.join(reference_chat_dir, "browseability-generator.css"),
         )
 
         # Compare all year files
@@ -208,11 +220,7 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
     if files_compared:
         print(f"Verified {len(files_compared)} reference files in {reference_dir}")
 
-    # Now verify structure matches
-    # Check CSS presence
-    assert os.path.exists(os.path.join(output_dir, "browseability-generator.css")), "CSS file missing from output root"
-
-    # Verify final structure
+    # Now verify final structure
     output_chat_dirs: set[str] = {
         d for d in os.listdir(output_dir) if os.path.isdir(os.path.join(output_dir, d)) and d != "media"
     }
@@ -236,11 +244,6 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
             os.path.join(output_chat_dir, "index.html"),
             os.path.join(reference_chat_dir, "index.html"),
         )
-
-        # Check chat CSS and media directory presence
-        assert os.path.exists(
-            os.path.join(output_chat_dir, "browseability-generator.css")
-        ), f"CSS file missing from chat directory {chat_dir}"
 
         # Check and compare media files
         output_media_dir = os.path.join(output_chat_dir, "media")
