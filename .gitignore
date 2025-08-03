@@ -18,10 +18,6 @@ dist/
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Test artifacts (remove this comment line if you want to track reference files)
-!tests/resources/reference_output/
-!tests/resources/reference_output/.gitkeep
-
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -64,8 +60,3 @@ ENV/
 *.swp
 *.swo
 *.orig
-
-# Generated files
-*.html
-*.css
-!/src/browseability-generator.css
