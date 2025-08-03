@@ -4,12 +4,13 @@ Full integration tests will be added in step 10.
 """
 
 import os
+from pathlib import Path
 
 from src.chat_data import Chat, ChatData, ChatName, Message
 from src.metadata_updater import update_metadata
 
 
-def test_metadata_update(tmp_path):
+def test_metadata_update(tmp_path: Path) -> None:
     """Test the atomic update process for metadata files"""
     # Create test data
     chat_data = ChatData(

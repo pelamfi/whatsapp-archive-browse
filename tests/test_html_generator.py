@@ -13,14 +13,14 @@ from src.html_generator import (
 )
 
 
-def test_escape_html():
+def test_escape_html() -> None:
     """Test HTML escaping of special characters"""
     input_text = "Test with <tags> & \"quotes\" and 'apostrophes'"
     expected = "Test with &lt;tags&gt; &amp; &quot;quotes&quot; and &#39;apostrophes&#39;"
     assert escape_html(input_text) == expected
 
 
-def test_format_message_html():
+def test_format_message_html() -> None:
     """Test message HTML formatting with and without media"""
     # Message without media
     message = Message(timestamp="12:00", sender="Alice", content="Hello!", year=2025)
@@ -41,7 +41,7 @@ def test_format_message_html():
     assert "[Media file not available]" in html
 
 
-def test_create_year_html():
+def test_create_year_html() -> None:
     """Test year page HTML generation"""
     chat = Chat(chat_name=ChatName("Test Chat"))
     messages = [
@@ -56,7 +56,7 @@ def test_create_year_html():
     assert 'class="message"' in html
 
 
-def test_create_chat_index_html():
+def test_create_chat_index_html() -> None:
     """Test chat index page generation"""
     chat = Chat(chat_name=ChatName("Test Chat"))
     years = {2023, 2024, 2025}
@@ -68,7 +68,7 @@ def test_create_chat_index_html():
     assert "Back to chats" in html
 
 
-def test_create_main_index_html():
+def test_create_main_index_html() -> None:
     """Test main index page generation"""
     chats = {"Chat One": {2023, 2024}, "Chat Two": {2024, 2025}}
     html = create_main_index_html(chats, "2025-08-03 14:28:38")

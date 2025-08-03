@@ -3,7 +3,7 @@ import os
 from src.chat_data import Chat, ChatData, ChatFile, ChatName, MediaReference, Message
 
 
-def test_deserialization_from_file():
+def test_deserialization_from_file() -> None:
     resource_path = os.path.join(os.path.dirname(__file__), "resources", "sample_chat_data.json")
     with open(resource_path, "r") as file:
         json_data = file.read()
@@ -17,7 +17,7 @@ def test_deserialization_from_file():
     assert chat.messages[0].sender == "Matias Virtanen"
 
 
-def test_serialization():
+def test_serialization() -> None:
     media = MediaReference(
         raw_file_name="input.jpg",
         input_path=ChatFile(path="inputfolder/input.jpg"),
@@ -60,7 +60,7 @@ def test_serialization():
     assert chat.messages[0].html_file == "2022.html"
 
 
-def test_serialization_round_trip():
+def test_serialization_round_trip() -> None:
     resource_path = os.path.join(os.path.dirname(__file__), "resources", "sample_chat_data.json")
     with open(resource_path, "r") as file:
         json_data = file.read()
@@ -76,7 +76,7 @@ def test_serialization_round_trip():
     assert json_data.strip() == serialized_data.strip()
 
 
-def test_chat_file_serialization():
+def test_chat_file_serialization() -> None:
     chat_file = ChatFile(
         path="example.txt",
         parent_zip="archive.zip",
@@ -92,7 +92,7 @@ def test_chat_file_serialization():
     assert deserialized.size == chat_file.size
 
 
-def test_message_with_chatfile():
+def test_message_with_chatfile() -> None:
     chat_file = ChatFile(
         path="example.txt",
         parent_zip="archive.zip",
@@ -111,7 +111,7 @@ def test_message_with_chatfile():
     assert message.input_file == chat_file
 
 
-def test_media_reference_with_chatfile():
+def test_media_reference_with_chatfile() -> None:
     chat_file = ChatFile(
         path="media.jpg",
         parent_zip=None,

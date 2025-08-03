@@ -15,10 +15,10 @@ The main tasks are:
 
 from typing import Optional, Set
 
-from src.chat_data import Chat, ChatData, OutputFile
+from src.chat_data import Chat, ChatData, Message, OutputFile
 
 
-def get_message_years(messages) -> Set[int]:
+def get_message_years(messages: list[Message]) -> Set[int]:
     """Get set of years that have messages"""
     return {msg.year for msg in messages}
 
@@ -44,7 +44,7 @@ def find_years_needing_update(input_chat: Chat, output_chat: Optional[Chat]) -> 
     output_years = get_message_years(output_chat.messages)
 
     # Years that need updating:
-    needs_update = set()
+    needs_update: set[int] = set()
 
     # 1. Any year in input that has no output file
     for year in input_years:
