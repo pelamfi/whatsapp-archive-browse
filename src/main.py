@@ -1,4 +1,5 @@
 import argparse
+import os
 from parser import parse_chat_files
 from chat_data import ChatData
 from input_scanner import scan_input_directory
@@ -7,13 +8,19 @@ from data_comparator import compare_and_merge_data
 from html_generator import generate_html
 from metadata_updater import update_metadata
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description="Whatsapp Archive Browseability Generator")
-    parser.add_argument("input_folder", help="Input folder containing WhatsApp archives")
-    parser.add_argument("output_folder", help="Output folder for generated HTML")
-    parser.add_argument("--locale", default="FI", help="Locale specification (default: FI)")
+    parser.add_argument("--input", dest="input_folder", required=True,
+                       help="Input folder containing WhatsApp archives")
+    parser.add_argument("--output", dest="output_folder", required=True,
+                       help="Output folder for generated HTML")
+    parser.add_argument("--locale", default="FI",
+                       help="Locale specification (default: FI)")
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+
+    # Create output directory if it doesn't exist
+    os.makedirs(args.output_folder, exist_ok=True)
 
     # Step 1: Check output directory
     # This step loads existing metadata from the output directory.
