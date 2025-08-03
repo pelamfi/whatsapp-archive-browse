@@ -172,7 +172,7 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
     )
 
     safe_compare(os.path.join(output_dir, "index.html"), os.path.join(reference_dir, "index.html"))
-    
+
     # Compare and copy CSS file
     safe_compare(
         os.path.join(output_dir, "browseability-generator.css"),
@@ -192,7 +192,7 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
             os.path.join(output_chat_dir, "index.html"),
             os.path.join(reference_chat_dir, "index.html"),
         )
-        
+
         # Compare chat CSS file
         safe_compare(
             os.path.join(output_chat_dir, "browseability-generator.css"),
