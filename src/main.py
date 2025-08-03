@@ -9,13 +9,32 @@ from html_generator import generate_html
 from metadata_updater import update_metadata
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Whatsapp Archive Browseability Generator")
-    parser.add_argument("--input", dest="input_folder", required=True,
-                       help="Input folder containing WhatsApp archives")
-    parser.add_argument("--output", dest="output_folder", required=True,
-                       help="Output folder for generated HTML")
-    parser.add_argument("--locale", default="FI",
-                       help="Locale specification (default: FI)")
+    parser = argparse.ArgumentParser(
+        description="Whatsapp Archive Browseability Generator",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+    # Generate HTML from a WhatsApp export folder
+    %(prog)s --input path/to/whatsapp/export --output path/to/html/output
+
+    # Use a specific locale (default: FI)
+    %(prog)s --input path/to/whatsapp/export --output path/to/html/output --locale FI
+
+Notes:
+    - Input folder should contain WhatsApp chat exports (_chat.txt files)
+    - Can handle both expanded and .zip WhatsApp exports
+    - Output directory will be created if it doesn't exist
+    - Generates clean, static HTML with year-based organization
+    - Detects and handles duplicate messages from multiple backups
+    - Preserves and links media files referenced in chats
+    """
+    )
+    parser.add_argument("--input", dest="input_folder", required=True, metavar="DIR",
+                       help="Input folder containing WhatsApp archives (either expanded or .zip)")
+    parser.add_argument("--output", dest="output_folder", required=True, metavar="DIR",
+                       help="Output folder for generated browseable HTML files")
+    parser.add_argument("--locale", default="FI", metavar="LOCALE",
+                       help="Locale for parsing timestamps (currently only FI supported)")
 
     args = parser.parse_args(argv)
 

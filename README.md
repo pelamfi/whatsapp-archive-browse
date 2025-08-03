@@ -120,7 +120,50 @@ pip install -r requirements-dev.txt
 pip install -e .
 ```
 
-## Running Tests
+## Usage
+
+This tool converts WhatsApp chat exports into browseable HTML files, preserving the chat history and media files.
+
+### Basic Usage:
+
+```bash
+# Create and activate virtual environment (first time only)
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies (first time only)
+pip install -r requirements-dev.txt
+pip install -e .
+
+# Run the tool
+python -m src.main --input path/to/whatsapp/export --output path/to/html/output
+```
+
+### Input Requirements:
+- A folder containing WhatsApp chat exports
+- Can contain multiple `_chat.txt` files from different exports
+- Can handle both expanded exports and .zip files
+- Media files can be in the same folder or subfolder structure
+
+### Output Structure:
+- Clean, static HTML files
+- Year-based organization
+- Preserved media files
+- Index file listing all chats
+- No external dependencies needed for viewing
+
+### Example:
+```bash
+# Convert an expanded WhatsApp export
+python -m src.main --input ~/Downloads/WhatsApp --output ~/Documents/chat-archive
+
+# Specify a different locale (currently only FI supported)
+python -m src.main --input ~/Downloads/WhatsApp --output ~/Documents/chat-archive --locale FI
+```
+
+## Development
+
+### Running Tests
 
 To run the tests for this project, first activate the virtual environment:
 
