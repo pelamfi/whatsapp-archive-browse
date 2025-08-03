@@ -70,14 +70,15 @@ Difficulties:
 Overall Architeture:
   - A command line program with nice command line arguments and help
   - 5 main stages
-    - 1. First scans the input directory to determine:
-      - Different chats
-      - Time ranges for which data is available
-      - Locations of media files referred to by the chats
-      - Constructs a ChatData data structure
-    - 2. Check the status of the output directory
+    - 1. Check the status of the output directory
       - Checks the output directory for browseability-generator-chat-data.json
       - Constructs a second ChatData data structure from the JSON
+    - 2. First scans the input directory to:
+      - Detect different chats
+      - Uses output of Stage 1 to detect changed / new _chat.txt files to do incremental scanning
+      - Construct a coherent sequence of messages (Eliminate repeats etc)
+      - Find and record locations of media files referred to by the chats
+      - Constructs a ChatData data structure
     - 3. Looks at at ChatData data structures from stages 1. and 2.
       - Costructs a data structure of missing or changed chat data that should be generated from the input
       - Costructs a merged ChatData to be saved to browseability-generator-chat-data.json later
