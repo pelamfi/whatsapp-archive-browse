@@ -179,4 +179,13 @@ pytest
 
 This will automatically discover and run all test files in the `tests` directory.
 
+# Output directory structure
 
+- Top level folder, the folder given with `--output` parameter contains:
+  - `index.html` - allows access to known chats
+  - `browseability-generator.css` - the common .css resource used by index.html files
+  - `browseability-generator-chat-data.json` - metadata for incremental processing and maintaining chats for which archives no longer exists
+  - `Chat Name` - Subdirectories for each known chat with the name of the chat as directory name
+    - `index.html` - showing the chat name and links to per year `.html` files
+    - `browseability-generator.css` - a copy of the .css to make the directory stand alone
+    - `YYYY.html` - a per year HTML file for years for which chat messages exist for this chat
