@@ -64,3 +64,4 @@ ENV/
 # Generated files
 *.html
 *.css
+!/src/browseability-generator.css
