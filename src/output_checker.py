@@ -1,6 +1,6 @@
 import os
 from typing import Optional
-from .chat_data import ChatData
+from src.chat_data import ChatData
 
 def check_output_directory(output_dir: str) -> Optional[ChatData]:
     """

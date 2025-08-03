@@ -14,7 +14,8 @@ The main tasks are:
 """
 
 from typing import Set, Dict, Optional
-from .chat_data import ChatData, Chat, ChatName, Message, OutputFile
+from datetime import datetime
+from src.chat_data import ChatData, Chat, ChatName, Message, OutputFile
 
 def get_message_years(messages) -> Set[int]:
     """Get set of years that have messages"""

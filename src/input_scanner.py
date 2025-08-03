@@ -21,7 +21,7 @@ complexities of WhatsApp chat backups:
 import os
 import glob
 from typing import List, Optional, Tuple
-from .chat_data import ChatData, Chat, ChatName, ChatFile
+from src.chat_data import ChatData, Chat, ChatName, ChatFile
 
 def find_chat_files(input_dir: str) -> List[Tuple[str, float]]:
     """
