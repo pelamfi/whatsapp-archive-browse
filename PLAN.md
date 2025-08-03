@@ -52,7 +52,13 @@
   - Media files.
 5.2. Parse `_chat.txt` files to identify:
   - Different chats.
-  - Time ranges for chat data.
+  - Year numbers to place messages in correct output HTML files.
+  - Time order for chat messages:
+    - Since parsing timestamps is too hard due to wild localization:
+      - We'll resort to parsing _chat.txt files in the file modification order
+      - We append parsed messages to the array
+      - Eliminate chat messages that are duplicates across the array using a dictionary
+      - If timestamps on the export files are correct, the chat messages should be in correct order.
   - Media file references.
 5.3. Construct a `ChatData` data structure to store parsed information.
 
