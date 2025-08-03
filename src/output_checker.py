@@ -23,5 +23,5 @@ def check_output_directory(output_dir: str) -> Optional[ChatData]:
             return ChatData.from_json(f.read())
     except Exception as e:
         # Log error but continue - this allows regenerating from input if output is corrupted
-        print(f"Error reading {json_path}: {e}")
+        print(f"Error reading {json_path}: {e}, will regenerate from input.\n  NOTE: IF INPUT FILES ARE MISSING SOME MESSAGES MAY BE LOST!\n  Check the output backup JSON: browseability-generator-chat-data-BACKUP.json")
         return None
