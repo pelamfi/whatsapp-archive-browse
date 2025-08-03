@@ -1,12 +1,13 @@
 """Test environment utilities."""
 
 import os
-import pytest
 import shutil
 import tempfile
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
-from datetime import datetime
+
+import pytest
 
 # Predefined timestamps for consistent file modification times across systems
 TIMESTAMPS = {
@@ -14,6 +15,7 @@ TIMESTAMPS = {
     "BACKUP1": datetime(2020, 2, 1, 0, 0, 0).timestamp(),  # 2020-02-01 00:00:00
     "BACKUP2": datetime(2020, 3, 1, 0, 0, 0).timestamp(),  # 2020-03-01 00:00:00
 }
+
 
 class ChatTestEnvironment:
     """
@@ -56,7 +58,7 @@ class ChatTestEnvironment:
         if to_dir is None:
             to_dir = self.create_input_dir()
 
-        demo_path = (Path(__file__).parent.parent.parent / "demo-chat")
+        demo_path = Path(__file__).parent.parent.parent / "demo-chat"
         if demo_path.exists():
             shutil.copytree(demo_path, to_dir, dirs_exist_ok=True)
             self.set_chat_timestamps(to_dir, timestamp)
@@ -81,7 +83,7 @@ class ChatTestEnvironment:
     def set_file_timestamps(self, file_path: Path, timestamp: float) -> None:
         """
         Set both access and modification times of a file to a specific timestamp.
-        
+
         Args:
             file_path: Path to the file to modify
             timestamp: Unix timestamp to set (can use TIMESTAMPS dictionary)
@@ -91,7 +93,7 @@ class ChatTestEnvironment:
     def set_chat_timestamps(self, chat_dir: Path, timestamp: float) -> None:
         """
         Set timestamps for all files in a chat directory.
-        
+
         Args:
             chat_dir: Path to the chat directory
             timestamp: Unix timestamp to set (can use TIMESTAMPS dictionary)
@@ -101,11 +103,13 @@ class ChatTestEnvironment:
                 file_path = Path(root) / file
                 self.set_file_timestamps(file_path, timestamp)
 
-    def filter_chat_lines(self, chat_dir: Path, start_line: int, end_line: int, timestamp: float) -> None:
+    def filter_chat_lines(
+        self, chat_dir: Path, start_line: int, end_line: int, timestamp: float
+    ) -> None:
         """
         Filter the _chat.txt file to keep 2 first lines (chat name) and the specified line range.
         Updates the file modification time after editing.
-        
+
         Args:
             chat_dir: Directory containing the _chat.txt file
             start_line: First line to keep (1-based, excluding the chat name line)
@@ -115,21 +119,23 @@ class ChatTestEnvironment:
         chat_file = chat_dir / "_chat.txt"
         with open(chat_file, "r") as f:
             lines = f.readlines()
-        
+
         # Always keep first line (chat name) and the specified range
-        selected_lines = lines[0:2] + lines[start_line - 1:end_line]
-        
+        selected_lines = lines[0:2] + lines[start_line - 1 : end_line]
+
         with open(chat_file, "w") as f:
             f.writelines(selected_lines)
-        
+
         # Update timestamps after modification
         self.set_chat_timestamps(chat_dir, timestamp)
 
-    def insert_chat_lines(self, chat_dir: Path, after_line: int, lines_to_insert: list[str], timestamp: float) -> None:
+    def insert_chat_lines(
+        self, chat_dir: Path, after_line: int, lines_to_insert: list[str], timestamp: float
+    ) -> None:
         """
         Insert lines into the _chat.txt file after the specified line number.
         Updates the file modification time after editing.
-        
+
         Args:
             chat_dir: Directory containing the _chat.txt file
             after_line: Line number after which to insert (1-based)
@@ -139,13 +145,13 @@ class ChatTestEnvironment:
         chat_file = chat_dir / "_chat.txt"
         with open(chat_file, "r") as f:
             existing_lines = f.readlines()
-        
+
         # Insert new lines after the specified position
         new_lines = existing_lines[:after_line] + lines_to_insert + existing_lines[after_line:]
-        
+
         with open(chat_file, "w") as f:
             f.writelines(new_lines)
-        
+
         # Update timestamps after modification
         self.set_chat_timestamps(chat_dir, timestamp)
 
@@ -154,23 +160,24 @@ class ChatTestEnvironment:
         """Get the base directory path."""
         return self.base_dir
 
+
 @pytest.fixture
 def test_env():
     """
     Create a test environment with temporary directory that's automatically cleaned up.
-    
+
     Usage:
         def test_something(test_env):
             # Create input and output dirs
             input_dir = test_env.create_input_dir()
             output_dir = test_env.create_output_dir()
-            
+
             # Copy demo chat
             test_env.copy_demo_chat(input_dir)
-            
+
             # Create a backup
             backup_dir = test_env.create_chat_backup(input_dir)
-            
+
             # Run your test...
     """
     test_dir = tempfile.mkdtemp()

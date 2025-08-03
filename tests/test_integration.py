@@ -1,6 +1,7 @@
 from src.main import main
 from tests.utils.output_verification import verify_output_directory
-from tests.utils.test_env import ChatTestEnvironment, TIMESTAMPS
+from tests.utils.test_env import TIMESTAMPS, ChatTestEnvironment
+
 
 def test_basic_run(test_env: ChatTestEnvironment) -> None:
     """
@@ -11,15 +12,14 @@ def test_basic_run(test_env: ChatTestEnvironment) -> None:
     input_dir = test_env.create_input_dir()
     output_dir = test_env.create_output_dir()
     test_env.copy_demo_chat(input_dir, TIMESTAMPS["BASE"])
-    
+
     # Run the main function
-    main_args = ['--input', str(input_dir), 
-                '--output', str(output_dir), 
-                '--locale', 'FI']
+    main_args = ["--input", str(input_dir), "--output", str(output_dir), "--locale", "FI"]
     main(main_args, timestamp="2025-08-03 14:28:38")
-    
+
     # Verify output against reference
-    verify_output_directory(str(output_dir), 'basic_test')
+    verify_output_directory(str(output_dir), "basic_test")
+
 
 def test_duplicated_chat(test_env: ChatTestEnvironment):
     """
@@ -29,23 +29,22 @@ def test_duplicated_chat(test_env: ChatTestEnvironment):
     # Set up test directories with two copies of the same chat
     input_dir = test_env.create_input_dir()
     output_dir = test_env.create_output_dir()
-    
+
     # Create first copy in input/chat1
     chat1_dir = input_dir / "chat1"
     test_env.copy_demo_chat(chat1_dir, TIMESTAMPS["BACKUP1"])
-    
+
     # Create second copy in input/chat2
     chat2_dir = input_dir / "chat2"
     test_env.copy_demo_chat(chat2_dir, TIMESTAMPS["BACKUP2"])
-    
+
     # Run the main function
-    main_args = ['--input', str(input_dir), 
-                '--output', str(output_dir), 
-                '--locale', 'FI']
+    main_args = ["--input", str(input_dir), "--output", str(output_dir), "--locale", "FI"]
     main(main_args, timestamp="2025-08-03 14:28:38")
-    
+
     # Verify output against reference - should handle duplicates and produce clean output
-    verify_output_directory(str(output_dir), 'duplicated_chat_test')
+    verify_output_directory(str(output_dir), "duplicated_chat_test")
+
 
 def test_overlapping_chat_history(test_env: ChatTestEnvironment):
     """
@@ -55,25 +54,24 @@ def test_overlapping_chat_history(test_env: ChatTestEnvironment):
     """
     input_dir = test_env.create_input_dir()
     output_dir = test_env.create_output_dir()
-    
+
     # Create second backup with lines 1 - 2 and 3-13
     backup1_dir = input_dir / "backup1"
     test_env.copy_demo_chat(backup1_dir, TIMESTAMPS["BACKUP1"])
     test_env.filter_chat_lines(backup1_dir, 3, 13, TIMESTAMPS["BACKUP1"])
-    
+
     # Create first backup with lines 1 - 2 and 12-21
     backup2_dir = input_dir / "backup2"
     test_env.copy_demo_chat(backup2_dir, TIMESTAMPS["BACKUP2"])
     test_env.filter_chat_lines(backup2_dir, 12, 21, TIMESTAMPS["BACKUP2"])
-    
+
     # Run the main function
-    main_args = ['--input', str(input_dir), 
-                '--output', str(output_dir), 
-                '--locale', 'FI']
+    main_args = ["--input", str(input_dir), "--output", str(output_dir), "--locale", "FI"]
     main(main_args, timestamp="2025-08-03 14:28:38")
-    
+
     # Verify output against reference
-    verify_output_directory(str(output_dir), 'overlapping_chat_test')
+    verify_output_directory(str(output_dir), "overlapping_chat_test")
+
 
 def test_invalid_chat_syntax(test_env: ChatTestEnvironment):
     """
@@ -82,11 +80,11 @@ def test_invalid_chat_syntax(test_env: ChatTestEnvironment):
     """
     input_dir = test_env.create_input_dir()
     output_dir = test_env.create_output_dir()
-    
+
     # Create chat with invalid syntax
     chat_dir = input_dir / "chat"
     test_env.copy_demo_chat(chat_dir, TIMESTAMPS["BASE"])
-    
+
     invalid_lines = [
         "This line has no timestamp or sender\n",
         "[12.3.2022 klo ] Missing time\n",
@@ -94,12 +92,10 @@ def test_invalid_chat_syntax(test_env: ChatTestEnvironment):
         "[12.3.2022 klo 14:17:25 Invalid timestamp format\n",
     ]
     test_env.insert_chat_lines(chat_dir, 5, invalid_lines, TIMESTAMPS["BASE"])
-    
+
     # Run the main function
-    main_args = ['--input', str(input_dir), 
-                '--output', str(output_dir), 
-                '--locale', 'FI']
+    main_args = ["--input", str(input_dir), "--output", str(output_dir), "--locale", "FI"]
     main(main_args, timestamp="2025-08-03 14:28:38")
-    
+
     # Verify output against reference
-    verify_output_directory(str(output_dir), 'invalid_chat_test')
+    verify_output_directory(str(output_dir), "invalid_chat_test")

@@ -1,15 +1,19 @@
 import argparse
 import os
 from typing import Sequence
-from src.input_scanner import scan_input_directory
-from src.output_checker import check_output_directory
+
 from src.data_comparator import merge_chat_data
 from src.html_generator import generate_html
+from src.input_scanner import scan_input_directory
 from src.metadata_updater import update_metadata
+from src.output_checker import check_output_directory
+
 
 def get_current_time():
     from datetime import datetime
+
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 
 def main(argv: Sequence[str] | None = None, *, timestamp: str | None = None):
     if timestamp is None:
@@ -33,14 +37,28 @@ Notes:
     - Generates clean, static HTML with year-based organization
     - Detects and handles duplicate messages from multiple backups
     - Preserves and links media files referenced in chats
-    """
+    """,
     )
-    parser.add_argument("--input", dest="input_folder", required=True, metavar="DIR",
-                       help="Input folder containing WhatsApp archives (either expanded or .zip)")
-    parser.add_argument("--output", dest="output_folder", required=True, metavar="DIR",
-                       help="Output folder for generated browseable HTML files")
-    parser.add_argument("--locale", default="FI", metavar="LOCALE",
-                       help="Locale for parsing timestamps (currently only FI supported)")
+    parser.add_argument(
+        "--input",
+        dest="input_folder",
+        required=True,
+        metavar="DIR",
+        help="Input folder containing WhatsApp archives (either expanded or .zip)",
+    )
+    parser.add_argument(
+        "--output",
+        dest="output_folder",
+        required=True,
+        metavar="DIR",
+        help="Output folder for generated browseable HTML files",
+    )
+    parser.add_argument(
+        "--locale",
+        default="FI",
+        metavar="LOCALE",
+        help="Locale for parsing timestamps (currently only FI supported)",
+    )
 
     args = parser.parse_args(argv)
 
@@ -68,6 +86,7 @@ Notes:
 
     # Step 5: Update metadata: safely rewrites browseability-generator-chat-data.json, old JSON becomes backup.
     update_metadata(merged_data, args.output_folder)
+
 
 if __name__ == "__main__":
     main()
