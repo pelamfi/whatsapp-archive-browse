@@ -1,0 +1,30 @@
+[project]
+name = "whatsapp-archive-browse"
+version = "0.1.0"
+description = "Tool for generating browseable HTML from Whatsapp chat exports"
+authors = [
+    { name = "pelamfi" },
+]
+dependencies = [
+    # Add runtime dependencies here when we need them
+]
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "setuptools>=45.0.0",
+    "wheel>=0.37.0",
+]
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v"
+
+[project.scripts]
+whatsapp-archive-browse = "src.main:main"

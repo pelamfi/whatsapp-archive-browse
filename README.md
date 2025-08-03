@@ -106,16 +106,34 @@ ChatData specification:
     - Relative path to the possible per year HTML file where the message is
       placed in if the HTML file is already generated
 
+## Development Setup
+
+This project uses Python virtual environments for development. To set up:
+
+```bash
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install development dependencies
+pip install -r requirements-dev.txt
+pip install -e .
+```
+
 ## Running Tests
 
-To run the tests for this project, use the following command:
+To run the tests for this project, first activate the virtual environment:
 
-```
-python -m unittest discover -s tests -p "test_*.py"
+```bash
+source .venv/bin/activate
 ```
 
-This will automatically discover and run all test files in the `tests` directory
-that match the pattern `test_*.py`. Ensure you have Python 3 installed and are
-in the project root directory when running this command.
+Then run the tests using pytest:
+
+```bash
+pytest
+```
+
+This will automatically discover and run all test files in the `tests` directory.
 
 

@@ -1,0 +1,4 @@
+# Development dependencies
+pytest>=7.0.0
+setuptools>=45.0.0
+wheel>=0.37.0
