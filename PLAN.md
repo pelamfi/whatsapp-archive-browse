@@ -35,16 +35,16 @@
   - Input folder containing WhatsApp archives.
   - locale specification. (Only `FI` supported now)
   - Output directory for generated HTML.
-4.3. Implement help and usage instructions.
-4.4. Implement a basic integration test fixture helper functions that make it trivial to construct tests using the following:
+4.3. Implement a basic integration test fixture helper functions that make it trivial to construct tests using the following:
   - Sets up temp input folder (Deep copy of `demo-chat`)
   - Sets up temp output folder
   - Run CLI 
   - Modify input folder
   - Check output folder
   - Clean up temp folders
-4.5.
+4.4.
   - Implement a simple test matching current implementation (no HTML generated as steps 5-9 are not completed)
+4.5. Implement help and usage instructions.
 
 ## 5. Basic input Directory Scanning
 5.1. Implement a function to scan the input directory for:
