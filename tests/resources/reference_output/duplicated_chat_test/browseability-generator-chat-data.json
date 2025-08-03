@@ -1,0 +1,246 @@
+{
+    "chats": {
+        "Space Rocket": {
+            "messages": [
+                {
+                    "content": "Viestit ja puhelut ovat t\u00e4ysin salattuja. Vain t\u00e4m\u00e4n keskustelun j\u00e4senet voivat lukea, kuunnella tai jakaa niit\u00e4.",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Space Rocket",
+                    "timestamp": "12.3.2022 klo 14.08.18",
+                    "year": 2022
+                },
+                {
+                    "content": "Matias Virtanen muutti ryhm\u00e4n nimeksi Space Rocket",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Matias Virtanen",
+                    "timestamp": "12.3.2022 klo 14.08.18",
+                    "year": 2022
+                },
+                {
+                    "content": "~\u202fJuuso Kivi lis\u00e4ttiin",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "~\u202fJuuso Kivi",
+                    "timestamp": "12.3.2022 klo 14.10.56",
+                    "year": 2022
+                },
+                {
+                    "content": "Matias Virtanen lis\u00e4ttiin",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Matias Virtanen",
+                    "timestamp": "12.3.2022 klo 14.10.56",
+                    "year": 2022
+                },
+                {
+                    "content": "Blah blah",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Matias Virtanen",
+                    "timestamp": "12.3.2022 klo 14.09.09",
+                    "year": 2022
+                },
+                {
+                    "content": "h\u00f6p\u00f6 h\u00f6p\u00f6",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Sami Str\u00f6m",
+                    "timestamp": "12.3.2022 klo 14.20.39",
+                    "year": 2022
+                },
+                {
+                    "content": "Yeaah",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Sami Str\u00f6m",
+                    "timestamp": "12.3.2022 klo 14.24.24",
+                    "year": 2022
+                },
+                {
+                    "content": "Olet nyt yll\u00e4pit\u00e4j\u00e4",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Space Rocket",
+                    "timestamp": "12.3.2022 klo 14.55.01",
+                    "year": 2022
+                },
+                {
+                    "content": "~\u202fJuuso Kivi lis\u00e4si henkil\u00f6n ~\u202fAleksi Luoto",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "~\u202fAleksi Luoto",
+                    "timestamp": "12.3.2022 klo 14.56.47",
+                    "year": 2022
+                },
+                {
+                    "content": "\ud83d\udc4b",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "~\u202fAleksi Luoto",
+                    "timestamp": "12.3.2022 klo 15.35.35",
+                    "year": 2022
+                },
+                {
+                    "content": "\ud83d\udc4b",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Sami Str\u00f6m",
+                    "timestamp": "12.3.2022 klo 16.24.37",
+                    "year": 2022
+                },
+                {
+                    "content": "Blah Blah",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Sami Str\u00f6m",
+                    "timestamp": "13.3.2022 klo 11.46.59",
+                    "year": 2022
+                },
+                {
+                    "content": "",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": {
+                        "input_path": null,
+                        "output_path": null,
+                        "raw_file_name": "00000074-PHOTO-2022-03-13-14-17-25.jpg"
+                    },
+                    "sender": "Sami Str\u00f6m",
+                    "timestamp": "13.3.2022 klo 14.17.25",
+                    "year": 2022
+                },
+                {
+                    "content": "\ud83d\udcaa",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Matias Virtanen",
+                    "timestamp": "13.3.2022 klo 14.17.51",
+                    "year": 2022
+                },
+                {
+                    "content": "foo bar seli seli",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Sami Str\u00f6m",
+                    "timestamp": "13.3.2022 klo 14.18.45",
+                    "year": 2022
+                },
+                {
+                    "content": "\ud83d\ude31\ud83e\udd70",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1754148176.8496726",
+                        "parent_zip": null,
+                        "path": "chat2/_chat.txt",
+                        "size": 1176
+                    },
+                    "media": null,
+                    "sender": "Matias Virtanen",
+                    "timestamp": "31.1.2024 klo 8.56.58",
+                    "year": 2024
+                }
+            ],
+            "output_files": {
+                "2022": {
+                    "generate": true,
+                    "year": 2022
+                },
+                "2024": {
+                    "generate": true,
+                    "year": 2024
+                }
+            }
+        }
+    }
+}
