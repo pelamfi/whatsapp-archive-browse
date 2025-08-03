@@ -67,7 +67,7 @@ class Message:
 class ChatName:
     name: str
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.name)
 
     def __eq__(self, other: object) -> bool:
@@ -133,7 +133,7 @@ class ChatData:
             return key.name
 
         def encode_chat(chat: Chat) -> ChatDict:
-            chat_dict = chat.__dict__.copy()
+            chat_dict: Dict[str, Any] = chat.__dict__.copy()
             del chat_dict["chat_name"]
             chat_dict["output_files"] = {str(year): file.to_dict() for year, file in chat.output_files.items()}
             return ChatDict(messages=chat_dict["messages"], output_files=chat_dict["output_files"])
@@ -197,7 +197,7 @@ class ChatData:
                 for year, file_data in files_dict.items()
             }
 
-        obj = json.loads(data)
+        obj: dict[str, Any] = json.loads(data)
         obj["chats"] = {
             decode_key(k): Chat(
                 chat_name=decode_key(k),

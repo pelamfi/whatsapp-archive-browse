@@ -116,14 +116,14 @@ def compare_or_update_reference(output_path: str, reference_path: str) -> bool:
 
         # If sizes match, compare content
         with open(output_path, "rb") as f1, open(reference_path, "rb") as f2:
-            output_content = f1.read()
-            reference_content = f2.read()
-            if output_content != reference_content:
+            byte_output_content: bytes = f1.read()
+            byte_reference_content: bytes = f2.read()
+            if byte_output_content != byte_reference_content:
                 assert False, f"Binary file content differs: {os.path.relpath(output_path)}"
     return True
 
 
-def verify_output_directory(output_dir: str, reference_dir: str):
+def verify_output_directory(output_dir: str, reference_dir: str) -> None:
     """
     Compare the output directory with a reference subdirectory.
     Structure based on README.md:
@@ -158,7 +158,7 @@ def verify_output_directory(output_dir: str, reference_dir: str):
     files_compared: list[str] = []
     files_created: list[str] = []
 
-    def safe_compare(output_path: str, reference_path: str):
+    def safe_compare(output_path: str, reference_path: str) -> None:
         """Helper to track which files were compared vs created"""
         if compare_or_update_reference(output_path, reference_path):
             files_compared.append(os.path.relpath(reference_path, reference_dir))
@@ -213,10 +213,10 @@ def verify_output_directory(output_dir: str, reference_dir: str):
     assert os.path.exists(os.path.join(output_dir, "browseability-generator.css")), "CSS file missing from output root"
 
     # Verify final structure
-    output_chat_dirs = {
+    output_chat_dirs: set[str] = {
         d for d in os.listdir(output_dir) if os.path.isdir(os.path.join(output_dir, d)) and d != "media"
     }
-    reference_chat_dirs = {
+    reference_chat_dirs: set[str] = {
         d for d in os.listdir(reference_dir) if os.path.isdir(os.path.join(reference_dir, d)) and d != "media"
     }
 

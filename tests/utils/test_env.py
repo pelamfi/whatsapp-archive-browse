@@ -5,7 +5,7 @@ import shutil
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Any, Generator, Optional
 
 import pytest
 
@@ -158,7 +158,7 @@ class ChatTestEnvironment:
 
 
 @pytest.fixture
-def test_env():
+def test_env() -> Generator[ChatTestEnvironment, Any, None]:
     """
     Create a test environment with temporary directory that's automatically cleaned up.
 

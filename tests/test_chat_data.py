@@ -1,6 +1,6 @@
 import os
 
-from src.chat_data import Chat, ChatData, ChatFile, ChatName, MediaReference, Message
+from src.chat_data import Chat, ChatData, ChatFile, ChatFileDict, ChatName, MediaReference, Message
 
 
 def test_deserialization_from_file() -> None:
@@ -8,11 +8,11 @@ def test_deserialization_from_file() -> None:
     with open(resource_path, "r") as file:
         json_data = file.read()
 
-    chat_data = ChatData.from_json(json_data)
+    chat_data: ChatData = ChatData.from_json(json_data)
 
     # Assert a few fields
     assert ChatName(name="Space Rocket") in chat_data.chats
-    chat = chat_data.chats[ChatName(name="Space Rocket")]
+    chat: Chat = chat_data.chats[ChatName(name="Space Rocket")]
     assert len(chat.messages) == 1
     assert chat.messages[0].sender == "Matias Virtanen"
 
@@ -36,16 +36,16 @@ def test_serialization() -> None:
         chats={ChatName(name="Space Rocket"): Chat(chat_name=ChatName(name="Space Rocket"), messages=[message])}
     )
 
-    json_data = chat_data.to_json()
-    deserialized = ChatData.from_json(json_data)
+    json_data: str = chat_data.to_json()
+    deserialized: ChatData = ChatData.from_json(json_data)
 
     assert len(deserialized.chats) == 1
     assert ChatName(name="Space Rocket") in deserialized.chats
-    chat = deserialized.chats[ChatName(name="Space Rocket")]
+    chat: Chat = deserialized.chats[ChatName(name="Space Rocket")]
     assert len(chat.messages) == 1
     assert chat.messages[0].timestamp == "2022-03-12T14:08:18"
-    if media := chat.messages[0].media:
-        assert media.raw_file_name == "input.jpg"
+    if message_media := chat.messages[0].media:
+        assert message_media.raw_file_name == "input.jpg"
         if media_input_path := media.input_path:
             assert media_input_path.path == "inputfolder/input.jpg"
         else:
@@ -61,12 +61,12 @@ def test_serialization() -> None:
 
 
 def test_serialization_round_trip() -> None:
-    resource_path = os.path.join(os.path.dirname(__file__), "resources", "sample_chat_data.json")
+    resource_path: str = os.path.join(os.path.dirname(__file__), "resources", "sample_chat_data.json")
     with open(resource_path, "r") as file:
-        json_data = file.read()
+        json_data: str = file.read()
 
-    chat_data = ChatData.from_json(json_data)
-    serialized_data = chat_data.to_json()
+    chat_data: ChatData = ChatData.from_json(json_data)
+    serialized_data: str = chat_data.to_json()
 
     # Log the produced JSON for easier resource file updates
     print("Produced JSON:")
@@ -83,8 +83,8 @@ def test_chat_file_serialization() -> None:
         modification_timestamp=1754448000.0,
         size=1024,
     )
-    serialized = chat_file.to_dict()
-    deserialized = ChatFile.from_dict(serialized)
+    serialized: ChatFileDict = chat_file.to_dict()
+    deserialized: ChatFile = ChatFile.from_dict(serialized)
 
     assert deserialized.path == chat_file.path
     assert deserialized.parent_zip == chat_file.parent_zip

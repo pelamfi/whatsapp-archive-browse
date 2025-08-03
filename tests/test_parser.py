@@ -6,7 +6,7 @@ from src.chat_data import Chat, ChatData, ChatFile
 from src.parser import parse_chat_file, parse_chat_files
 
 
-def test_parse_chat_file():
+def test_parse_chat_file() -> None:
     """Test parsing chat.txt and comparing with reference JSON"""
     resource_dir = os.path.join(os.path.dirname(__file__), "resources")
     input_file_path = os.path.join(resource_dir, "_chat.txt")
@@ -46,7 +46,7 @@ def test_parse_chat_file():
     assert serialized_data.strip() == expected_data.strip()
 
 
-def test_parse_chat_files():
+def test_parse_chat_files() -> None:
     """Test basic chat file parsing"""
     file_paths = ["example1.txt", "example2.txt"]
     locale = "FI"
@@ -61,7 +61,7 @@ def test_parse_chat_files():
         assert chat_file.size is None  # Placeholder
 
 
-def test_parse_chat_files_with_chatfile():
+def test_parse_chat_files_with_chatfile() -> None:
     """Test chat file parsing returns proper ChatFile objects"""
     file_paths = ["example1.txt", "example2.txt"]
     locale = "FI"

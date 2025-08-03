@@ -35,7 +35,7 @@ def test_find_chat_files(tmp_path: Path) -> None:
     assert files[1][0] == str(chat2)  # Newer file second
 
 
-def test_remove_duplicate_messages():
+def test_remove_duplicate_messages() -> None:
     """Test duplicate message removal from a chat"""
     chat = Chat(chat_name=ChatName("test"))
     msg1 = Message(timestamp="12:00", sender="Alice", content="Hi", year=2023)

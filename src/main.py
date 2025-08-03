@@ -9,13 +9,13 @@ from src.metadata_updater import update_metadata
 from src.output_checker import check_output_directory
 
 
-def get_current_time():
+def get_current_time() -> str:
     from datetime import datetime
 
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def main(argv: Sequence[str] | None = None, *, timestamp: str | None = None):
+def main(argv: Sequence[str] | None = None, *, timestamp: str | None = None) -> None:
     if timestamp is None:
         timestamp = get_current_time()
 

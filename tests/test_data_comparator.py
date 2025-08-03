@@ -1,8 +1,10 @@
+from typing import Set
+
 from src.chat_data import Chat, ChatName, Message, OutputFile
 from src.data_comparator import find_years_needing_update, get_message_years
 
 
-def test_get_message_years():
+def test_get_message_years() -> None:
     """Test extracting years from a list of messages"""
     messages = [
         Message(timestamp="12:00", sender="Alice", content="Hi", year=2022),
@@ -10,11 +12,11 @@ def test_get_message_years():
         Message(timestamp="14:00", sender="Alice", content="Hey", year=2023),
     ]
 
-    years = get_message_years(messages)
+    years: Set[int] = get_message_years(messages)
     assert years == {2022, 2023}
 
 
-def test_find_years_needing_update_no_output():
+def test_find_years_needing_update_no_output() -> None:
     """Test when there's no existing output"""
     input_chat = Chat(
         chat_name=ChatName("test"),
@@ -24,11 +26,11 @@ def test_find_years_needing_update_no_output():
         ],
     )
 
-    needs_update = find_years_needing_update(input_chat, None)
+    needs_update: Set[int] = find_years_needing_update(input_chat, None)
     assert needs_update == {2022, 2023}
 
 
-def test_find_years_needing_update_with_changes():
+def test_find_years_needing_update_with_changes() -> None:
     """Test detecting years that need updates"""
     # Create input chat with messages from 2022 and 2023
     input_chat = Chat(
@@ -52,5 +54,6 @@ def test_find_years_needing_update_with_changes():
         output_files={2022: OutputFile(year=2022, generate=False)},
     )
 
-    needs_update = find_years_needing_update(input_chat, output_chat)
+    needs_update: Set[int] = find_years_needing_update(input_chat, output_chat)
+    assert needs_update == {2023}  # Both different content and missing output file
     assert needs_update == {2023}  # Both different content and missing output file

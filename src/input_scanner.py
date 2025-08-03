@@ -24,7 +24,7 @@ from typing import Dict, List, Optional, Set, Tuple
 
 from src.chat_data import Chat, ChatData, ChatFile, Message
 
-type MessageTuple = Tuple[str, str, str, int, Optional[str]]
+type MessageDuplicateCheckingTuple = Tuple[str, str, str, int, Optional[str]]
 
 
 def find_chat_files(input_dir: str) -> List[Tuple[str, float]]:
@@ -67,16 +67,21 @@ def remove_duplicate_messages(chat: Chat) -> None:
     # Later we may need more sophisticated matching if we find
     # that timestamps or other fields vary between copies
 
-    seen: Set[MessageTuple] = set()
+    seen: Set[MessageDuplicateCheckingTuple] = set()
     unique_messages: List[Message] = []
 
     for msg in chat.messages:
-        msg_tuple: MessageTuple = (
+
+        media_file: Optional[str] = None
+        if msg.media:
+            media_file = msg.media.raw_file_name
+
+        msg_tuple: MessageDuplicateCheckingTuple = (
             msg.timestamp,
             msg.sender,
             msg.content,
             msg.year,
-            (media := msg.media) and media.raw_file_name,
+            media_file,
         )
 
         if msg_tuple not in seen:
