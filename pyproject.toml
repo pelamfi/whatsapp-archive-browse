@@ -8,7 +8,7 @@ authors = [
 dependencies = [
     # Add runtime dependencies here when we need them
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 
 [project.optional-dependencies]
 dev = [
@@ -31,7 +31,7 @@ addopts = "-v"
 whatsapp-archive-browse = "src.main:main"
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.12"
 strict = true
 show_error_codes = true
 warn_unused_ignores = true
