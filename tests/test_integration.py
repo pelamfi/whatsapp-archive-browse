@@ -57,15 +57,15 @@ def test_overlapping_chat_history(test_env):
     input_dir = test_env.create_input_dir()
     output_dir = test_env.create_output_dir()
     
-    # Create first backup with lines 1 and 12-21
+    # Create first backup with lines 1 - 2 and 12-21
     backup1_dir = input_dir / "backup1"
     test_env.copy_demo_chat(backup1_dir, TIMESTAMPS["BACKUP1"])
     test_env.filter_chat_lines(backup1_dir, 12, 21, TIMESTAMPS["BACKUP1"])
     
-    # Create second backup with lines 1 and 2-13
+    # Create second backup with lines 1 - 2 and 3-13
     backup2_dir = input_dir / "backup2"
     test_env.copy_demo_chat(backup2_dir, TIMESTAMPS["BACKUP2"])
-    test_env.filter_chat_lines(backup2_dir, 2, 13, TIMESTAMPS["BACKUP2"])
+    test_env.filter_chat_lines(backup2_dir, 3, 13, TIMESTAMPS["BACKUP2"])
     
     # Run the main function
     main_args = ['--input', str(input_dir), 

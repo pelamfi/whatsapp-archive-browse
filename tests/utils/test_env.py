@@ -101,7 +101,7 @@ class ChatTestEnvironment:
 
     def filter_chat_lines(self, chat_dir: Path, start_line: int, end_line: int, timestamp: float) -> None:
         """
-        Filter the _chat.txt file to keep line 1 (chat name) and the specified line range.
+        Filter the _chat.txt file to keep 2 first lines (chat name) and the specified line range.
         Updates the file modification time after editing.
         
         Args:
@@ -115,7 +115,7 @@ class ChatTestEnvironment:
             lines = f.readlines()
         
         # Always keep first line (chat name) and the specified range
-        selected_lines = [lines[0]] + lines[start_line - 1:end_line]
+        selected_lines = lines[0:2] + lines[start_line - 1:end_line]
         
         with open(chat_file, "w") as f:
             f.writelines(selected_lines)
