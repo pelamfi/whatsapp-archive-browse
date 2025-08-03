@@ -1,9 +1,8 @@
-import pytest
 from src.main import main
 from tests.utils.output_verification import verify_output_directory
-from tests.utils.test_env import test_env, TIMESTAMPS
+from tests.utils.test_env import ChatTestEnvironment, TIMESTAMPS
 
-def test_basic_run(test_env):
+def test_basic_run(test_env: ChatTestEnvironment) -> None:
     """
     Test complete HTML generation against reference files using demo chat data.
     If reference files don't exist, they will be created.
@@ -22,7 +21,7 @@ def test_basic_run(test_env):
     # Verify output against reference
     verify_output_directory(str(output_dir), 'basic_test')
 
-def test_duplicated_chat(test_env):
+def test_duplicated_chat(test_env: ChatTestEnvironment):
     """
     Test HTML generation with the same chat backed up in two different locations.
     Should handle duplicates and produce identical output to single chat case.
@@ -48,7 +47,7 @@ def test_duplicated_chat(test_env):
     # Verify output against reference - should handle duplicates and produce clean output
     verify_output_directory(str(output_dir), 'duplicated_chat_test')
 
-def test_overlapping_chat_history(test_env):
+def test_overlapping_chat_history(test_env: ChatTestEnvironment):
     """
     Test HTML generation with two backups of the same chat with partially overlapping history.
     One backup contains messages from lines 1 and 12-21.
@@ -76,7 +75,7 @@ def test_overlapping_chat_history(test_env):
     # Verify output against reference
     verify_output_directory(str(output_dir), 'overlapping_chat_test')
 
-def test_invalid_chat_syntax(test_env):
+def test_invalid_chat_syntax(test_env: ChatTestEnvironment):
     """
     Test HTML generation with invalid syntax in chat file.
     Should handle errors gracefully and continue processing.

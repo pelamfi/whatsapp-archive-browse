@@ -1,7 +1,6 @@
 import argparse
 import os
-from src.parser import parse_chat_files
-from src.chat_data import ChatData
+from typing import Sequence
 from src.input_scanner import scan_input_directory
 from src.output_checker import check_output_directory
 from src.data_comparator import merge_chat_data
@@ -12,7 +11,7 @@ def get_current_time():
     from datetime import datetime
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-def main(argv=None, *, timestamp=None):
+def main(argv: Sequence[str] | None = None, *, timestamp: str | None = None):
     if timestamp is None:
         timestamp = get_current_time()
 
@@ -65,7 +64,7 @@ Notes:
     merged_data.timestamp = timestamp
 
     # Step 4: Generate HTML: Generate per chat folders, copy media files, and create per chat and top level index.htmls.
-    generate_html(merged_data, args.output_folder)
+    generate_html(merged_data, args.input_folder, args.output_folder)
 
     # Step 5: Update metadata: safely rewrites browseability-generator-chat-data.json, old JSON becomes backup.
     update_metadata(merged_data, args.output_folder)

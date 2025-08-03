@@ -7,7 +7,6 @@ import tempfile
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
-import time
 
 # Predefined timestamps for consistent file modification times across systems
 TIMESTAMPS = {
@@ -21,6 +20,9 @@ class ChatTestEnvironment:
     Test environment with temporary directory management and utility functions.
     Provides methods for creating and managing test input/output directories.
     """
+
+    _created_dirs: set[Path]
+
     def __init__(self, base_dir: str):
         self.base_dir = Path(base_dir)
         self._created_dirs = set()

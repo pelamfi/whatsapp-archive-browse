@@ -8,7 +8,6 @@ def test_parse_chat_file():
     resource_dir = os.path.join(os.path.dirname(__file__), 'resources')
     input_file_path = os.path.join(resource_dir, '_chat.txt')
     output_file = os.path.join(resource_dir, 'chat.json')
-    base_dir = os.path.dirname(resource_dir)  # Set base directory
 
     # Create a ChatFile object
     input_file = ChatFile(

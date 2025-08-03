@@ -36,11 +36,9 @@ Note: This approach assumes that reference files should only change when functio
 intentionally changes, and that such changes should be reviewed as part of code review.
 """
 
-from typing import List
 
 import os
 import shutil
-import pytest
 
 def get_reference_dir(name: str) -> str:
     """Get the path to a reference directory."""
@@ -131,8 +129,8 @@ def verify_output_directory(output_dir: str, reference_dir: str):
     """
     # Convert the reference_dir from short name to full path if needed
     reference_dir = get_reference_dir(reference_dir)
-    files_compared = []
-    files_created = []
+    files_compared: list[str] = []
+    files_created: list[str] = []
 
     def safe_compare(output_path: str, reference_path: str):
         """Helper to track which files were compared vs created"""

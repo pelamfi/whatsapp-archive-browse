@@ -31,7 +31,6 @@ Design decisions:
 
 import os
 import shutil
-from datetime import datetime
 import logging
 from typing import List, Dict, Set
 from src.chat_data import ChatData, Chat, Message, MediaReference
@@ -163,7 +162,7 @@ def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str) -> str:
 </body>
 </html>"""
 
-def generate_html(chat_data: ChatData, output_dir: str) -> None:
+def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
     """
     Generate HTML files for chats based on OutputFile flags in chat_data.
     Always regenerates index.html files and copies CSS.
@@ -174,7 +173,7 @@ def generate_html(chat_data: ChatData, output_dir: str) -> None:
     shutil.copy(css_path, os.path.join(output_dir, 'browseability-generator.css'))
 
     # Track which chats have which years for index generation
-    chat_years = {}
+    chat_years: Dict[str, Set[int]] = {}
 
     # Process each chat
     for chat_name, chat in chat_data.chats.items():
@@ -185,7 +184,7 @@ def generate_html(chat_data: ChatData, output_dir: str) -> None:
         # Copy CSS to chat directory
         shutil.copy(css_path, os.path.join(chat_dir, 'browseability-generator.css'))
 
-        years = set()
+        years: set[int] = set()
         for year, output_file in chat.output_files.items():
             years.add(year)
             if not output_file.generate:
@@ -214,7 +213,6 @@ def generate_html(chat_data: ChatData, output_dir: str) -> None:
 
     # Copy all referenced media files
     print("Copying media files...")
-    input_dir = os.path.dirname(os.path.dirname(output_dir))  # Assumes standard directory structure
     for chat in chat_data.chats.values():
         chat_dir = os.path.join(output_dir, chat.chat_name.name)
         for msg in chat.messages:

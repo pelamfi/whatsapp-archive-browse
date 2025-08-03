@@ -7,7 +7,6 @@ The update process is designed to be safe against interruptions by:
 """
 
 import os
-import json
 from src.chat_data import ChatData
 
 def update_metadata(chat_data: ChatData, output_dir: str) -> None:

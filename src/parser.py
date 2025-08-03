@@ -1,8 +1,7 @@
-import os
 import re
-from src.chat_data import ChatData, Chat, ChatName, Message, MediaReference, ChatFile
+from src.chat_data import ChatName, Message, MediaReference, ChatFile
 
-def parse_chat_file(file_path: str, input_file: ChatFile) -> dict:
+def parse_chat_file(file_path: str, input_file: ChatFile) -> dict[ChatName, list[Message]]:
     """
     Parse a single WhatsApp _chat.txt file.
     
@@ -13,8 +12,8 @@ def parse_chat_file(file_path: str, input_file: ChatFile) -> dict:
     Returns:
         Dict mapping ChatName to list of Messages from this file
     """
-    messages_by_chat = {}
-    
+    messages_by_chat: dict[ChatName, list[Message]] = {}
+
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
 
@@ -37,7 +36,7 @@ def parse_chat_file(file_path: str, input_file: ChatFile) -> dict:
         chat_name = "Unknown Chat"
     
     chat_name = ChatName(name=chat_name)
-    messages = []
+    messages: list[Message] = []
 
     for line in lines:
         line = line.replace('\u200e', '')  # Remove U+200E characters
@@ -76,26 +75,14 @@ def parse_chat_file(file_path: str, input_file: ChatFile) -> dict:
     messages_by_chat[chat_name] = messages
     return messages_by_chat
 
-def parse_chat_files(file_paths, locale):
-    chat_files = []
+def parse_chat_files(file_paths: list[str], locale: str) -> list[ChatFile]:
+    chat_files: list[ChatFile] = []
     for file_path in file_paths:
         chat_file = ChatFile(
             path=file_path,
             parent_zip=None,  # Update logic if file is inside a zip
             modification_timestamp=None,  # Replace with actual timestamp
             size=None,  # Replace with actual file size
-        )
-        # Example usage in Message and MediaReference
-        message = Message(
-            timestamp="2025-08-03T12:00:00",  # Example timestamp
-            sender="Example User",
-            content="Example content",
-            year=2025,
-            input_file=chat_file
-        )
-        media_reference = MediaReference(
-            raw_file_name=os.path.basename(file_path),
-            input_path=chat_file
         )
         chat_files.append(chat_file)
     return chat_files

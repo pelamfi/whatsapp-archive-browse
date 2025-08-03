@@ -1,5 +1,4 @@
 import os
-import pytest
 from src.chat_data import ChatData, Message, MediaReference, ChatName, Chat, ChatFile
 
 def test_deserialization_from_file():
@@ -18,7 +17,7 @@ def test_deserialization_from_file():
 def test_serialization():
     media = MediaReference(
         raw_file_name="input.jpg",
-        input_path="inputfolder/input.jpg",
+        input_path=ChatFile(path="inputfolder/input.jpg"),
         output_path="outputfolder/input.jpg"
     )
     message = Message(
@@ -27,7 +26,7 @@ def test_serialization():
         content="Hello World",
         year=2022,
         media=media,
-        input_file="_chat.txt",
+        input_file=ChatFile(path="_chat.txt"),
         html_file="2022.html"
     )
     chat_data = ChatData(chats={ChatName(name="Space Rocket"): Chat(chat_name=ChatName(name="Space Rocket"), messages=[message])})
@@ -40,10 +39,19 @@ def test_serialization():
     chat = deserialized.chats[ChatName(name="Space Rocket")]
     assert len(chat.messages) == 1
     assert chat.messages[0].timestamp == "2022-03-12T14:08:18"
-    assert chat.messages[0].media.raw_file_name == "input.jpg"
-    assert chat.messages[0].media.input_path.path == "inputfolder/input.jpg"
-    assert chat.messages[0].media.output_path == "outputfolder/input.jpg"
-    assert chat.messages[0].input_file.path == "_chat.txt"
+    if media := chat.messages[0].media:
+        assert media.raw_file_name == "input.jpg"
+        if media_input_path := media.input_path:
+            assert media_input_path.path == "inputfolder/input.jpg"
+        else:
+            assert False, "Expected input_path to be set"
+        assert media.output_path == "outputfolder/input.jpg"
+    else:
+        assert False, "Expected media to be set"
+    if message_input_file := chat.messages[0].input_file:
+        assert message_input_file.path == "_chat.txt"
+    else:
+        assert False, "Expected input_file to be set"
     assert chat.messages[0].html_file == "2022.html"
 
 def test_serialization_round_trip():
@@ -65,7 +73,7 @@ def test_chat_file_serialization():
     chat_file = ChatFile(
         path="example.txt",
         parent_zip="archive.zip",
-        modification_timestamp="2025-08-03T12:00:00",
+        modification_timestamp=1754448000.0,
         size=1024,
     )
     serialized = chat_file.to_dict()
@@ -80,7 +88,7 @@ def test_message_with_chatfile():
     chat_file = ChatFile(
         path="example.txt",
         parent_zip="archive.zip",
-        modification_timestamp="2025-08-03T12:00:00",
+        modification_timestamp=1754448000.0,
         size=1024,
     )
     message = Message(
@@ -98,7 +106,7 @@ def test_media_reference_with_chatfile():
     chat_file = ChatFile(
         path="media.jpg",
         parent_zip=None,
-        modification_timestamp="2025-08-03T12:00:00",
+        modification_timestamp=1754448000.0,
         size=2048,
     )
     media_reference = MediaReference(

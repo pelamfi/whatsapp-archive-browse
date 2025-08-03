@@ -19,11 +19,11 @@ complexities of WhatsApp chat backups:
 """
 
 import os
-import glob
 import logging
-from typing import List, Optional, Tuple, Dict
-from pathlib import Path
-from src.chat_data import ChatData, Chat, ChatName, ChatFile, Message
+from typing import List, Optional, Tuple, Dict, Set
+from src.chat_data import ChatData, Chat, ChatFile, Message
+
+type MessageTuple = Tuple[str, str, str, int, Optional[str]]
 
 def find_chat_files(input_dir: str) -> List[Tuple[str, float]]:
     """
@@ -37,8 +37,8 @@ def find_chat_files(input_dir: str) -> List[Tuple[str, float]]:
     Returns:
         List of (file_path, mtime) tuples sorted by mtime
     """
-    chat_files = []
-    
+    chat_files: list[tuple[str, float]] = []
+
     for root, _, _ in os.walk(input_dir):
         path = os.path.join(root, "_chat.txt")
         if os.path.isfile(path):
@@ -63,16 +63,17 @@ def remove_duplicate_messages(chat: Chat) -> None:
     # For now we use a simple exact match on all fields
     # Later we may need more sophisticated matching if we find
     # that timestamps or other fields vary between copies
-    seen = set()
-    unique_messages = []
-    
+
+    seen: Set[MessageTuple] = set()
+    unique_messages: List[Message] = []
+
     for msg in chat.messages:
-        msg_tuple = (
+        msg_tuple: MessageTuple = (
             msg.timestamp,
             msg.sender, 
             msg.content,
             msg.year,
-            msg.media.raw_file_name if msg.media else None
+            (media := msg.media) and media.raw_file_name
         )
         
         if msg_tuple not in seen:
@@ -109,7 +110,7 @@ def scan_input_directory(input_dir: str, existing_data: Optional[ChatData] = Non
         # Create ChatFile for tracking origin
         chat_file = ChatFile(
             path=os.path.relpath(file_path, input_dir),
-            modification_timestamp=str(mtime),
+            modification_timestamp=mtime,
             size=os.path.getsize(file_path)
         )
         
@@ -159,7 +160,7 @@ def find_media_simple(chat: Chat, input_dir: str) -> None:
         if os.path.exists(media_path):
             msg.media.input_path = ChatFile(
                 path=os.path.relpath(media_path, input_dir),
-                modification_timestamp=str(os.path.getmtime(media_path)),
+                modification_timestamp=os.path.getmtime(media_path),
                 size=os.path.getsize(media_path)
             )
 
@@ -200,16 +201,17 @@ def find_missing_media(chat_data: ChatData, input_dir: str) -> None:
     # Try to match missing media files
     still_missing: List[Tuple[str, str]] = []  # List of (filename, chat_txt_path) pairs
     for msg in missing_media_messages:
-        filename = msg.media.raw_file_name
-        if filename in media_files:
-            media_path = media_files[filename]
-            msg.media.input_path = ChatFile(
-                path=os.path.relpath(media_path, input_dir),
-                modification_timestamp=str(os.path.getmtime(media_path)),
-                size=os.path.getsize(media_path)
-            )
-        else:
-            still_missing.append((filename, msg.input_file.path if msg.input_file else "unknown _chat.txt"))
+        if media := msg.media:
+            filename = media.raw_file_name
+            if filename in media_files:
+                media_path = media_files[filename]
+                msg.media.input_path = ChatFile(
+                    path=os.path.relpath(media_path, input_dir),
+                    modification_timestamp=os.path.getmtime(media_path),
+                    size=os.path.getsize(media_path)
+                )
+            else:
+                still_missing.append((filename, msg.input_file.path if msg.input_file else "unknown _chat.txt"))
     
     # Log details about still-missing files
     if still_missing:
