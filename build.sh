@@ -27,13 +27,13 @@ $PYTHON -m isort --check-only src tests || {
     $PYTHON -m isort src tests
 }
 
-echo "==> Running flake8 linter..."
-$PYTHON -m flake8 src tests
-
 echo "==> Running mypy type checker..."
 $PYTHON -m mypy src tests
 
 echo "==> Running tests with coverage..."
 $PYTHON -m pytest --cov=src --cov-report=term-missing
+
+echo "==> Running flake8 linter..."
+$PYTHON -m flake8 src tests
 
 echo "==> All checks passed! 🎉"
