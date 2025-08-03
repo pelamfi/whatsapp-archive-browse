@@ -2,9 +2,19 @@ import os
 import re
 from src.chat_data import ChatData, Chat, ChatName, Message, MediaReference, ChatFile
 
-def parse_chat_txt(file_path, base_dir):
-    chat_data = ChatData()
-
+def parse_chat_file(file_path: str, input_file: ChatFile) -> dict:
+    """
+    Parse a single WhatsApp _chat.txt file.
+    
+    Args:
+        file_path: Path to the _chat.txt file
+        input_file: ChatFile object representing the file
+        
+    Returns:
+        Dict mapping ChatName to list of Messages from this file
+    """
+    messages_by_chat = {}
+    
     with open(file_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
 
@@ -13,6 +23,21 @@ def parse_chat_txt(file_path, base_dir):
     sender_regex = re.compile(r'(?<=\] ).*?(?=: )')
     content_regex = re.compile(r'(?<=: ).*')
     media_regex = re.compile(r'<liite: (.*?)>')
+
+    # Try to determine chat name from first few system messages
+    chat_name = None
+    for line in lines[:10]:  # Look at first 10 lines
+        if "muutti ryhmän nimeksi" in line:
+            match = re.search(r'muutti ryhmän nimeksi (.*)', line)
+            if match:
+                chat_name = match.group(1)
+                break
+    
+    if not chat_name:
+        chat_name = "Unknown Chat"
+    
+    chat_name = ChatName(name=chat_name)
+    messages = []
 
     for line in lines:
         line = line.replace('\u200e', '')  # Remove U+200E characters
@@ -36,16 +61,18 @@ def parse_chat_txt(file_path, base_dir):
             else:
                 media = None
 
-            chat_name = ChatName(name="Default Chat")
-            if chat_name not in chat_data.chats:
-                chat_data.chats[chat_name] = Chat(chat_name=chat_name)
-
-            relative_file_path = os.path.relpath(file_path, base_dir)
-            input_file = ChatFile(path=relative_file_path)
-            message = Message(timestamp=timestamp, sender=sender, content=content, year=year, media=media, input_file=input_file)
-            chat_data.chats[chat_name].messages.append(message)
-
-    return chat_data
+            message = Message(
+                timestamp=timestamp,
+                sender=sender,
+                content=content,
+                year=year,
+                media=media,
+                input_file=input_file
+            )
+            messages.append(message)
+    
+    messages_by_chat[chat_name] = messages
+    return messages_by_chat
 
 def parse_chat_files(file_paths, locale):
     chat_files = []
