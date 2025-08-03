@@ -89,6 +89,7 @@
 10.1. Add more integration tests for each of the advanced features:
   - In the following assert output files against reference test resources stored in the project
   - Each test offers a feature for easy update of output reference test resource for when code is changed
+10.1.1. Basic test for simple scenario with output folder compared against stored reference resources
 10.1.2. 2 backups of the same chat in different directories
 10.1.3. 2 backups of the same chat in different directories with partially overlapping history
 10.1.4. Unknown _chat.txt syntax, log warnings and continue
