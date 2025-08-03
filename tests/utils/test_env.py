@@ -123,6 +123,30 @@ class ChatTestEnvironment:
         # Update timestamps after modification
         self.set_chat_timestamps(chat_dir, timestamp)
 
+    def insert_chat_lines(self, chat_dir: Path, after_line: int, lines_to_insert: list[str], timestamp: float) -> None:
+        """
+        Insert lines into the _chat.txt file after the specified line number.
+        Updates the file modification time after editing.
+        
+        Args:
+            chat_dir: Directory containing the _chat.txt file
+            after_line: Line number after which to insert (1-based)
+            lines_to_insert: List of lines to insert (should include newlines)
+            timestamp: Unix timestamp to set after modifying (use TIMESTAMPS)
+        """
+        chat_file = chat_dir / "_chat.txt"
+        with open(chat_file, "r") as f:
+            existing_lines = f.readlines()
+        
+        # Insert new lines after the specified position
+        new_lines = existing_lines[:after_line] + lines_to_insert + existing_lines[after_line:]
+        
+        with open(chat_file, "w") as f:
+            f.writelines(new_lines)
+        
+        # Update timestamps after modification
+        self.set_chat_timestamps(chat_dir, timestamp)
+
     @property
     def path(self) -> Path:
         """Get the base directory path."""
