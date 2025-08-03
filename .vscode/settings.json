@@ -7,5 +7,28 @@
     "python.analysis.extraPaths": [
         "./src"
     ],
-    "python-envs.pythonProjects": []
+    "python-envs.pythonProjects": [],
+    
+    // Type checking settings
+    "python.analysis.typeCheckingMode": "strict",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingTypeStubs": "none",     // Too strict for first-party code
+        "reportUnknownMemberType": "none",    // Too noisy with pytest
+        "reportUnknownVariableType": "none",  // Too noisy with pytest
+        "reportUnknownParameterType": "error", // Match mypy strictness
+        "reportMissingParameterType": "error", // Match mypy strictness
+        "reportMissingTypeArgument": "error", // Match mypy strictness
+        "reportFunctionMemberAccess": "error" // Match mypy strictness
+    },
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.inlayHints.variableTypes": true,
+    
+    // Code style settings
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "always"
+        }
+    }
 }
