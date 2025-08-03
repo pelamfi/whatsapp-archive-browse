@@ -9,7 +9,7 @@
                         "modification_timestamp": "1580508000.0",
                         "parent_zip": null,
                         "path": "backup1/_chat.txt",
-                        "size": 847
+                        "size": 675
                     },
                     "media": null,
                     "sender": "Space Rocket",
@@ -23,11 +23,67 @@
                         "modification_timestamp": "1580508000.0",
                         "parent_zip": null,
                         "path": "backup1/_chat.txt",
-                        "size": 847
+                        "size": 675
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
                     "timestamp": "12.3.2022 klo 14.08.18",
+                    "year": 2022
+                },
+                {
+                    "content": "~\u202fJuuso Kivi lis\u00e4ttiin",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1580508000.0",
+                        "parent_zip": null,
+                        "path": "backup1/_chat.txt",
+                        "size": 675
+                    },
+                    "media": null,
+                    "sender": "~\u202fJuuso Kivi",
+                    "timestamp": "12.3.2022 klo 14.10.56",
+                    "year": 2022
+                },
+                {
+                    "content": "Matias Virtanen lis\u00e4ttiin",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1580508000.0",
+                        "parent_zip": null,
+                        "path": "backup1/_chat.txt",
+                        "size": 675
+                    },
+                    "media": null,
+                    "sender": "Matias Virtanen",
+                    "timestamp": "12.3.2022 klo 14.10.56",
+                    "year": 2022
+                },
+                {
+                    "content": "Blah blah",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1580508000.0",
+                        "parent_zip": null,
+                        "path": "backup1/_chat.txt",
+                        "size": 675
+                    },
+                    "media": null,
+                    "sender": "Matias Virtanen",
+                    "timestamp": "12.3.2022 klo 14.09.09",
+                    "year": 2022
+                },
+                {
+                    "content": "h\u00f6p\u00f6 h\u00f6p\u00f6",
+                    "html_file": null,
+                    "input_file": {
+                        "modification_timestamp": "1580508000.0",
+                        "parent_zip": null,
+                        "path": "backup1/_chat.txt",
+                        "size": 675
+                    },
+                    "media": null,
+                    "sender": "Sami Str\u00f6m",
+                    "timestamp": "12.3.2022 klo 14.20.39",
                     "year": 2022
                 },
                 {
@@ -37,7 +93,7 @@
                         "modification_timestamp": "1580508000.0",
                         "parent_zip": null,
                         "path": "backup1/_chat.txt",
-                        "size": 847
+                        "size": 675
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -51,7 +107,7 @@
                         "modification_timestamp": "1580508000.0",
                         "parent_zip": null,
                         "path": "backup1/_chat.txt",
-                        "size": 847
+                        "size": 675
                     },
                     "media": null,
                     "sender": "Space Rocket",
@@ -62,9 +118,9 @@
                     "content": "~\u202fJuuso Kivi lis\u00e4si henkil\u00f6n ~\u202fAleksi Luoto",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1580508000.0",
+                        "modification_timestamp": "1583013600.0",
                         "parent_zip": null,
-                        "path": "backup1/_chat.txt",
+                        "path": "backup2/_chat.txt",
                         "size": 847
                     },
                     "media": null,
@@ -76,9 +132,9 @@
                     "content": "\ud83d\udc4b",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1580508000.0",
+                        "modification_timestamp": "1583013600.0",
                         "parent_zip": null,
-                        "path": "backup1/_chat.txt",
+                        "path": "backup2/_chat.txt",
                         "size": 847
                     },
                     "media": null,
@@ -90,9 +146,9 @@
                     "content": "\ud83d\udc4b",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1580508000.0",
+                        "modification_timestamp": "1583013600.0",
                         "parent_zip": null,
-                        "path": "backup1/_chat.txt",
+                        "path": "backup2/_chat.txt",
                         "size": 847
                     },
                     "media": null,
@@ -104,9 +160,9 @@
                     "content": "Blah Blah",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1580508000.0",
+                        "modification_timestamp": "1583013600.0",
                         "parent_zip": null,
-                        "path": "backup1/_chat.txt",
+                        "path": "backup2/_chat.txt",
                         "size": 847
                     },
                     "media": null,
@@ -118,9 +174,9 @@
                     "content": "",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1580508000.0",
+                        "modification_timestamp": "1583013600.0",
                         "parent_zip": null,
-                        "path": "backup1/_chat.txt",
+                        "path": "backup2/_chat.txt",
                         "size": 847
                     },
                     "media": {
@@ -136,9 +192,9 @@
                     "content": "\ud83d\udcaa",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1580508000.0",
+                        "modification_timestamp": "1583013600.0",
                         "parent_zip": null,
-                        "path": "backup1/_chat.txt",
+                        "path": "backup2/_chat.txt",
                         "size": 847
                     },
                     "media": null,
@@ -150,9 +206,9 @@
                     "content": "foo bar seli seli",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1580508000.0",
+                        "modification_timestamp": "1583013600.0",
                         "parent_zip": null,
-                        "path": "backup1/_chat.txt",
+                        "path": "backup2/_chat.txt",
                         "size": 847
                     },
                     "media": null,
@@ -164,71 +220,15 @@
                     "content": "\ud83d\ude31\ud83e\udd70",
                     "html_file": null,
                     "input_file": {
-                        "modification_timestamp": "1580508000.0",
+                        "modification_timestamp": "1583013600.0",
                         "parent_zip": null,
-                        "path": "backup1/_chat.txt",
+                        "path": "backup2/_chat.txt",
                         "size": 847
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
                     "timestamp": "31.1.2024 klo 8.56.58",
                     "year": 2024
-                },
-                {
-                    "content": "~\u202fJuuso Kivi lis\u00e4ttiin",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": "1583013600.0",
-                        "parent_zip": null,
-                        "path": "backup2/_chat.txt",
-                        "size": 675
-                    },
-                    "media": null,
-                    "sender": "~\u202fJuuso Kivi",
-                    "timestamp": "12.3.2022 klo 14.10.56",
-                    "year": 2022
-                },
-                {
-                    "content": "Matias Virtanen lis\u00e4ttiin",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": "1583013600.0",
-                        "parent_zip": null,
-                        "path": "backup2/_chat.txt",
-                        "size": 675
-                    },
-                    "media": null,
-                    "sender": "Matias Virtanen",
-                    "timestamp": "12.3.2022 klo 14.10.56",
-                    "year": 2022
-                },
-                {
-                    "content": "Blah blah",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": "1583013600.0",
-                        "parent_zip": null,
-                        "path": "backup2/_chat.txt",
-                        "size": 675
-                    },
-                    "media": null,
-                    "sender": "Matias Virtanen",
-                    "timestamp": "12.3.2022 klo 14.09.09",
-                    "year": 2022
-                },
-                {
-                    "content": "h\u00f6p\u00f6 h\u00f6p\u00f6",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": "1583013600.0",
-                        "parent_zip": null,
-                        "path": "backup2/_chat.txt",
-                        "size": 675
-                    },
-                    "media": null,
-                    "sender": "Sami Str\u00f6m",
-                    "timestamp": "12.3.2022 klo 14.20.39",
-                    "year": 2022
                 }
             ],
             "output_files": {
