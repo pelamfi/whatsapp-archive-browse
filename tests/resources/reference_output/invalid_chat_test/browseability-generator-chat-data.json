@@ -180,7 +180,12 @@
                         "size": 1315
                     },
                     "media": {
-                        "input_path": null,
+                        "input_path": {
+                            "modification_timestamp": "1577829600.0",
+                            "parent_zip": null,
+                            "path": "chat/00000074-PHOTO-2022-03-13-14-17-25.jpg",
+                            "size": 13673
+                        },
                         "output_path": null,
                         "raw_file_name": "00000074-PHOTO-2022-03-13-14-17-25.jpg"
                     },
