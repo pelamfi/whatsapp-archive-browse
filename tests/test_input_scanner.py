@@ -1,12 +1,13 @@
 import os
 import shutil
 from datetime import datetime
+from pathlib import Path
 
 from src.chat_data import Chat, ChatName, Message
 from src.input_scanner import find_chat_files, remove_duplicate_messages, scan_input_directory
 
 
-def test_find_chat_files(tmp_path):
+def test_find_chat_files(tmp_path: Path) -> None:
     """Test that find_chat_files finds _chat.txt files and sorts them by mtime"""
     # Copy demo chat file twice with different names
     demo_path = "demo-chat/_chat.txt"
@@ -49,7 +50,7 @@ def test_remove_duplicate_messages():
     assert chat.messages[1].sender == "Bob"
 
 
-def test_scan_input_directory_finds_chats(tmp_path):
+def test_scan_input_directory_finds_chats(tmp_path: Path) -> None:
     """Test that scanner finds and processes chat files"""
     # Copy demo chat to test directory
     chat_dir = tmp_path / "backup"
