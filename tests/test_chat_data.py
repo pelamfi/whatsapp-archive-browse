@@ -17,12 +17,10 @@ class TestChatData(unittest.TestCase):
         chat = chat_data.chats[ChatName(name="Space Rocket")]
         self.assertEqual(len(chat.messages), 1)
         self.assertEqual(chat.messages[0].sender, "Matias Virtanen")
-        self.assertEqual(chat.messages[0].media.size, 12345)
 
     def test_serialization(self):
         media = MediaReference(
             raw_file_name="input.jpg",
-            size=12345,
             input_path="inputfolder/input.jpg",
             output_path="outputfolder/input.jpg"
         )
@@ -46,7 +44,6 @@ class TestChatData(unittest.TestCase):
         self.assertEqual(len(chat.messages), 1)
         self.assertEqual(chat.messages[0].timestamp, "2022-03-12T14:08:18")
         self.assertEqual(chat.messages[0].media.raw_file_name, "input.jpg")
-        self.assertEqual(chat.messages[0].media.size, 12345)
         self.assertEqual(chat.messages[0].media.input_path, "inputfolder/input.jpg")
         self.assertEqual(chat.messages[0].media.output_path, "outputfolder/input.jpg")
         self.assertEqual(chat.messages[0].input_file, "_chat.txt")
@@ -61,8 +58,8 @@ class TestChatData(unittest.TestCase):
         serialized_data = chat_data.to_json()
 
         # Log the produced JSON for easier resource file updates
-        # print("Produced JSON:")
-        # print(serialized_data)
+        print("Produced JSON:")
+        print(serialized_data)
 
         # Assert the serialized output matches the original JSON byte by byte
         self.assertEqual(json_data.strip(), serialized_data.strip())
@@ -109,7 +106,6 @@ class TestChatData(unittest.TestCase):
         )
         media_reference = MediaReference(
             raw_file_name="media.jpg",
-            size=2048,
             input_path=chat_file,
             output_path="outputfolder/media.jpg"
         )

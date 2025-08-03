@@ -41,7 +41,8 @@ def parse_chat_txt(file_path, base_dir):
                 chat_data.chats[chat_name] = Chat(chat_name=chat_name)
 
             relative_file_path = os.path.relpath(file_path, base_dir)
-            message = Message(timestamp=timestamp, sender=sender, content=content, year=year, media=media, input_file=relative_file_path)
+            input_file = ChatFile(path=relative_file_path)
+            message = Message(timestamp=timestamp, sender=sender, content=content, year=year, media=media, input_file=input_file)
             chat_data.chats[chat_name].messages.append(message)
 
     return chat_data
@@ -56,7 +57,16 @@ def parse_chat_files(file_paths, locale):
             size=None,  # Replace with actual file size
         )
         # Example usage in Message and MediaReference
-        message = Message(input_file=chat_file)
-        media_reference = MediaReference(input_path=chat_file)
+        message = Message(
+            timestamp="2025-08-03T12:00:00",  # Example timestamp
+            sender="Example User",
+            content="Example content",
+            year=2025,
+            input_file=chat_file
+        )
+        media_reference = MediaReference(
+            raw_file_name=os.path.basename(file_path),
+            input_path=chat_file
+        )
         chat_files.append(chat_file)
     return chat_files

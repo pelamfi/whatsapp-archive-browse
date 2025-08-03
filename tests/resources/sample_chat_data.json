@@ -5,12 +5,21 @@
                 {
                     "content": "Hello World",
                     "html_file": "2022.html",
-                    "input_file": "_chat.txt",
+                    "input_file": {
+                        "modification_timestamp": null,
+                        "parent_zip": null,
+                        "path": "_chat.txt",
+                        "size": null
+                    },
                     "media": {
-                        "input_path": "inputfolder/input.jpg",
+                        "input_path": {
+                            "modification_timestamp": null,
+                            "parent_zip": null,
+                            "path": "inputfolder/input.jpg",
+                            "size": 12345
+                        },
                         "output_path": "outputfolder/input.jpg",
-                        "raw_file_name": "input.jpg",
-                        "size": 12345
+                        "raw_file_name": "input.jpg"
                     },
                     "sender": "Matias Virtanen",
                     "timestamp": "2022-03-12T14:08:18",

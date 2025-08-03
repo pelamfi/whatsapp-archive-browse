@@ -83,9 +83,7 @@ class ChatData:
             return chat_dict
 
         def default_serializer(obj):
-            if isinstance(obj, Message):
-                return obj.__dict__
-            if isinstance(obj, MediaReference):
+            if isinstance(obj, (Message, MediaReference, ChatFile)):
                 return obj.__dict__
             raise TypeError(f"Object of type {obj.__class__.__name__} is not JSON serializable")
 
@@ -103,8 +101,29 @@ class ChatData:
 
         def decode_message_list(messages):
             def decode_message(msg):
+                # Convert input_file to ChatFile if present
+                if 'input_file' in msg and msg['input_file'] is not None:
+                    if isinstance(msg['input_file'], str):  # Handle legacy format
+                        msg['input_file'] = ChatFile(path=msg['input_file'])
+                    else:
+                        msg['input_file'] = ChatFile(**msg['input_file'])
+                
+                # Handle media reference
                 if 'media' in msg and msg['media'] is not None:
-                    msg['media'] = MediaReference(**msg['media'])
+                    media = msg['media'].copy()  # Make a copy to modify
+                    
+                    # Handle input_path
+                    if 'input_path' in media and media['input_path'] is not None:
+                        if isinstance(media['input_path'], str):  # Handle legacy format
+                            size = media.pop('size', None)  # Extract size if present
+                            media['input_path'] = ChatFile(path=media['input_path'], size=size)
+                        else:
+                            media['input_path'] = ChatFile(**media['input_path'])
+                            
+                    # Remove size if present (it's now in ChatFile)
+                    media.pop('size', None)
+                    
+                    msg['media'] = MediaReference(**media)
                 return Message(**msg)
 
             return [decode_message(msg) for msg in messages]
