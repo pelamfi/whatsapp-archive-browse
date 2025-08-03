@@ -8,7 +8,14 @@ from src.data_comparator import merge_chat_data
 from src.html_generator import generate_html
 from src.metadata_updater import update_metadata
 
-def main(argv=None):
+def get_current_time():
+    from datetime import datetime
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def main(argv=None, *, timestamp=None):
+    if timestamp is None:
+        timestamp = get_current_time()
+
     parser = argparse.ArgumentParser(
         description="Whatsapp Archive Browseability Generator",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -53,6 +60,9 @@ Notes:
 
     # Step 3: Compare and merge data: Detects which YYYY.html files need to be (re)generated, this information is embeded in ChatData for simplicity.
     merged_data = merge_chat_data(input_data, output_data)
+
+    # Set timestamp
+    merged_data.timestamp = timestamp
 
     # Step 4: Generate HTML: Generate per chat folders, copy media files, and create per chat and top level index.htmls.
     generate_html(merged_data, args.output_folder)

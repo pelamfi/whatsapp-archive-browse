@@ -95,6 +95,7 @@ class Chat:
 @dataclass
 class ChatData:
     chats: Dict[ChatName, Chat] = field(default_factory=dict)
+    timestamp: str = None  # ISO format timestamp when this data was generated
 
     def to_json(self) -> str:
         def encode_key(key):

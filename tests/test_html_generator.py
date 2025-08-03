@@ -78,7 +78,7 @@ def test_create_main_index_html():
         "Chat One": {2023, 2024},
         "Chat Two": {2024, 2025}
     }
-    html = create_main_index_html(chats)
+    html = create_main_index_html(chats, "2025-08-03 14:28:38")
     assert "Chat One" in html
     assert "Chat Two" in html
     assert "Generated on" in html

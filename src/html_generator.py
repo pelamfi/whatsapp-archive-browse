@@ -104,7 +104,7 @@ def create_chat_index_html(chat: Chat, years: Set[int]) -> str:
 </body>
 </html>"""
 
-def create_main_index_html(chats: Dict[str, Set[int]]) -> str:
+def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str) -> str:
     """Generate main index.html listing all chats."""
     chats_html = "\n".join(
         f'<li><a href="{escape_html(name)}/index.html">{escape_html(name)}</a></li>'
@@ -122,7 +122,7 @@ def create_main_index_html(chats: Dict[str, Set[int]]) -> str:
     <ul class="chat-list">
         {chats_html}
     </ul>
-    <p><small>Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</small></p>
+    <p><small>Generated on {timestamp}</small></p>
 </body>
 </html>"""
 
@@ -171,7 +171,7 @@ def generate_html(chat_data: ChatData, output_dir: str) -> None:
             f.write(chat_index)
 
     # Generate main index.html
-    main_index = create_main_index_html(chat_years)
+    main_index = create_main_index_html(chat_years, chat_data.timestamp)
     with open(os.path.join(output_dir, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(main_index)
     print("Generating HTML")
