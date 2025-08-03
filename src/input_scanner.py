@@ -20,8 +20,10 @@ complexities of WhatsApp chat backups:
 
 import os
 import glob
-from typing import List, Optional, Tuple
-from src.chat_data import ChatData, Chat, ChatName, ChatFile
+import logging
+from typing import List, Optional, Tuple, Dict
+from pathlib import Path
+from src.chat_data import ChatData, Chat, ChatName, ChatFile, Message
 
 def find_chat_files(input_dir: str) -> List[Tuple[str, float]]:
     """
@@ -128,4 +130,90 @@ def scan_input_directory(input_dir: str, existing_data: Optional[ChatData] = Non
             # Remove duplicates after each file to keep memory usage reasonable
             remove_duplicate_messages(chat)
     
+    # Try to locate any missing media files
+    for chat in chat_data.chats.values():
+        find_media_simple(chat, input_dir)
+    find_missing_media(chat_data, input_dir)
+    
     return chat_data
+
+def find_media_simple(chat: Chat, input_dir: str) -> None:
+    """
+    Locate missing media files in the same directory as the _chat.txt file that referenced them.
+    
+    Args:
+        chat: Chat object to process
+        input_dir: Root input directory
+    """
+    for msg in chat.messages:
+        if not msg.media or msg.media.input_path:
+            continue
+            
+        # Get the directory of the _chat.txt file that referenced this media
+        if not msg.input_file:
+            continue
+            
+        chat_dir = os.path.dirname(os.path.join(input_dir, msg.input_file.path))
+        media_path = os.path.join(chat_dir, msg.media.raw_file_name)
+        
+        if os.path.exists(media_path):
+            msg.media.input_path = ChatFile(
+                path=os.path.relpath(media_path, input_dir),
+                modification_timestamp=str(os.path.getmtime(media_path)),
+                size=os.path.getsize(media_path)
+            )
+
+def find_missing_media(chat_data: ChatData, input_dir: str) -> None:
+    """
+    Scan chat data for missing media files and attempt to locate them.
+    First tries same directory as _chat.txt, then searches entire input directory.
+    Logs warning messages about missing media files.
+    
+    Args:
+        chat_data: ChatData to process
+        input_dir: Root input directory
+    """
+    # First pass: try to find media files in same directory as _chat.txt
+    for chat in chat_data.chats.values():
+        find_media_simple(chat, input_dir)
+    
+    # Second pass: collect messages with missing media
+    missing_media_messages: List[Message] = []
+    for chat in chat_data.chats.values():
+        for msg in chat.messages:
+            if msg.media and not msg.media.input_path:
+                missing_media_messages.append(msg)
+    
+    if not missing_media_messages:
+        return
+        
+    # Log the initial count of missing media files
+    logging.warning(f"Found {len(missing_media_messages)} messages with missing media files")
+    
+    # Build a dictionary of all media files in input directory
+    media_files: Dict[str, str] = {}
+    for root, _, files in os.walk(input_dir):
+        for file in files:
+            if file not in media_files:  # Only keep first occurrence if duplicate names exist
+                media_files[file] = os.path.join(root, file)
+    
+    # Try to match missing media files
+    still_missing: List[Tuple[str, str]] = []  # List of (filename, chat_txt_path) pairs
+    for msg in missing_media_messages:
+        filename = msg.media.raw_file_name
+        if filename in media_files:
+            media_path = media_files[filename]
+            msg.media.input_path = ChatFile(
+                path=os.path.relpath(media_path, input_dir),
+                modification_timestamp=str(os.path.getmtime(media_path)),
+                size=os.path.getsize(media_path)
+            )
+        else:
+            still_missing.append((filename, msg.input_file.path if msg.input_file else "unknown _chat.txt"))
+    
+    # Log details about still-missing files
+    if still_missing:
+        logging.warning("The following media files are still missing:")
+        for filename, chat_txt in still_missing:
+            logging.warning(f"  {filename} (referenced in {chat_txt})")
+```
