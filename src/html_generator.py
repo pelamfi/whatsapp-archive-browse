@@ -32,8 +32,45 @@ Design decisions:
 import os
 import shutil
 from datetime import datetime
+import logging
 from typing import List, Dict, Set
 from src.chat_data import ChatData, Chat, Message, MediaReference
+
+def copy_media_file(input_dir: str, chat_dir: str, media_ref: MediaReference) -> bool:
+    """
+    Copy a media file from input to output directory and update its output path.
+    
+    Args:
+        input_dir: Root input directory
+        chat_dir: Output directory for the chat
+        media_ref: MediaReference to process
+    
+    Returns:
+        bool: True if file was copied successfully, False if file is missing
+    """
+    if not media_ref.input_path:
+        return False
+        
+    # Construct paths
+    src_path = os.path.join(input_dir, media_ref.input_path.path)
+    if not os.path.exists(src_path):
+        logging.warning(f"Media file not found: {src_path}")
+        return False
+        
+    # Use the original filename for the output
+    dst_path = os.path.join(chat_dir, 'media', media_ref.raw_file_name)
+    
+    try:
+        # Create media directory if it doesn't exist
+        os.makedirs(os.path.dirname(dst_path), exist_ok=True)
+        
+        # Copy the file and update the reference
+        shutil.copy2(src_path, dst_path)
+        media_ref.output_path = f"media/{media_ref.raw_file_name}"
+        return True
+    except (IOError, OSError) as e:
+        logging.error(f"Failed to copy media file {src_path}: {e}")
+        return False
 
 def escape_html(text: str) -> str:
     """Escape special characters in text for HTML output."""
@@ -174,6 +211,12 @@ def generate_html(chat_data: ChatData, output_dir: str) -> None:
     main_index = create_main_index_html(chat_years, chat_data.timestamp)
     with open(os.path.join(output_dir, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(main_index)
-    print("Generating HTML")
-    # No-op implementation
-    return None
+
+    # Copy all referenced media files
+    print("Copying media files...")
+    input_dir = os.path.dirname(os.path.dirname(output_dir))  # Assumes standard directory structure
+    for chat in chat_data.chats.values():
+        chat_dir = os.path.join(output_dir, chat.chat_name.name)
+        for msg in chat.messages:
+            if msg.media:
+                copy_media_file(input_dir, chat_dir, msg.media)
