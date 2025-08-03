@@ -70,6 +70,8 @@ def parse_chat_file(file_path: str, input_file: ChatFile) -> dict:
                 input_file=input_file
             )
             messages.append(message)
+        else:
+            print(f"WARNING! Skipping line in file {file_path} due to unknown syntax: {line.strip()}")
     
     messages_by_chat[chat_name] = messages
     return messages_by_chat
