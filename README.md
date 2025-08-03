@@ -163,21 +163,156 @@ python -m src.main --input ~/Downloads/WhatsApp --output ~/Documents/chat-archiv
 
 ## Development
 
-### Running Tests
+### Setting Up Development Environment
 
-To run the tests for this project, first activate the virtual environment:
+This project uses Python virtual environments and strict type checking. To set up:
 
 ```bash
+# Create and activate virtual environment
+python3 -m venv .venv
 source .venv/bin/activate
+
+# Install development dependencies
+pip install -e ".[dev]"
 ```
 
-Then run the tests using pytest:
+### Development Tools
+
+The project is configured with several development tools in `pyproject.toml`:
+
+#### Code Quality Tools
+
+The project uses several tools to maintain code quality:
+
+##### Type Checking (mypy)
+
+Static type checking with strict settings:
 
 ```bash
-pytest
+mypy src tests
 ```
 
-This will automatically discover and run all test files in the `tests` directory.
+##### Code Formatting (black)
+
+Consistent code formatting:
+
+```bash
+# Check formatting
+black --check src tests
+
+# Auto-format code
+black src tests
+```
+
+##### Import Sorting (isort)
+
+Consistent import ordering:
+
+```bash
+# Check import ordering
+isort --check-only src tests
+
+# Fix import ordering
+isort src tests
+```
+
+##### Code Linting (flake8)
+
+Style guide enforcement:
+
+```bash
+flake8 src tests
+```
+
+#### Running Tests
+
+Tests are written using pytest. Run:
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage report and generate HTML report
+pytest --cov=src --cov-report=html
+
+# View coverage report in browser (Linux)
+xdg-open htmlcov/index.html
+
+# Run specific test file
+pytest tests/test_specific.py
+```
+
+#### Running All Checks
+
+The project includes a build script that runs all quality checks:
+
+```bash
+./build.sh
+```
+
+This script:
+1. Formats code with black
+2. Sorts imports with isort
+3. Runs flake8 linter
+4. Runs mypy type checker
+5. Runs tests with coverage report
+
+The script uses bash strict mode (`set -euo pipefail`) and will stop on the first error. For code formatting issues (black and isort), it will automatically fix the problems.
+
+You can also run individual checks as needed:
+
+```bash
+# Just format code
+black src tests
+isort src tests
+
+# Just run tests
+pytest
+
+# Just check types
+mypy src tests
+```
+
+#### IDE Integration
+
+The project is configured to work well with modern IDEs through `pyproject.toml`:
+
+- **VS Code**: Will automatically pick up:
+  - Python version requirements
+  - Type checking settings
+  - Test configuration
+  - Development dependencies
+
+- **PyCharm**: Will recognize:
+  - Project structure
+  - Test configuration
+  - Type checking settings
+
+### Building and Distribution
+
+The project uses standard Python packaging tools:
+
+```bash
+# Build distribution packages
+python -m build
+
+# Install in development mode
+pip install -e .
+
+# Install with development dependencies
+pip install -e ".[dev]"
+```
+
+### Continuous Integration
+
+The project's `pyproject.toml` configuration supports common CI practices:
+
+- Type checking with mypy
+- Test running with pytest
+- Package building
+- Development dependency management
+
+All tools are configured through `pyproject.toml`, making it easy to run the same checks locally that will run in CI.
 
 # Output directory structure
 
