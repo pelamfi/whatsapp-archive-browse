@@ -44,9 +44,9 @@ class TestChatData(unittest.TestCase):
         self.assertEqual(len(chat.messages), 1)
         self.assertEqual(chat.messages[0].timestamp, "2022-03-12T14:08:18")
         self.assertEqual(chat.messages[0].media.raw_file_name, "input.jpg")
-        self.assertEqual(chat.messages[0].media.input_path, "inputfolder/input.jpg")
+        self.assertEqual(chat.messages[0].media.input_path.path, "inputfolder/input.jpg")
         self.assertEqual(chat.messages[0].media.output_path, "outputfolder/input.jpg")
-        self.assertEqual(chat.messages[0].input_file, "_chat.txt")
+        self.assertEqual(chat.messages[0].input_file.path, "_chat.txt")
         self.assertEqual(chat.messages[0].html_file, "2022.html")
 
     def test_serialization_round_trip(self):
