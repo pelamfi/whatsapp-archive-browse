@@ -216,4 +216,4 @@ def find_missing_media(chat_data: ChatData, input_dir: str) -> None:
         logging.warning("The following media files are still missing:")
         for filename, chat_txt in still_missing:
             logging.warning(f"  {filename} (referenced in {chat_txt})")
-```
+
