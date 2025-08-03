@@ -19,7 +19,6 @@ def test_metadata_update(tmp_path):
             ]
         )
     })
-    chat_data.timestamp = "2025-08-03 14:28:38"  # Set fixed timestamp
     
     # First update - creates new file
     update_metadata(chat_data, str(tmp_path))
@@ -30,19 +29,26 @@ def test_metadata_update(tmp_path):
     chat_data.chats[ChatName("Test")].messages.append(
         Message(timestamp="12:01", sender="Bob", content="Hello", year=2025)
     )
+
+    # Sleep for a moment to ensure file timestamps will be different
+    import time
+    time.sleep(0.1)
     update_metadata(chat_data, str(tmp_path))
+
     assert os.path.exists(os.path.join(tmp_path, 'browseability-generator-chat-data.json'))
     assert os.path.exists(os.path.join(tmp_path, 'browseability-generator-chat-data-BACKUP.json'))
     
     # Third update - should replace old backup
     old_backup_time = os.path.getmtime(os.path.join(tmp_path, 'browseability-generator-chat-data-BACKUP.json'))
-    # Sleep for a moment to ensure file timestamps will be different
-    import time
-    time.sleep(0.1)
     chat_data.chats[ChatName("Test")].messages.append(
         Message(timestamp="12:02", sender="Alice", content="Bye", year=2025)
     )
+
+    # Sleep for a moment to ensure file timestamps will be different
+    import time
+    time.sleep(0.1)
     update_metadata(chat_data, str(tmp_path))
+
     new_backup_time = os.path.getmtime(os.path.join(tmp_path, 'browseability-generator-chat-data-BACKUP.json'))
     assert new_backup_time > old_backup_time
     
