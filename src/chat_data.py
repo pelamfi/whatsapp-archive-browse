@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Set
 import json
 
 @dataclass
@@ -65,9 +65,32 @@ class ChatName:
         return False
 
 @dataclass
+class OutputFile:
+    """
+    Represents a YYYY.html file in the output directory.
+    Used to track which files need to be regenerated on each run.
+    """
+    year: int  # The year this file contains messages for
+    generate: bool = False  # Whether this file needs to be regenerated this run
+    
+    def to_dict(self):
+        return {
+            "year": self.year,
+            "generate": self.generate
+        }
+    
+    @staticmethod
+    def from_dict(data):
+        return OutputFile(
+            year=data["year"],
+            generate=data.get("generate", False)
+        )
+
+@dataclass
 class Chat:
     chat_name: ChatName
     messages: List[Message] = field(default_factory=list)
+    output_files: Dict[int, OutputFile] = field(default_factory=dict)  # year -> OutputFile
 
 @dataclass
 class ChatData:
@@ -80,6 +103,7 @@ class ChatData:
         def encode_chat(chat):
             chat_dict = chat.__dict__.copy()
             del chat_dict['chat_name']
+            chat_dict['output_files'] = {str(year): file.to_dict() for year, file in chat.output_files.items()}
             return chat_dict
 
         def default_serializer(obj):
@@ -128,6 +152,18 @@ class ChatData:
 
             return [decode_message(msg) for msg in messages]
 
+        def decode_output_files(files_dict):
+            if not files_dict:
+                return {}
+            return {int(year): OutputFile.from_dict(file_data) 
+                   for year, file_data in files_dict.items()}
+
         obj = json.loads(data)
-        obj['chats'] = {decode_key(k): Chat(chat_name=decode_key(k), messages=decode_message_list(v['messages'])) for k, v in obj['chats'].items()}
+        obj['chats'] = {
+            decode_key(k): Chat(
+                chat_name=decode_key(k),
+                messages=decode_message_list(v['messages']),
+                output_files=decode_output_files(v.get('output_files', {}))
+            ) for k, v in obj['chats'].items()
+        }
         return ChatData(chats=obj['chats'])
