@@ -86,8 +86,17 @@ def compare_or_update_reference(output_path: str, reference_path: str) -> bool:
     # Compare files
     with open(output_path, 'r', encoding='utf-8') as f1, \
          open(reference_path, 'r', encoding='utf-8') as f2:
-        assert f1.read().strip() == f2.read().strip(), \
-            f"Output file {output_path} differs from reference {reference_path}"
+        output_content = f1.read().strip()
+        reference_content = f2.read().strip()
+        if output_content != reference_content:
+            from difflib import unified_diff
+            diff = list(unified_diff(
+                reference_content.splitlines(keepends=True),
+                output_content.splitlines(keepends=True),
+                fromfile=f'Reference: {os.path.relpath(reference_path)}',
+                tofile=f'Output: {os.path.relpath(output_path)}'
+            ))
+            assert False, f"Output file differs from reference:\n{''.join(diff)}"
     return True
 
 def verify_output_directory(output_dir: str, reference_dir: str):
