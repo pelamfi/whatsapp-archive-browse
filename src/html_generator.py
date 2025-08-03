@@ -97,7 +97,7 @@ def format_message_html(message: Message) -> str:
     return f"""
     <div class="message">
         <div class="metadata">
-            <span class="timestamp">[{escape_html(message.timestamp)}]</span>
+            <span class="timestamp">{escape_html(message.timestamp)}</span>
             <span class="sender">{escape_html(message.sender)}</span>
         </div>
         <div class="content">{escape_html(message.content)}</div>
@@ -119,7 +119,7 @@ def create_year_html(chat: Chat, year: int, messages: List[Message]) -> str:
 <body>
     <h1>{escape_html(chat.chat_name.name)}</h1>
     <h2>Messages from {year}</h2>
-    <p><a href="index.html">Back to years</a></p>
+    <nav><a href="index.html" class="nav-link">← Back to years</a></nav>
     <div class="messages">
         {messages_html}
     </div>
@@ -139,7 +139,7 @@ def create_chat_index_html(chat: Chat, years: Set[int]) -> str:
 </head>
 <body>
     <h1>{escape_html(chat.chat_name.name)}</h1>
-    <p><a href="../index.html">Back to chats</a></p>
+    <nav><a href="../index.html" class="nav-link">← Back to chats</a></nav>
     <h2>Messages by Year</h2>
     <ul class="year-list">
         {years_html}

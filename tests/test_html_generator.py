@@ -25,7 +25,7 @@ def test_format_message_html() -> None:
     # Message without media
     message = Message(timestamp="12:00", sender="Alice", content="Hello!", year=2025)
     html = format_message_html(message)
-    assert "[12:00]" in html
+    assert "12:00" in html
     assert "Alice" in html
     assert "Hello!" in html
     assert "media" not in html
