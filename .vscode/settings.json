@@ -11,14 +11,40 @@
     
     // Type checking settings
     "python.analysis.typeCheckingMode": "strict",
+    "python.analysis.enablePytestSupport": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.indexing": true,
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.useLibraryCodeForTypes": true,
+    "python.analysis.diagnosticMode": "workspace",
     "python.analysis.diagnosticSeverityOverrides": {
         "reportMissingTypeStubs": "none",     // Too strict for first-party code
         "reportUnknownMemberType": "none",    // Too noisy with pytest
         "reportUnknownVariableType": "none",  // Too noisy with pytest
-        "reportUnknownParameterType": "error", // Match mypy strictness
-        "reportMissingParameterType": "error", // Match mypy strictness
-        "reportMissingTypeArgument": "error", // Match mypy strictness
-        "reportFunctionMemberAccess": "error" // Match mypy strictness
+        
+        // Core type checking (match mypy)
+        "reportUnknownParameterType": "error",
+        "reportMissingParameterType": "error",
+        "reportMissingTypeArgument": "error",
+        "reportMissingTypeFunction": "error",
+        "reportMissingReturnType": "error",
+        
+        // Optional/Union handling (match mypy)
+        "reportOptionalMemberAccess": "error",
+        "reportOptionalSubscript": "error",
+        "reportOptionalOperand": "error",
+        "reportOptionalCall": "error",
+        "reportOptionalIterable": "error",
+        
+        // Function/method handling
+        "reportFunctionMemberAccess": "error",
+        "reportUntypedFunctionDecorator": "error",
+        "reportUntypedClassDecorator": "error",
+        "reportUntypedBaseClass": "error",
+        
+        // Extra safety (beyond mypy)
+        "reportInvalidTypeVarUse": "error",
+        "reportShadowedImports": "warning"
     },
     "python.analysis.inlayHints.functionReturnTypes": true,
     "python.analysis.inlayHints.variableTypes": true,
