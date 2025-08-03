@@ -81,20 +81,39 @@ def compare_or_update_reference(output_path: str, reference_path: str) -> bool:
         )
         return False
     
-    # Compare files
-    with open(output_path, 'r', encoding='utf-8') as f1, \
-         open(reference_path, 'r', encoding='utf-8') as f2:
-        output_content = f1.read().strip()
-        reference_content = f2.read().strip()
-        if output_content != reference_content:
-            from difflib import unified_diff
-            diff = list(unified_diff(
-                reference_content.splitlines(keepends=True),
-                output_content.splitlines(keepends=True),
-                fromfile=f'Reference: {os.path.relpath(reference_path)}',
-                tofile=f'Output: {os.path.relpath(output_path)}'
-            ))
-            assert False, f"Output file differs from reference:\n{''.join(diff)}"
+    # Check if this is a text file that should be compared with text diff
+    is_text_file = any(output_path.endswith(ext) for ext in ['.txt', '.html', '.json', '.css'])
+    
+    if is_text_file:
+        # Compare text files with diff
+        with open(output_path, 'r', encoding='utf-8') as f1, \
+             open(reference_path, 'r', encoding='utf-8') as f2:
+            output_content = f1.read().strip()
+            reference_content = f2.read().strip()
+            if output_content != reference_content:
+                from difflib import unified_diff
+                diff = list(unified_diff(
+                    reference_content.splitlines(keepends=True),
+                    output_content.splitlines(keepends=True),
+                    fromfile=f'Reference: {os.path.relpath(reference_path)}',
+                    tofile=f'Output: {os.path.relpath(output_path)}'
+                ))
+                assert False, f"Output file differs from reference:\n{''.join(diff)}"
+    else:
+        # Compare binary files by checking size first, then content if sizes match
+        output_size = os.path.getsize(output_path)
+        reference_size = os.path.getsize(reference_path)
+        
+        if output_size != reference_size:
+            assert False, (f"Binary file size mismatch for {os.path.relpath(output_path)}: "
+                         f"output size {output_size} != reference size {reference_size}")
+        
+        # If sizes match, compare content
+        with open(output_path, 'rb') as f1, open(reference_path, 'rb') as f2:
+            output_content = f1.read()
+            reference_content = f2.read()
+            if output_content != reference_content:
+                assert False, f"Binary file content differs: {os.path.relpath(output_path)}"
     return True
 
 def verify_output_directory(output_dir: str, reference_dir: str):
