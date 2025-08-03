@@ -85,21 +85,21 @@
 9.2. Rename the existing `browseability-generator-chat-data.json` to `browseability-generator-chat-data-BACKUP.json` (delete old backup if it exists).
 9.3. Rename `browseability-generator-chat-data-NEW.json` to `browseability-generator-chat-data.json`.
 
-## 11. Testing and Validation, advanced features
-11.1. Add more integration tests for each of the advanced features:
+## 10. Testing and Validation, advanced features
+10.1. Add more integration tests for each of the advanced features:
   - In the following assert output files against reference test resources stored in the project
   - Each test offers a feature for easy update of output reference test resource for when code is changed
-11.1.2. 2 backups of the same chat in different directories
-11.1.3. 2 backups of the same chat in different directories with partially overlapping history
-11.1.4. Unknown _chat.txt syntax, log warnings and continue
-11.1.5. Missing media files, log warnings and add note to output HTML and continue
-11.1.6. Missing input files on 2nd run, Use output directory `browseability-generator-chat-data.json` and media files to keep output chat HTML intact
-11.1.7. Incremental runs using input file timestamp + size checks, only modified input files are processed again and only necessary output HTML regenerated
-11.1.8. Repeated runs on same input, no work done
-11.1.9. Handling of Zipped WhatsApp export files
+10.1.2. 2 backups of the same chat in different directories
+10.1.3. 2 backups of the same chat in different directories with partially overlapping history
+10.1.4. Unknown _chat.txt syntax, log warnings and continue
+10.1.5. Missing media files, log warnings and add note to output HTML and continue
+10.1.6. Missing input files on 2nd run, Use output directory `browseability-generator-chat-data.json` and media files to keep output chat HTML intact
+10.1.7. Incremental runs using input file timestamp + size checks, only modified input files are processed again and only necessary output HTML regenerated
+10.1.8. Repeated runs on same input, no work done
+10.1.9. Handling of Zipped WhatsApp export files
 
-## 12. Documentation
-12.1. Update the README.md with:
+## 11. Documentation
+11.1. Update the README.md with:
   - Detailed usage instructions.
   - Examples of input and output.
-12.2. Add comments and docstrings to the code for maintainability.
+11.2. Add comments and docstrings to the code for maintainability.
