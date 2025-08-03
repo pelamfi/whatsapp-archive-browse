@@ -21,6 +21,12 @@ warn_return_any = true
 implicit_reexport = false
 strict_optional = true
 
+# Make test files just as strict as source files
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = true
+check_untyped_defs = true
+
 [tool.black]
 line-length = 120
 target-version = ["py312"]
