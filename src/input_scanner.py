@@ -127,19 +127,21 @@ def scan_input_directory(input_dir: str, existing_data: Optional[ChatData] = Non
         # Details of parsing and merging are handled by the parser module
         from .parser import parse_chat_file  # Import here to avoid circular imports
 
-        new_messages = parse_chat_file(file_path, chat_file)
+        new_file_chat: Chat | None = parse_chat_file(file_path, chat_file)
 
-        for chat_name, messages in new_messages.items():
-            # Get or create chat
-            if chat_name not in chat_data.chats:
-                chat_data.chats[chat_name] = Chat(chat_name=chat_name)
+        if new_file_chat:
+            chat_name = new_file_chat.chat_name
+            chat: Chat = new_file_chat
+            # If chat with this name already exists, append messages to it
+            if new_file_chat.chat_name in chat_data.chats:
+                prev_chat = chat_data.chats[chat_name]
+                prev_chat.messages.extend(chat.messages)
 
-            # Add new messages
-            chat = chat_data.chats[chat_name]
-            chat.messages.extend(messages)
-
-            # Remove duplicates after each file to keep memory usage reasonable
-            remove_duplicate_messages(chat)
+                # Remove duplicates after each file to keep memory usage reasonable
+                remove_duplicate_messages(chat)
+            else:
+                # Add new chat to the data
+                chat_data.chats[chat_name] = chat
 
     # Try to locate any missing media files
     for chat in chat_data.chats.values():
