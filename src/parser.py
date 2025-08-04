@@ -17,19 +17,19 @@ def parse_chat_file(file_path: str, input_file: ChatFile) -> dict[ChatName, list
     messages_by_chat: dict[ChatName, list[Message]] = {}
 
     with open(file_path, "r", encoding="utf-8") as file:
-        lines = file.readlines()
+        lines: list[str] = file.readlines()
 
-    timestamp_regex = re.compile(r"\[(.*?)\]")
-    year_regex = re.compile(r"\D(\d{4})\D")
-    sender_regex = re.compile(r"(?<=\] ).*?(?=: )")
-    content_regex = re.compile(r"(?<=: ).*")
-    media_regex = re.compile(r"<liite: (.*?)>")
+    timestamp_regex: re.Pattern[str] = re.compile(r"\[(.*?)\]")
+    year_regex: re.Pattern[str] = re.compile(r"\D(\d{4})\D")
+    sender_regex: re.Pattern[str] = re.compile(r"(?<=\] ).*?(?=: )")
+    content_regex: re.Pattern[str] = re.compile(r"(?<=: ).*")
+    media_regex: re.Pattern[str] = re.compile(r"<liite: (.*?)>")
 
     # Try to determine chat name from first few system messages
-    chat_name = None
+    chat_name: str | None = None
     for line in lines[:10]:  # Look at first 10 lines
         if "muutti ryhmän nimeksi" in line:
-            match = re.search(r"muutti ryhmän nimeksi (.*)", line)
+            match: re.Match[str] | None = re.search(r"muutti ryhmän nimeksi (.*)", line)
             if match:
                 chat_name = match.group(1)
                 break
@@ -37,26 +37,26 @@ def parse_chat_file(file_path: str, input_file: ChatFile) -> dict[ChatName, list
     if not chat_name:
         chat_name = "Unknown Chat"
 
-    chat_name = ChatName(name=chat_name)
+    chat_name_typed = ChatName(name=chat_name)
     messages: list[Message] = []
 
     for line in lines:
         line = line.replace("\u200e", "")  # Remove U+200E characters
 
-        timestamp_match = timestamp_regex.search(line)
-        year_match = year_regex.search(line)
-        sender_match = sender_regex.search(line)
-        content_match = content_regex.search(line)
-        media_match = media_regex.search(line)
+        timestamp_match: re.Match[str] | None = timestamp_regex.search(line)
+        year_match: re.Match[str] | None = year_regex.search(line)
+        sender_match: re.Match[str] | None = sender_regex.search(line)
+        content_match: re.Match[str] | None = content_regex.search(line)
+        media_match: re.Match[str] | None = media_regex.search(line)
 
         if timestamp_match and year_match and sender_match:
-            timestamp = timestamp_match.group(1)
+            timestamp: str = timestamp_match.group(1)
             year = int(year_match.group(1))
-            sender = sender_match.group(0)
+            sender: str = sender_match.group(0)
 
-            content = content_match.group(0) if content_match else ""
+            content: str = content_match.group(0) if content_match else ""
             if media_match:
-                raw_file_name = media_match.group(1)
+                raw_file_name: str = media_match.group(1)
                 content = content.replace(f"<liite: {raw_file_name}>", "").strip()
                 media = MediaReference(raw_file_name=raw_file_name)
             else:
@@ -74,7 +74,7 @@ def parse_chat_file(file_path: str, input_file: ChatFile) -> dict[ChatName, list
         else:
             print(f"WARNING! Skipping line in file {file_path} due to unknown syntax: {line.strip()}")
 
-    messages_by_chat[chat_name] = messages
+    messages_by_chat[chat_name_typed] = messages
     return messages_by_chat
 
 
