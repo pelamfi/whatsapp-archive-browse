@@ -2,6 +2,9 @@
 name = "whatsapp-archive-browse"
 version = "0.1.0"
 
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
