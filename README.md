@@ -1,4 +1,4 @@
-## Whatsapp Archive Browseability Generator
+v## Whatsapp Archive Browseability Generator
 
 This tool scans a directory for exported Whatsapp archives, zipped or otherwise and
 generates a clean static HTML folder where backed up Whatsapp chats can be
@@ -115,9 +115,8 @@ This project uses Python virtual environments for development. To set up:
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Install development dependencies
-pip install -r requirements-dev.txt
-pip install -e .
+# Install the package in development mode with all development dependencies
+pip install -e ".[dev]"
 ```
 
 ## Usage
@@ -132,8 +131,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # Install dependencies (first time only)
-pip install -r requirements-dev.txt
-pip install -e .
+pip install -e ".[dev]"
 
 # Run the tool
 python -m src.main --input path/to/whatsapp/export --output path/to/html/output
