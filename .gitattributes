@@ -1,0 +1,20 @@
+# Git attributes for consistent line endings across platforms
+
+# Ensure all text files use LF (Unix-style) line endings in the repository
+# but allow Git to convert to native line endings on checkout (if needed)
+* text=auto
+
+# Force specific files to always use LF line endings
+# This is important for demo data and test reference files
+demo-chat/_chat.txt text eol=lf
+tests/resources/**/*.txt text eol=lf
+
+# Ensure JSON reference files also have consistent line endings
+tests/resources/**/*.json text eol=lf
+
+# Binary files should not be converted
+*.jpg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.zip binary

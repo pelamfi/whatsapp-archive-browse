@@ -61,6 +61,9 @@ class ChatTestEnvironment:
         demo_path = Path(__file__).parent.parent.parent / "demo-chat"
         if demo_path.exists():
             shutil.copytree(demo_path, to_dir, dirs_exist_ok=True)
+            # Normalize line endings BEFORE setting timestamps to avoid changing modification times
+            for file_path in to_dir.rglob("*.txt"):
+                self.normalize_line_endings(file_path)
             self.set_chat_timestamps(to_dir, timestamp)
         return to_dir
 
@@ -115,13 +118,13 @@ class ChatTestEnvironment:
             timestamp: Unix timestamp to set after modifying (use TIMESTAMPS)
         """
         chat_file = chat_dir / "_chat.txt"
-        with open(chat_file, "r") as f:
+        with open(chat_file, "r", encoding="utf-8", newline="") as f:
             lines = f.readlines()
 
         # Always keep first line (chat name) and the specified range
         selected_lines = lines[0:2] + lines[start_line - 1 : end_line]
 
-        with open(chat_file, "w") as f:
+        with open(chat_file, "w", encoding="utf-8", newline="") as f:
             f.writelines(selected_lines)
 
         # Update timestamps after modification
@@ -139,17 +142,36 @@ class ChatTestEnvironment:
             timestamp: Unix timestamp to set after modifying (use TIMESTAMPS)
         """
         chat_file = chat_dir / "_chat.txt"
-        with open(chat_file, "r") as f:
+        with open(chat_file, "r", encoding="utf-8", newline="") as f:
             existing_lines = f.readlines()
 
         # Insert new lines after the specified position
         new_lines = existing_lines[:after_line] + lines_to_insert + existing_lines[after_line:]
 
-        with open(chat_file, "w") as f:
+        with open(chat_file, "w", encoding="utf-8", newline="") as f:
             f.writelines(new_lines)
 
         # Update timestamps after modification
         self.set_chat_timestamps(chat_dir, timestamp)
+
+    def normalize_line_endings(self, file_path: Path) -> None:
+        """
+        Normalize line endings in a text file to LF (Unix style) to ensure
+        consistent behavior across platforms. Only modifies the file if changes are needed.
+
+        Args:
+            file_path: Path to the file to normalize
+        """
+        with open(file_path, "r", encoding="utf-8", newline="") as f:
+            original_content = f.read()
+        
+        # Replace CRLF with LF
+        normalized_content = original_content.replace("\r\n", "\n")
+        
+        # Only write if content changed to avoid updating modification time unnecessarily
+        if normalized_content != original_content:
+            with open(file_path, "w", encoding="utf-8", newline="") as f:
+                f.write(normalized_content)
 
     @property
     def path(self) -> Path:

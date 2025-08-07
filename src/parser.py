@@ -164,7 +164,7 @@ def parse_chat_file(file_path: str, input_file: ChatFile) -> Chat | None:
         input_file: ChatFile object representing the file
     """
 
-    with open(file_path, "r", encoding="utf-8") as file:
+    with open(file_path, "r", encoding="utf-8", newline="") as file:
         lines: list[str] = file.readlines()
 
     return parse_chat_lines(lines, input_file)
