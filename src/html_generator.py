@@ -14,7 +14,7 @@ Design decisions:
 2. Incremental Generation
    - Only regenerate YYYY.html files marked with generate=True
    - Always regenerate index.html files as they're small and simple
-   - Always copy CSS files as they're small and might be updated
+   - CSS is now embedded directly in HTML files for maximum compatibility
 
 3. File Structure
    - Top level index.html with links to all chats
@@ -22,11 +22,12 @@ Design decisions:
      - chat_name/index.html listing years
      - chat_name/YYYY.html for each year
      - chat_name/media/ for media files
-   - CSS file copied to each chat directory to make them self-contained
+   - Each HTML file is now self-contained with embedded CSS
 
 4. Testing Strategy
    - Unit tests for HTML generation helper functions
-   - Integration tests in step 11 for full generation
+   - Integration tests for full generation
+   - CSS is now embedded directly in HTML files for maximum compatibility
 """
 
 import logging
@@ -35,6 +36,13 @@ import shutil
 from typing import Dict, List, Set
 
 from src.chat_data import Chat, ChatData, MediaReference, Message
+
+
+def load_css_content() -> str:
+    """Load CSS content from the browseability-generator.css file."""
+    css_path = os.path.join(os.path.dirname(__file__), "browseability-generator.css")
+    with open(css_path, "r", encoding="utf-8") as f:
+        return f.read()
 
 
 def copy_media_file(input_dir: str, chat_dir: str, media_ref: MediaReference) -> bool:
@@ -116,13 +124,16 @@ def format_message_html(message: Message) -> str:
 
 def create_year_html(chat: Chat, year: int, messages: List[Message]) -> str:
     """Generate HTML for a specific year of chat messages."""
+    css_content = load_css_content()
     messages_html = "\n".join(format_message_html(msg) for msg in messages)
     return f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>{escape_html(chat.chat_name.name)} - {year}</title>
-    <link rel="stylesheet" href="browseability-generator.css">
+    <style>
+{css_content}
+    </style>
 </head>
 <body>
     <h1>{escape_html(chat.chat_name.name)}</h1>
@@ -137,13 +148,16 @@ def create_year_html(chat: Chat, year: int, messages: List[Message]) -> str:
 
 def create_chat_index_html(chat: Chat, years: Set[int]) -> str:
     """Generate index.html for a specific chat directory."""
+    css_content = load_css_content()
     years_html = "\n".join(f'<li><a href="{year}.html">{year}</a></li>' for year in sorted(years))
     return f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>{escape_html(chat.chat_name.name)}</title>
-    <link rel="stylesheet" href="browseability-generator.css">
+    <style>
+{css_content}
+    </style>
 </head>
 <body>
     <h1>{escape_html(chat.chat_name.name)}</h1>
@@ -158,6 +172,7 @@ def create_chat_index_html(chat: Chat, years: Set[int]) -> str:
 
 def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str) -> str:
     """Generate main index.html listing all chats."""
+    css_content = load_css_content()
     chats_html = "\n".join(
         f'<li><a href="{escape_html(name)}/index.html">{escape_html(name)}</a></li>' for name in sorted(chats.keys())
     )
@@ -166,7 +181,9 @@ def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str) -> str:
 <head>
     <meta charset="utf-8">
     <title>WhatsApp Chats</title>
-    <link rel="stylesheet" href="browseability-generator.css">
+    <style>
+{css_content}
+    </style>
 </head>
 <body>
     <h1>WhatsApp Chats</h1>
@@ -181,12 +198,10 @@ def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str) -> str:
 def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
     """
     Generate HTML files for chats based on OutputFile flags in chat_data.
-    Always regenerates index.html files and copies CSS.
+    Always regenerates index.html files. CSS is now embedded in HTML files.
     """
-    # Copy CSS to root and prepare directory
+    # Prepare output directory
     os.makedirs(output_dir, exist_ok=True)
-    css_path = os.path.join(os.path.dirname(__file__), "browseability-generator.css")
-    shutil.copy(css_path, os.path.join(output_dir, "browseability-generator.css"))
 
     # Track which chats have which years for index generation
     chat_years: Dict[str, Set[int]] = {}
@@ -196,9 +211,6 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
         chat_dir = os.path.join(output_dir, chat_name.name)
         os.makedirs(chat_dir, exist_ok=True)
         os.makedirs(os.path.join(chat_dir, "media"), exist_ok=True)
-
-        # Copy CSS to chat directory
-        shutil.copy(css_path, os.path.join(chat_dir, "browseability-generator.css"))
 
         years: set[int] = set()
         for year, output_file in chat.output_files.items():

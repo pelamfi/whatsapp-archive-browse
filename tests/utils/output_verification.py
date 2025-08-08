@@ -15,7 +15,7 @@ Key features:
 - Uses warnings instead of test failures when creating reference files
 - Reference files are tracked in git, so they can be reviewed during code review
 - Directory structure is verified to match exactly between output and reference
-- Presence of support files (CSS, media dirs) is verified without content comparison
+- Presence of support files (media dirs) is verified without content comparison
 
 Example usage:
     def test_something(test_env):
@@ -81,7 +81,7 @@ def compare_or_update_reference(output_path: str, reference_path: str) -> bool:
         return False
 
     # Check if this is a text file that should be compared with text diff
-    is_text_file = any(output_path.endswith(ext) for ext in [".txt", ".html", ".json", ".css"])
+    is_text_file = any(output_path.endswith(ext) for ext in [".txt", ".html", ".json"])
 
     if is_text_file:
         # Compare text files with diff
@@ -129,11 +129,9 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
     Structure based on README.md:
     - Top level folder:
         - index.html (compared)
-        - browseability-generator.css (compared)
         - browseability-generator-chat-data.json (compared)
         - Chat Name/
             - index.html (compared)
-            - browseability-generator.css (compared)
             - YYYY.html (compared)
             - media/ (presence checked)
 
@@ -173,12 +171,6 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
 
     safe_compare(os.path.join(output_dir, "index.html"), os.path.join(reference_dir, "index.html"))
 
-    # Compare and copy CSS file
-    safe_compare(
-        os.path.join(output_dir, "browseability-generator.css"),
-        os.path.join(reference_dir, "browseability-generator.css"),
-    )
-
     # Process all chat directories in output
     for chat_dir in os.listdir(output_dir):
         if not os.path.isdir(os.path.join(output_dir, chat_dir)) or chat_dir == "media":
@@ -191,12 +183,6 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
         safe_compare(
             os.path.join(output_chat_dir, "index.html"),
             os.path.join(reference_chat_dir, "index.html"),
-        )
-
-        # Compare chat CSS file
-        safe_compare(
-            os.path.join(output_chat_dir, "browseability-generator.css"),
-            os.path.join(reference_chat_dir, "browseability-generator.css"),
         )
 
         # Compare all year files
@@ -233,7 +219,7 @@ def verify_output_directory(output_dir: str, reference_dir: str) -> None:
         output_chat_dirs == reference_chat_dirs
     ), f"Chat directories don't match. Output has {output_chat_dirs}, reference has {reference_chat_dirs}"
 
-    # Check CSS and media for each chat directory
+    # Check media for each chat directory
     for chat_dir in output_chat_dirs:
 
         output_chat_dir = os.path.join(output_dir, chat_dir)
