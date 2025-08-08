@@ -85,6 +85,14 @@ def escape_html(text: str) -> str:
     )
 
 
+def format_content_html(text: str) -> str:
+    """Format message content for HTML, escaping HTML and converting newlines to <br> tags."""
+    # First escape HTML special characters
+    escaped = escape_html(text)
+    # Then convert newlines to HTML line breaks with newlines for readable source
+    return escaped.replace("\n", "<br>\n")
+
+
 def format_message_html(message: Message) -> str:
     """Format a single message as HTML."""
     media_html = ""
@@ -100,7 +108,7 @@ def format_message_html(message: Message) -> str:
             <span class="timestamp">{escape_html(message.timestamp)}</span>
             <span class="sender">{escape_html(message.sender)}</span>
         </div>
-        <div class="content">{escape_html(message.content)}</div>
+        <div class="content">{format_content_html(message.content)}</div>
         {media_html}
     </div>
     """
