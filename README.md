@@ -338,3 +338,9 @@ All tools are configured through `pyproject.toml`, making it easy to run the sam
     - `index.html` - showing the chat name and links to per year `.html` files
     - `browseability-generator.css` - a copy of the .css to make the directory stand alone
     - `YYYY.html` - a per year HTML file for years for which chat messages exist for this chat
+
+
+# Misc TODOs / Ideas
+
+- Use uv
+- Use ruff
