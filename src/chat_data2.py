@@ -1,0 +1,209 @@
+import json
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, NotRequired, Optional, TypedDict, Union
+
+
+class ChatFile2Dict(TypedDict):
+    path: str
+    parent_zip: NotRequired[Optional[str]]
+    modification_timestamp: NotRequired[Optional[float]]
+    size: NotRequired[Optional[int]]
+
+
+@dataclass
+class ChatFile2:
+    path: str  # Relative path to the file
+    parent_zip: Optional[str] = None  # Path to the parent zip file, if any
+    modification_timestamp: Optional[float] = None  # Timestamp of last modification
+    size: Optional[int] = None  # Size of the file in bytes
+
+    def to_dict(self) -> ChatFile2Dict:
+        return {
+            "path": self.path,
+            "parent_zip": self.parent_zip,
+            "modification_timestamp": self.modification_timestamp,
+            "size": self.size,
+        }
+
+    @staticmethod
+    def from_dict(data: ChatFile2Dict) -> "ChatFile2":
+        return ChatFile2(
+            path=data["path"],
+            parent_zip=data.get("parent_zip"),
+            modification_timestamp=data.get("modification_timestamp"),
+            size=data.get("size"),
+        )
+
+
+@dataclass
+class MediaReference2:
+    # The raw file name extracted from the content.
+    raw_file_name: str
+    # The input path of the media file, if known. Input file can be lost to time, so it is optional.
+    input_path: Optional[ChatFile2] = None
+    # The output path of the media file, if known.
+    output_path: Optional[str] = None
+
+
+@dataclass
+class Message2:
+    # The timestamp of the message, stored verbatim without square brackets.
+    timestamp: str
+    # The sender of the message.
+    sender: str
+    # The content of the message.
+    content: str
+    # The year extracted from the timestamp, used to determine the output HTML file.
+    year: int
+    # Optional media reference associated with the message.
+    media: Optional[MediaReference2] = None
+    # The input file where the message was found. Input file can be lost to time, so it is optional.
+    input_file: Optional[ChatFile2] = None
+    # Relative path to the possible per year HTML file where the message is placed.
+    html_file: Optional[str] = None
+
+
+@dataclass
+class ChatName2:
+    name: str
+
+    def __hash__(self) -> int:
+        return hash(self.name)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ChatName2):
+            return self.name == other.name
+        return False
+
+
+class OutputFile2Dict(TypedDict):
+    year: int
+    generate: NotRequired[bool]
+
+
+@dataclass
+class OutputFile2:
+    """
+    Represents a YYYY.html file in the output directory.
+    Used to track which files need to be regenerated on each run.
+    """
+
+    year: int  # The year this file contains messages for
+    generate: bool = False  # Whether this file needs to be regenerated this run
+
+    def to_dict(self) -> OutputFile2Dict:
+        return {"year": self.year, "generate": self.generate}
+
+    @staticmethod
+    def from_dict(data: OutputFile2Dict) -> "OutputFile2":
+        return OutputFile2(year=data["year"], generate=data.get("generate", False))
+
+
+def messages2_factory() -> List[Message2]:
+    return []
+
+
+def output_files2_factory() -> Dict[int, OutputFile2]:
+    return {}
+
+
+def chats2_factory() -> Dict[ChatName2, "Chat2"]:
+    return {}
+
+
+@dataclass
+class Chat2:
+    chat_name: ChatName2
+    messages: List[Message2] = field(default_factory=messages2_factory)
+    output_files: Dict[int, OutputFile2] = field(default_factory=output_files2_factory)  # year -> OutputFile2
+
+
+class Chat2Dict(TypedDict):
+    messages: List[dict[str, Any]]
+    output_files: Dict[str, OutputFile2Dict]
+
+
+@dataclass
+class ChatData2:
+    chats: Dict[ChatName2, Chat2] = field(default_factory=chats2_factory)
+    timestamp: str = "1970-01-01T00:00:00"  # Default timestamp, can be updated later
+
+    def to_json(self) -> str:
+        def encode_key(key: ChatName2) -> str:
+            return key.name
+
+        def encode_chat(chat: Chat2) -> Chat2Dict:
+            chat_dict: Dict[str, Any] = chat.__dict__.copy()
+            del chat_dict["chat_name"]
+            chat_dict["output_files"] = {str(year): file.to_dict() for year, file in chat.output_files.items()}
+            return Chat2Dict(messages=chat_dict["messages"], output_files=chat_dict["output_files"])
+
+        def default_serializer(obj: Union[Message2, MediaReference2, ChatFile2]) -> dict[str, Any]:
+            return obj.__dict__
+
+        return json.dumps(
+            {"chats": {encode_key(k): encode_chat(v) for k, v in self.chats.items()}},
+            indent=4,
+            sort_keys=True,
+            default=default_serializer,
+        )
+
+    @staticmethod
+    def from_json(data: str) -> "ChatData2":
+        def decode_key(key: str) -> ChatName2:
+            return ChatName2(name=key)
+
+        def decode_message_list(messages: List[dict[str, Any]]) -> List[Message2]:
+            def decode_message(msg: dict[str, Any]) -> Message2:
+                # Convert input_file to ChatFile2 if present
+                if "input_file" in msg and msg["input_file"] is not None:
+                    if isinstance(msg["input_file"], str):  # Handle legacy format
+                        msg["input_file"] = ChatFile2(path=str(msg["input_file"]))
+                    else:
+                        input_file_data = dict(msg["input_file"])
+                        msg["input_file"] = ChatFile2(**input_file_data)
+
+                # Handle media reference
+                if "media" in msg and msg["media"] is not None:
+                    media: dict[str, Any] = dict(msg["media"])  # Make a copy to modify
+
+                    # Handle input_path
+                    if "input_path" in media and media["input_path"] is not None:
+                        if isinstance(media["input_path"], str):  # Handle legacy format
+                            size = media.pop("size", None)  # Extract size if present
+                            media["input_path"] = ChatFile2(path=str(media["input_path"]), size=size)
+                        else:
+                            input_path_data = dict(media["input_path"])
+                            media["input_path"] = ChatFile2(**input_path_data)
+
+                    # Remove size if present (it's now in ChatFile2)
+                    media.pop("size", None)
+
+                    msg["media"] = MediaReference2(**media)
+                return Message2(**msg)
+
+            return [decode_message(msg) for msg in messages]
+
+        def decode_output_files(files_dict: dict[str, Any]) -> Dict[int, OutputFile2]:
+            if not files_dict:
+                return {}
+            return {
+                int(year): OutputFile2.from_dict(
+                    OutputFile2Dict(
+                        year=int(file_data.get("year", 0)),
+                        generate=bool(file_data.get("generate", False)),
+                    )
+                )
+                for year, file_data in files_dict.items()
+            }
+
+        obj: dict[str, Any] = json.loads(data)
+        obj["chats"] = {
+            decode_key(k): Chat2(
+                chat_name=decode_key(k),
+                messages=decode_message_list(v.get("messages", [])),
+                output_files=decode_output_files(v.get("output_files", {})),
+            )
+            for k, v in obj["chats"].items()
+        }
+        return ChatData2(chats=obj["chats"])
