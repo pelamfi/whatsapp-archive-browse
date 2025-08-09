@@ -223,7 +223,7 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
                 # Add chat_dependencies for every message
                 for msg in chat.messages:
                     if msg.input_file_id and msg.year == year:
-                        output_file.chat_dependencies.append(msg.input_file_id)
+                        output_file.chat_dependencies.add(msg.input_file_id)
                 output_file.css_dependency = css_file.id
 
         # Create chat index

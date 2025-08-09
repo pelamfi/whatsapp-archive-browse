@@ -97,7 +97,7 @@ class OutputFileDict(TypedDict):
     year: int
     generate: NotRequired[bool]
     media_dependencies: NotRequired[Dict[str, Optional[str]]]  # basename -> ChatFileID value
-    chat_dependencies: NotRequired[List[str]]  # List of ChatFileID values
+    chat_dependencies: NotRequired[List[str]]  # Set of ChatFileID values serialized as a list
     css_dependency: NotRequired[str]  # ChatFileID value
 
 
@@ -111,7 +111,7 @@ class OutputFile:
     year: int  # The year this file contains messages for
     generate: bool = False  # Whether this file needs to be regenerated this run
     media_dependencies: Dict[str, Optional[ChatFileID]] = field(default_factory=dict)  # basename -> ID
-    chat_dependencies: List[ChatFileID] = field(default_factory=list)  # _chat.txt files
+    chat_dependencies: set[ChatFileID] = field(default_factory=set)  # _chat.txt files
     css_dependency: Optional[ChatFileID] = None  # CSS resource dependency
 
     def to_dict(self) -> OutputFileDict:
@@ -125,7 +125,7 @@ class OutputFile:
                 basename: id.value if id else None for basename, id in self.media_dependencies.items()
             }
         if self.chat_dependencies:
-            result["chat_dependencies"] = [id.value for id in self.chat_dependencies]
+            result["chat_dependencies"] = sorted(id.value for id in self.chat_dependencies)
         if self.css_dependency:
             result["css_dependency"] = self.css_dependency.value
         return result
@@ -139,7 +139,7 @@ class OutputFile:
                 basename: ChatFileID(value=id_value) if id_value else None
                 for basename, id_value in data.get("media_dependencies", {}).items()
             },
-            chat_dependencies=[ChatFileID(value=id_value) for id_value in data.get("chat_dependencies", [])],
+            chat_dependencies={ChatFileID(value=id_value) for id_value in data.get("chat_dependencies", [])},
             css_dependency=ChatFileID(value=css_id) if (css_id := data.get("css_dependency")) else None,
         )
 

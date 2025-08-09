@@ -46,7 +46,7 @@ def test_serialization() -> None:
 
     # Create chat data with output file dependencies
     output_file = OutputFile(
-        year=2022, generate=True, media_dependencies={"input.jpg": media_file_id}, chat_dependencies=[chat_file_id]
+        year=2022, generate=True, media_dependencies={"input.jpg": media_file_id}, chat_dependencies={chat_file_id}
     )
 
     chat_data = ChatData(
@@ -84,7 +84,7 @@ def test_serialization() -> None:
     # Check output file dependencies were preserved
     output_file = chat.output_files[2022]
     assert output_file.media_dependencies["input.jpg"] == media_file_id
-    assert output_file.chat_dependencies == [chat_file_id]
+    assert output_file.chat_dependencies == {chat_file_id}
 
 
 def test_serialization_round_trip() -> None:
