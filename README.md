@@ -34,7 +34,7 @@ technical details, see our [technical documentation](./docs/technical-documentat
 
 Key technical documents:
 - [PLAN.md](./PLAN.md): Current development status and roadmap
-- [FORMAT.md](./FORMAT.md): WhatsApp chat export format details
+- [chat-format.md](./docs/chat-format.md): WhatsApp chat export format details
 - [Testing Approach](./docs/testing-approach.md): Our end-to-end testing strategy
 
 ## Development Setup
