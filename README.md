@@ -8,6 +8,22 @@ This project is generated with the help of GPT-4o / Copilot.
 
 NOTE: Work in progress! Only basic parsing code exists now.
 
+## Testing Approach
+
+This project uses a pragmatic testing approach focused on end-to-end tests. See
+our detailed [testing approach documentation](./docs/testing-approach.md).
+
+Key points:
+- Primary testing is done through end-to-end tests in
+  [`test_integration.py`](./tests/test_integration.py)
+- Tests use a reference file system for easy verification and updates
+- To update reference files after making changes:
+  ```bash
+  rm -rf tests/resources/reference_output/*
+  pytest tests/test_integration.py
+  ```
+- Don't try to fix reference files manually - let the automation handle it
+- The system makes it easy to understand what changed through git diffs
 
 ## General Plan
 
