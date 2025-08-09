@@ -36,50 +36,16 @@ class OutputFile2:
 
 ### 1.4 Code Migration Strategy
 
-1. First Migration Phase
-   a. Update Parser
-      - Update parser.py to use ChatFile2/ChatFileID
-      - Return input files separately from chat data
-      - Ensure proper ID generation and tracking
-   
-   b. Input Scanner Changes
-      - Modify find_chat_files to return ChatFile2 objects
-      - Update scan_input_directory to use ChatData2
-      - Enhance media file handling to use ChatFileID
-      - Move input file tracking to top level
-
-   c. Data Comparator Updates
-      - Update merge_chat_data to handle ChatData2
-      - Enhance find_years_needing_update with ID-based comparisons
-      - Ensure proper merging of input_files maps
-      - Preserve file existence tracking across merges
-
-   d. HTML Generator Adaptation
-      - Update generate_html to use ChatData2
-      - Modify media file handling to use IDs
-      - Ensure proper lookup of file data from top-level map
-
-   e. Migration Support
-      - Add ChatData to ChatData2 conversion in output_checker.py
-      - Handle both formats during transition period
-      - Provide automatic upgrade of existing JSON files
-
-   f. Testing and Validation
-      - Update all unit tests to use new structure
-      - Enhance integration tests for ID-based tracking
-      - Add migration tests for format conversion
-      - Verify all existing functionality works with new model
-
-2. Cleanup Phase
-   - Keep old and new implementations parallel during development
-   - Use suffixed names to track progress
-   - Remove old implementations once everything works
-   - Plan final rename operation to remove suffixes
+Done. Details removed to save space.
 
 ## 2. Processing Pipeline Refactoring
 
 ### 2.1 New Stage Files
 Create new implementations alongside existing ones:
+
+- ['vfs.py']
+  - Data structure and functions to support vfs_scanner and querying vfs.
+
 - [`vfs_scanner.py`](../src/vfs_scanner.py): Stage 1 - VFS scanning
   - Takes over file discovery from `output_checker.py`
   - Merges new and old file information
