@@ -80,34 +80,23 @@ run_quietly "mypy type checker" $PYTHON -m mypy src tests
 echo "Running pytest test suite..."
 
 if [ "$refresh_test_resources" = true ]; then
-    echo "Refreshing test resources..."
+    echo "Refreshing test reference files. Removing existing resources..."
     rm -rf tests/resources/*
     # First run will generate reference files - capture output to detect creation warnings
     test_output=$($PYTHON -m pytest 2>&1) || true
-    echo "$test_output"
     if echo "$test_output" | grep -q "Reference file created:"; then
-        echo "Reference files were created, running tests again to validate..."
-        # Second run should pass all tests with the new reference files
-        if ! test_output=$($PYTHON -m pytest 2>&1); then
-            echo "❌ Tests failed on validation run:"
-            echo "$test_output"
-            echo "$test_output" > "$BUILD_DIR"/test_output.txt
-            exit 1
-        fi
-    else
-        echo "❌ No reference files were created. Tests failed for another reason:"
-        echo "$test_output"
-        echo "$test_output" > "$BUILD_DIR"/test_output.txt
-        exit 1
+        echo "✓ Reference files created"
+    else 
+        echo "❌ No reference files created. Check test setup."
     fi
-else
-    # Normal test run - fail on any error
-    if ! test_output=$($PYTHON -m pytest 2>&1); then
-        echo "❌ Tests failed:"
-        echo "$test_output"
-        echo "$test_output" > "$BUILD_DIR"/test_output.txt
-        exit 1
-    fi
+fi
+
+# Normal test run - fail on any error
+if ! test_output=$($PYTHON -m pytest 2>&1); then
+    echo "❌ Tests failed:"
+    echo "$test_output"
+    echo "$test_output" > "$BUILD_DIR"/test_output.txt
+    exit 1
 fi
 
 echo "✓ All tests passed"
