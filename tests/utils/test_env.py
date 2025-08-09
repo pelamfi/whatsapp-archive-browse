@@ -164,10 +164,10 @@ class ChatTestEnvironment:
         """
         with open(file_path, "r", encoding="utf-8", newline="") as f:
             original_content = f.read()
-        
+
         # Replace CRLF with LF
         normalized_content = original_content.replace("\r\n", "\n")
-        
+
         # Only write if content changed to avoid updating modification time unnecessarily
         if normalized_content != original_content:
             with open(file_path, "w", encoding="utf-8", newline="") as f:

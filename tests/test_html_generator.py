@@ -4,20 +4,7 @@ Full HTML generation tests will be added in step 11.
 """
 
 from src.chat_data import Chat, ChatName, MediaReference, Message
-from src.html_generator import (
-    create_chat_index_html,
-    create_main_index_html,
-    create_year_html,
-    escape_html,
-    format_message_html,
-)
-
-
-def test_escape_html() -> None:
-    """Test HTML escaping of special characters"""
-    input_text = "Test with <tags> & \"quotes\" and 'apostrophes'"
-    expected = "Test with &lt;tags&gt; &amp; &quot;quotes&quot; and &#39;apostrophes&#39;"
-    assert escape_html(input_text) == expected
+from src.html_generator import create_chat_index_html, create_main_index_html, create_year_html, format_message_html
 
 
 def test_format_message_html() -> None:

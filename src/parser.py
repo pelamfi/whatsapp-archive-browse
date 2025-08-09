@@ -29,30 +29,30 @@ class RawChatLine:
 #
 # We Use a single regular expression to match and break down a _chat.txt line.
 # This way we either get a match and know all components are present or we assume
-# the line is a continuation of content (or some kind of line we don't have 
+# the line is a continuation of content (or some kind of line we don't have
 # support for ATM).
-chat_line_raw_regex = r"""(?x) 
+chat_line_raw_regex = r"""(?x)
     (?# This regex matches a single line of WhatsApp chat data)    (?# Match the start of the line)
     ^
-    
+
     (?# Sometimes there is the right to left mark U+200E at the start, remove it)
-    \u200E? 
+    \u200E?
 
     (?# Match the timestamp in square brackets, ensure using non-greedy matchin that)
     (?# there is a 4 digit year somewhere and capture it to a separate group.)
     (?# Otherwise we treat the timestamp verbatim in the rest of the progam.)
-    \[ (?P<timestamp> [^]]*? (?P<year> (?: 19 | 20 )[0-9][0-9] ) [^]]*? ) \] 
-    
+    \[ (?P<timestamp> [^]]*? (?P<year> (?: 19 | 20 )[0-9][0-9] ) [^]]*? ) \]
+
     (?# Match the sender name trimming out spaces, possible left to right mark U+200E)
     (?# and tilde '~' wrapping, last of which is optional. Otherwise assume the sender)
     (?# name contains any characters except colon ':'. Note the use of backreference to
     (?# the tilde wrap group to not remove tilde in the beginning of content.)
 
-    \s (?P<tildewrap>~\s)? (?P<sender>[^:]+) : \s \u200E? (?P=tildewrap)? 
-    
+    \s (?P<tildewrap>~\s)? (?P<sender>[^:]+) : \s \u200E? (?P=tildewrap)?
+
     (?# Match the content, which is everything after the colon, allowing for any characters)
-    (?P<content> .*) 
-    
+    (?P<content> .*)
+
     (?# Match end of line)
     $
     """

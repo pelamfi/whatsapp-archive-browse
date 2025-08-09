@@ -37,14 +37,14 @@ def test_parse_chat_lines_u200e_and_tilde_handling() -> None:
 
     assert chat is not None
     assert len(chat.messages) == 3
-    
+
     # First message: U+200E removed from start and after colon, content preserved
     assert chat.messages[0].content == "Messages are encrypted"
-    
+
     # Second message: tilde stripped from sender, U+200E after colon removed
     assert chat.messages[1].sender == "Juuso Kivi"  # Tilde stripped
     assert chat.messages[1].content == "Juuso Kivi lisättiin"  # Content preserved
-    
+
     # Third message: U+200E in middle of content should be preserved
     assert chat.messages[2].content == "Content with ‎U+200E in middle"
 
@@ -69,16 +69,16 @@ def test_parse_chat_lines_complex_scenarios() -> None:
 
     assert chat is not None
     assert len(chat.messages) == 4
-    
+
     # Check multiline content is properly joined
     expected_multiline = "First line\nSecond line with link\nhttps://example.com/test\nThird line"
     assert chat.messages[1].content == expected_multiline
-    
+
     # Check media reference parsing
     assert chat.messages[2].media is not None
     assert chat.messages[2].media.raw_file_name == "photo.jpg"
     assert chat.messages[2].content == ""  # U+200E removed from the beginning of message
-    
+
     # Check year extraction from different years
     assert chat.messages[0].year == 2022
     assert chat.messages[3].year == 2024
