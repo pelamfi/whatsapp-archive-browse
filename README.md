@@ -1,12 +1,11 @@
 ## Whatsapp Archive Browseability Generator
 
-This tool scans a directory for exported Whatsapp archives, zipped or otherwise and
-generates a clean static HTML folder where backed up Whatsapp chats can be
+This tool scans a directory for exported Whatsapp archives, zipped or otherwise
+and generates a clean static HTML folder where backed up Whatsapp chats can be
 viewed.
 
-This project is generated with the help of GPT-4o / Copilot.
-
-NOTE: Work in progress! Only basic parsing code exists now.
+NOTE: This project is partially generated with the help of Claude Sonnet 3.5 /
+GPT-4o / Copilot.
 
 ## Testing Approach
 
@@ -32,8 +31,8 @@ exports. It handles multiple exports intelligently, merging overlapping backups
 into clean timelines while preserving all chat history. For comprehensive
 technical details, see our [technical documentation](./docs/technical-documentation.md).
 
-Key technical documents:
-- [PLAN.md](./PLAN.md): Current development status and roadmap
+Other key technical documents:
+- [plan.md](./docs/plan.md): Current development status and roadmap
 - [chat-format.md](./docs/chat-format.md): WhatsApp chat export format details
 - [Testing Approach](./docs/testing-approach.md): Our end-to-end testing strategy
 
