@@ -183,7 +183,9 @@ class ChatData2:
             chat_dict["output_files"] = {str(year): file.to_dict() for year, file in chat.output_files.items()}
             return Chat2Dict(messages=chat_dict["messages"], output_files=chat_dict["output_files"])
 
-        def default_serializer(obj: Union[Message2, ChatFile2]) -> dict[str, Any]:
+        def default_serializer(obj: Union[Message2, ChatFile2, ChatFileID]) -> Any:
+            if isinstance(obj, ChatFileID):
+                return obj.value
             return obj.__dict__
 
         return json.dumps(
@@ -200,7 +202,7 @@ class ChatData2:
 
         def decode_message_list(messages: List[dict[str, Any]]) -> List[Message2]:
             def decode_message(msg: dict[str, Any]) -> Message2:
-                # Convert input_file to ChatFileID
+                # Create ID from legacy input_file data
                 if "input_file" in msg and msg["input_file"] is not None:
                     file_data = msg.pop("input_file")
                     if isinstance(file_data, str):  # Handle legacy format
@@ -210,27 +212,34 @@ class ChatData2:
                             modification_timestamp=0.0,  # Legacy data doesn't have timestamp
                             exists=False,  # Legacy file might not exist
                         )
+                        msg["input_file_id"] = meta.id if meta.exists else None
                     else:
                         meta = ChatFile2(**dict(file_data))
-                    msg["input_file_id"] = meta.id if meta.exists else None
+                        msg["input_file_id"] = meta.id if meta.exists else None
+                # Direct ID in new format
+                elif isinstance(msg.get("input_file_id"), str):
+                    msg["input_file_id"] = ChatFileID(value=msg["input_file_id"])
 
                 # Handle media reference
                 if "media" in msg and msg["media"] is not None:
                     media: dict[str, Any] = dict(msg["media"])  # Make a copy to modify
 
-                    # Handle input_path (media file reference)
+                    # Create ID from legacy media file data
                     if "input_path" in media and media["input_path"] is not None:
-                        file_data = media.pop("input_path")
+                        file_data = media["input_path"]
                         if isinstance(file_data, str):  # Handle legacy format
                             meta = ChatFile2(
                                 path=str(file_data),
-                                size=media.pop("size", 0),  # Extract size if present, default to 0
+                                size=media.get("size", 0),  # Extract size if present
                                 modification_timestamp=0.0,  # Legacy data doesn't have timestamp
                                 exists=False,  # Legacy file might not exist
                             )
                         else:
                             meta = ChatFile2(**dict(file_data))
                         msg["media_file_id"] = meta.id if meta.exists else None
+                # Direct ID in new format
+                elif isinstance(msg.get("media_file_id"), str):
+                    msg["media_file_id"] = ChatFileID(value=msg["media_file_id"])
                 return Message2(**msg)
 
             return [decode_message(msg) for msg in messages]
@@ -238,15 +247,7 @@ class ChatData2:
         def decode_output_files(files_dict: dict[str, Any]) -> Dict[int, OutputFile2]:
             if not files_dict:
                 return {}
-            return {
-                int(year): OutputFile2.from_dict(
-                    OutputFile2Dict(
-                        year=int(file_data.get("year", 0)),
-                        generate=bool(file_data.get("generate", False)),
-                    )
-                )
-                for year, file_data in files_dict.items()
-            }
+            return {int(year): OutputFile2.from_dict(file_data) for year, file_data in files_dict.items()}
 
         obj: dict[str, Any] = json.loads(data)
         obj["chats"] = {

@@ -1,0 +1,28 @@
+{
+    "chats": {
+        "Space Rocket": {
+            "messages": [
+                {
+                    "content": "Hello World",
+                    "input_file_id": "B64_HASH_INPUT_FILE",
+                    "media_file_id": "B64_HASH_MEDIA_FILE",
+                    "sender": "Matias Virtanen",
+                    "timestamp": "2022-03-12T14:08:18",
+                    "year": 2022
+                }
+            ],
+            "output_files": {
+                "2022": {
+                    "chat_dependencies": [
+                        "B64_HASH_INPUT_FILE"
+                    ],
+                    "generate": true,
+                    "media_dependencies": {
+                        "input.jpg": "B64_HASH_MEDIA_FILE"
+                    },
+                    "year": 2022
+                }
+            }
+        }
+    }
+}
