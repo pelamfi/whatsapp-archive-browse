@@ -76,6 +76,13 @@ latest status and detailed development plan, see [PLAN.md](../PLAN.md).
 - Simple directory structure for output
 - Foundation for metadata tracking via `browseability-generator-chat-data.json`
 
+### Key Features
+- **Smart Backup Handling**
+  - Detects duplicated chats from multiple backups
+  - Constructs clean unified timeline from overlapping exports
+  - Preserves chat history even when original exports are lost
+  - Intelligently merges metadata from different backup sets
+
 ### Planned Features
 These features are designed but not yet implemented:
 
