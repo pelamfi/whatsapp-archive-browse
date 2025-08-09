@@ -5,8 +5,13 @@ Unit tests for HTML generation helper functions with ChatData2.
 from pathlib import Path
 
 from src.chat_data2 import Chat2, ChatData2, ChatFile2, ChatName2, Message2
-from src.html_generator2 import (create_chat_index_html2, create_main_index_html2,
-                               create_year_html2, format_message_html2, load_css_content2)
+from src.html_generator2 import (
+    create_chat_index_html2,
+    create_main_index_html2,
+    create_year_html2,
+    format_message_html2,
+    load_css_content2,
+)
 
 
 def test_format_message_html2(tmp_path: Path) -> None:
@@ -89,6 +94,11 @@ def test_create_main_index_html2(tmp_path: Path) -> None:
 
 def test_load_css_content2(tmp_path: Path) -> None:
     """Test loading CSS content and ChatFile2 creation"""
+    css_content, css_file = load_css_content2()
+    assert "body {" in css_content
+    assert css_file.path == "browseability-generator.css"
+    assert css_file.size > 0
+    assert css_file.modification_timestamp > 0
     css_content, css_file = load_css_content2()
     assert "body {" in css_content
     assert css_file.path == "browseability-generator.css"

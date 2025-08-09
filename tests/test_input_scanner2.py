@@ -7,7 +7,6 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 
-from src.chat_data2 import ChatData2, ChatFile2
 from src.input_scanner2 import find_chat_files2, scan_input_directory2
 
 
