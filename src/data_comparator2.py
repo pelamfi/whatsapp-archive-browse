@@ -1,0 +1,94 @@
+"""
+This module handles comparing and merging ChatData2 structures.
+"""
+
+from typing import Optional, Set
+
+from src.chat_data2 import Chat2, ChatData2, Message2, OutputFile2
+
+
+def get_message_years2(messages: list[Message2]) -> Set[int]:
+    """Get set of years that have messages"""
+    return {msg.year for msg in messages}
+
+
+def find_years_needing_update2(input_chat: Chat2, output_chat: Optional[Chat2]) -> Set[int]:
+    """
+    Determine which years need their HTML files regenerated.
+    """
+    # Get all years that have messages in input
+    input_years = get_message_years2(input_chat.messages)
+
+    if not output_chat:
+        # No existing output - all input years need generation
+        return input_years
+
+    output_years = get_message_years2(output_chat.messages)
+
+    # Years that need updating:
+    needs_update: set[int] = set()
+
+    # 1. Any year in input that has no output file
+    for year in input_years:
+        if year not in output_chat.output_files:
+            needs_update.add(year)
+
+    # 2. Check years that exist in both for message differences
+    for year in input_years & output_years:
+        input_msgs = {(m.timestamp, m.sender, m.content) for m in input_chat.messages if m.year == year}
+        output_msgs = {(m.timestamp, m.sender, m.content) for m in output_chat.messages if m.year == year}
+
+        if input_msgs != output_msgs:
+            needs_update.add(year)
+
+    return needs_update
+
+
+def merge_chat_data2(input_data: ChatData2, output_data: Optional[ChatData2] = None) -> ChatData2:
+    """
+    Merge input and output ChatData2.
+    """
+    result = ChatData2()
+
+    # First merge input files from both sources
+    if output_data:
+        result.input_files.update(output_data.input_files)
+    result.input_files.update(input_data.input_files)
+
+    # Then copy all input chats
+    for chat_name, input_chat in input_data.chats.items():
+        output_chat = output_data.chats.get(chat_name) if output_data else None
+
+        # Create merged chat with input messages
+        merged_chat = Chat2(
+            chat_name=chat_name,
+            messages=input_chat.messages.copy(),
+        )
+
+        # Add all known output files from output chat
+        if output_chat:
+            merged_chat.output_files.update(output_chat.output_files)
+            # Also merge in output messages that aren't in input
+            message_keys = {(m.timestamp, m.sender, m.content) for m in input_chat.messages}
+            for msg in output_chat.messages:
+                if (msg.timestamp, msg.sender, msg.content) not in message_keys:
+                    merged_chat.messages.append(msg)
+
+        # Determine which years need regeneration
+        needs_update = find_years_needing_update2(input_chat, output_chat)
+
+        # Update output_files with any new years and set generate flags
+        for year in get_message_years2(merged_chat.messages):
+            if year not in merged_chat.output_files:
+                merged_chat.output_files[year] = OutputFile2(year=year)
+            merged_chat.output_files[year].generate = year in needs_update
+
+        result.chats[chat_name] = merged_chat
+
+    # If there are any chats in output that weren't in input, include them
+    if output_data:
+        for chat_name, output_chat in output_data.chats.items():
+            if chat_name not in result.chats:
+                result.chats[chat_name] = output_chat
+
+    return result
