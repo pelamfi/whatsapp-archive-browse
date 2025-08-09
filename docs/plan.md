@@ -8,28 +8,6 @@ This document outlines the next phase of development focusing on implementing in
 
 
 
-## Modification to plan below
-
-We will include plan steps to split the the current
-
-|"Input Directory Scan" into 3 new stages:
-
-- new stage 1, Input VFS Scan
-  - will take the input_files part of the potential Output Directory Check stage
-  - will merge new discovered input files to the old ones. ChatFile2 should have flags indicating whether the file came from the old output dir JSON and whether it was also still present input.
-
-- new stage 2, _chat.txt parsing and message dedup
-  - Simply parse all new _chat.txt files.
-  - Sort messages for modified chats in the order of the timstamps of the _chat.txt files (this can also be done for messages for which the original _chat.txt has disappeared)
-  - Remove consecutive duplicate messages in a single pass per chat that was processed in this stage
-
-- new stage 3, media file locating
-  - Identify missing (None) media files in the OutputFile2 dictionaries
-  - Try to locate missing ones in the VFS (looking for a file that has a flag that it is present in the input)
-    - As currently, prefer ones in the same folder as the _chat.txt
-    - Otherwise any file with same base name in any folder / zip
-
-
 ## 1. Model Refactoring: ChatData2
 Fundamental changes to support incremental processing and efficient file handling.
 
@@ -61,9 +39,37 @@ class OutputFile2:
 - Use suffixed names to track progress
 - Plan final rename operation to remove suffixes
 
-## 2. Virtual File System (VFS)
+## 2. Processing Pipeline Refactoring
 
-### 2.1 File Information Cache
+### 2.1 New Stage Files
+Create new implementations alongside existing ones:
+- [`vfs_scanner.py`](../src/vfs_scanner.py): Stage 1 - VFS scanning
+  - Takes over file discovery from `output_checker.py`
+  - Merges new and old file information
+  - Maintains file existence flags
+  - Integrates with ZIP handling
+
+- [`message_processor.py`](../src/message_processor.py): Stage 2 - Message processing
+  - Focuses on chat text parsing and deduplication
+  - Sorts messages by _chat.txt timestamps
+  - Handles message deduplication per chat
+  - Works with both new and preserved messages
+
+- [`media_locator.py`](../src/media_locator.py): Stage 3 - Media handling
+  - Dedicated to media file discovery
+  - Uses VFS for efficient file lookup
+  - Implements smart file matching logic
+  - Handles both local and ZIP-based media
+
+### 2.2 Migration Strategy
+- Keep existing stages functional during development
+- Gradually shift functionality to new stages
+- Update `main.py` to coordinate new pipeline
+- Remove old stages once migration is complete
+
+## 3. Virtual File System (VFS)
+
+### 3.1 File Information Cache
 - Design efficient file lookup structure
 - Implement ID generation (path + separator + size + separator + mtime)
 - Create indices for quick file location
