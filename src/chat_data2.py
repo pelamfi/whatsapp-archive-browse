@@ -1,37 +1,66 @@
+import base64
+import hashlib
 import json
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, NotRequired, Optional, TypedDict, Union
 
 
+@dataclass(frozen=True)
+class ChatFileID:
+    """Unique identifier for a file based on its path, size, and modification time."""
+
+    value: str
+
+    @staticmethod
+    def create(mtime: float, size: int, path: str) -> "ChatFileID":
+        """Creates a ChatFileID by hashing the file's metadata."""
+        key = f"{mtime}:{size}:{path}"
+        hash_obj = hashlib.sha1(key.encode(), usedforsecurity=False)
+        return ChatFileID(base64.b64encode(hash_obj.digest()).decode())
+
+
 class ChatFile2Dict(TypedDict):
     path: str
+    size: int
+    modification_timestamp: float
     parent_zip: NotRequired[Optional[str]]
-    modification_timestamp: NotRequired[Optional[float]]
-    size: NotRequired[Optional[int]]
+    exists: NotRequired[bool]
 
 
 @dataclass
 class ChatFile2:
-    path: str  # Relative path to the file
+    path: str  # Relative path to the file within the containing directory or zip
+    size: int  # Size of the file in bytes
+    modification_timestamp: float  # Timestamp of last modification
     parent_zip: Optional[str] = None  # Path to the parent zip file, if any
-    modification_timestamp: Optional[float] = None  # Timestamp of last modification
-    size: Optional[int] = None  # Size of the file in bytes
+    exists: bool = True  # Whether the file currently exists
+
+    @property
+    def id(self) -> ChatFileID:
+        """Returns a unique identifier for this file based on its metadata."""
+        return ChatFileID.create(
+            mtime=self.modification_timestamp,
+            size=self.size,
+            path=self.path,
+        )
 
     def to_dict(self) -> ChatFile2Dict:
         return {
             "path": self.path,
-            "parent_zip": self.parent_zip,
-            "modification_timestamp": self.modification_timestamp,
             "size": self.size,
+            "modification_timestamp": self.modification_timestamp,
+            "parent_zip": self.parent_zip,
+            "exists": self.exists,
         }
 
     @staticmethod
     def from_dict(data: ChatFile2Dict) -> "ChatFile2":
         return ChatFile2(
             path=data["path"],
+            size=data["size"],
+            modification_timestamp=data["modification_timestamp"],
             parent_zip=data.get("parent_zip"),
-            modification_timestamp=data.get("modification_timestamp"),
-            size=data.get("size"),
+            exists=data.get("exists", True),
         )
 
 
@@ -158,7 +187,12 @@ class ChatData2:
                 # Convert input_file to ChatFile2 if present
                 if "input_file" in msg and msg["input_file"] is not None:
                     if isinstance(msg["input_file"], str):  # Handle legacy format
-                        msg["input_file"] = ChatFile2(path=str(msg["input_file"]))
+                        msg["input_file"] = ChatFile2(
+                            path=str(msg["input_file"]),
+                            size=0,  # Legacy data doesn't have size info
+                            modification_timestamp=0.0,  # Legacy data doesn't have timestamp
+                            exists=False,  # Legacy file might not exist
+                        )
                     else:
                         input_file_data = dict(msg["input_file"])
                         msg["input_file"] = ChatFile2(**input_file_data)
@@ -170,13 +204,16 @@ class ChatData2:
                     # Handle input_path
                     if "input_path" in media and media["input_path"] is not None:
                         if isinstance(media["input_path"], str):  # Handle legacy format
-                            size = media.pop("size", None)  # Extract size if present
-                            media["input_path"] = ChatFile2(path=str(media["input_path"]), size=size)
+                            media["input_path"] = ChatFile2(
+                                path=str(media["input_path"]),
+                                size=media.pop("size", 0),  # Extract size if present, default to 0
+                                modification_timestamp=0.0,  # Legacy data doesn't have timestamp
+                                exists=False,  # Legacy file might not exist
+                            )
                         else:
                             input_path_data = dict(media["input_path"])
                             media["input_path"] = ChatFile2(**input_path_data)
-
-                    # Remove size if present (it's now in ChatFile2)
+                        # Remove size if present (it's now in ChatFile2)
                     media.pop("size", None)
 
                     msg["media"] = MediaReference2(**media)
