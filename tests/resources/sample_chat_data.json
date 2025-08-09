@@ -4,29 +4,48 @@
             "messages": [
                 {
                     "content": "Hello World",
-                    "html_file": "2022.html",
-                    "input_file": {
-                        "modification_timestamp": null,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": null
-                    },
-                    "media": {
-                        "input_path": {
-                            "modification_timestamp": null,
-                            "parent_zip": null,
-                            "path": "inputfolder/input.jpg",
-                            "size": 12345
-                        },
-                        "output_path": "outputfolder/input.jpg",
-                        "raw_file_name": "input.jpg"
-                    },
+                    "input_file_id": "HhbVaFOxwsPWJ9WLRveRwna68l0=",
+                    "media_name": "input.jpg",
                     "sender": "Matias Virtanen",
                     "timestamp": "2022-03-12T14:08:18",
                     "year": 2022
                 }
             ],
-            "output_files": {}
+            "output_files": {
+                "2022": {
+                    "chat_dependencies": [
+                        "HhbVaFOxwsPWJ9WLRveRwna68l0="
+                    ],
+                    "generate": true,
+                    "media_dependencies": {
+                        "input.jpg": "rjkUgNOLhhp3zJkiXPYxy+fRJg0="
+                    },
+                    "year": 2022
+                }
+            }
+        }
+    },
+    "input_files": {
+        "HhbVaFOxwsPWJ9WLRveRwna68l0=": {
+            "exists": true,
+            "modification_timestamp": 1647093600.0,
+            "parent_zip": null,
+            "path": "_chat.txt",
+            "size": 100
+        },
+        "JSCJV7Gl5dTqMDLcqV5XW+48xZA=": {
+            "exists": true,
+            "modification_timestamp": 1647093600.0,
+            "parent_zip": null,
+            "path": "backup.zip",
+            "size": 5000
+        },
+        "rjkUgNOLhhp3zJkiXPYxy+fRJg0=": {
+            "exists": true,
+            "modification_timestamp": 1647093600.0,
+            "parent_zip": "JSCJV7Gl5dTqMDLcqV5XW+48xZA=",
+            "path": "inputfolder/input.jpg",
+            "size": 12345
         }
     }
 }

@@ -24,7 +24,7 @@ class ChatFileDict(TypedDict):
     path: str
     size: int
     modification_timestamp: float
-    parent_zip: NotRequired[Optional[str]]
+    parent_zip: NotRequired[Optional[str]]  # ChatFileID value as string when serialized
     exists: NotRequired[bool]
 
 
@@ -33,7 +33,7 @@ class ChatFile:
     path: str  # Relative path to the file within the containing directory or zip
     size: int  # Size of the file in bytes
     modification_timestamp: float  # Timestamp of last modification
-    parent_zip: Optional[str] = None  # Path to the parent zip file, if any
+    parent_zip: Optional[ChatFileID] = None  # ChatFileID of the parent zip file, if any
     exists: bool = True  # Whether the file currently exists
 
     @property
@@ -50,17 +50,18 @@ class ChatFile:
             "path": self.path,
             "size": self.size,
             "modification_timestamp": self.modification_timestamp,
-            "parent_zip": self.parent_zip,
+            "parent_zip": self.parent_zip.value if self.parent_zip else None,
             "exists": self.exists,
         }
 
     @staticmethod
     def from_dict(data: ChatFileDict) -> "ChatFile":
+        parent_zip_value = data.get("parent_zip")
         return ChatFile(
             path=data["path"],
             size=data["size"],
             modification_timestamp=data["modification_timestamp"],
-            parent_zip=data.get("parent_zip"),
+            parent_zip=ChatFileID(value=parent_zip_value) if parent_zip_value else None,
             exists=data.get("exists", True),
         )
 

@@ -18,6 +18,14 @@ def test_deserialization_from_file() -> None:
 
 
 def test_serialization() -> None:
+    # Create a zip file first to serve as parent
+    zip_file = ChatFile(
+        path="backup.zip",
+        size=5000,
+        modification_timestamp=1647093600.0,  # 2022-03-12 14:00:00 UTC
+    )
+    zip_file_id = zip_file.id
+
     # Create a chat file with known metadata
     chat_file = ChatFile(
         path="_chat.txt",
@@ -26,11 +34,12 @@ def test_serialization() -> None:
     )
     chat_file_id = chat_file.id
 
-    # Create a media file with known metadata
+    # Create a media file with known metadata (inside the zip)
     media_file = ChatFile(
         path="inputfolder/input.jpg",
         size=12345,
         modification_timestamp=1647093600.0,  # 2022-03-12 14:00:00 UTC
+        parent_zip=zip_file_id,  # This file is inside the zip
     )
     media_file_id = media_file.id
 
@@ -55,7 +64,7 @@ def test_serialization() -> None:
                 chat_name=ChatName(name="Space Rocket"), messages=[message], output_files={2022: output_file}
             )
         },
-        input_files={chat_file_id: chat_file, media_file_id: media_file},
+        input_files={chat_file_id: chat_file, media_file_id: media_file, zip_file_id: zip_file},
     )
 
     json_data: str = chat_data.to_json()
@@ -100,9 +109,16 @@ def test_serialization_round_trip() -> None:
 
 
 def test_chat_file_serialization() -> None:
+    # Create a zip file first to get its ID
+    zip_file = ChatFile(
+        path="archive.zip",
+        size=2048,
+        modification_timestamp=1754448000.0,
+    )
+
     chat_file = ChatFile(
         path="example.txt",
-        parent_zip="archive.zip",
+        parent_zip=zip_file.id,
         modification_timestamp=1754448000.0,
         size=1024,
     )
