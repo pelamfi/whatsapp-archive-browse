@@ -30,6 +30,7 @@ Design decisions:
    - CSS is now embedded directly in HTML files for maximum compatibility
 """
 
+import html
 import logging
 import os
 import shutil
@@ -82,21 +83,10 @@ def copy_media_file(input_dir: str, chat_dir: str, media_ref: MediaReference) ->
         return False
 
 
-def escape_html(text: str) -> str:
-    """Escape special characters in text for HTML output."""
-    return (
-        text.replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace('"', "&quot;")
-        .replace("'", "&#39;")
-    )
-
-
 def format_content_html(text: str) -> str:
     """Format message content for HTML, escaping HTML and converting newlines to <br> tags."""
     # First escape HTML special characters
-    escaped = escape_html(text)
+    escaped = html.escape(text)
     # Then convert newlines to HTML line breaks with newlines for readable source
     return escaped.replace("\n", "<br>\n")
 
@@ -113,8 +103,8 @@ def format_message_html(message: Message) -> str:
     return f"""
     <div class="message">
         <div class="metadata">
-            <span class="timestamp">{escape_html(message.timestamp)}</span>
-            <span class="sender">{escape_html(message.sender)}</span>
+            <span class="timestamp">{html.escape(message.timestamp)}</span>
+            <span class="sender">{html.escape(message.sender)}</span>
         </div>
         <div class="content">{format_content_html(message.content)}</div>
         {media_html}
@@ -130,13 +120,13 @@ def create_year_html(chat: Chat, year: int, messages: List[Message]) -> str:
 <html>
 <head>
     <meta charset="utf-8">
-    <title>{escape_html(chat.chat_name.name)} - {year}</title>
+    <title>{html.escape(chat.chat_name.name)} - {year}</title>
     <style>
 {css_content}
     </style>
 </head>
 <body>
-    <h1>{escape_html(chat.chat_name.name)}</h1>
+    <h1>{html.escape(chat.chat_name.name)}</h1>
     <h2>Messages from {year}</h2>
     <nav><a href="index.html" class="nav-link">← Back to years</a></nav>
     <div class="messages">
@@ -154,13 +144,13 @@ def create_chat_index_html(chat: Chat, years: Set[int]) -> str:
 <html>
 <head>
     <meta charset="utf-8">
-    <title>{escape_html(chat.chat_name.name)}</title>
+    <title>{html.escape(chat.chat_name.name)}</title>
     <style>
 {css_content}
     </style>
 </head>
 <body>
-    <h1>{escape_html(chat.chat_name.name)}</h1>
+    <h1>{html.escape(chat.chat_name.name)}</h1>
     <nav><a href="../index.html" class="nav-link">← Back to chats</a></nav>
     <h2>Messages by Year</h2>
     <ul class="year-list">
@@ -174,7 +164,7 @@ def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str) -> str:
     """Generate main index.html listing all chats."""
     css_content = load_css_content()
     chats_html = "\n".join(
-        f'<li><a href="{escape_html(name)}/index.html">{escape_html(name)}</a></li>' for name in sorted(chats.keys())
+        f'<li><a href="{html.escape(name)}/index.html">{html.escape(name)}</a></li>' for name in sorted(chats.keys())
     )
     return f"""<!DOCTYPE html>
 <html>

@@ -9,7 +9,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Space Rocket",
@@ -23,7 +23,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
@@ -37,7 +37,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Juuso Kivi",
@@ -51,7 +51,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
@@ -59,13 +59,13 @@
                     "year": 2022
                 },
                 {
-                    "content": "Blah blah",
+                    "content": "Blah blah <",
                     "html_file": null,
                     "input_file": {
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
@@ -73,13 +73,13 @@
                     "year": 2022
                 },
                 {
-                    "content": "h\u00f6p\u00f6 h\u00f6p\u00f6\n\nSeli seli imaginary link\nhttps://example.com/linky\n\nh\u00f6p\u00f6ti",
+                    "content": "h\u00f6p\u00f6 h\u00f6p\u00f6 &\n\nSeli seli imaginary link\nhttps://example.com/linky\n\nh\u00f6p\u00f6ti",
                     "html_file": null,
                     "input_file": {
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -87,13 +87,13 @@
                     "year": 2022
                 },
                 {
-                    "content": "Yeaah",
+                    "content": "Yeaah >",
                     "html_file": null,
                     "input_file": {
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -107,7 +107,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Space Rocket",
@@ -121,7 +121,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Aleksi Luoto",
@@ -135,7 +135,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Aleksi Luoto",
@@ -149,7 +149,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -163,7 +163,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -177,7 +177,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": {
                         "input_path": {
@@ -200,7 +200,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
@@ -214,7 +214,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -228,7 +228,7 @@
                         "modification_timestamp": 1580508000.0,
                         "parent_zip": null,
                         "path": "chat1/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
@@ -242,7 +242,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Space Rocket",
@@ -256,7 +256,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
@@ -270,7 +270,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Juuso Kivi",
@@ -284,7 +284,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
@@ -292,13 +292,13 @@
                     "year": 2022
                 },
                 {
-                    "content": "Blah blah",
+                    "content": "Blah blah <",
                     "html_file": null,
                     "input_file": {
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
@@ -306,13 +306,13 @@
                     "year": 2022
                 },
                 {
-                    "content": "h\u00f6p\u00f6 h\u00f6p\u00f6\n\nSeli seli imaginary link\nhttps://example.com/linky\n\nh\u00f6p\u00f6ti",
+                    "content": "h\u00f6p\u00f6 h\u00f6p\u00f6 &\n\nSeli seli imaginary link\nhttps://example.com/linky\n\nh\u00f6p\u00f6ti",
                     "html_file": null,
                     "input_file": {
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -320,13 +320,13 @@
                     "year": 2022
                 },
                 {
-                    "content": "Yeaah",
+                    "content": "Yeaah >",
                     "html_file": null,
                     "input_file": {
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -340,7 +340,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Space Rocket",
@@ -354,7 +354,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Aleksi Luoto",
@@ -368,7 +368,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Aleksi Luoto",
@@ -382,7 +382,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -396,7 +396,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -410,7 +410,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": {
                         "input_path": {
@@ -433,7 +433,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
@@ -447,7 +447,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Sami Str\u00f6m",
@@ -461,7 +461,7 @@
                         "modification_timestamp": 1583013600.0,
                         "parent_zip": null,
                         "path": "chat2/_chat.txt",
-                        "size": 1155
+                        "size": 1161
                     },
                     "media": null,
                     "sender": "Matias Virtanen",
