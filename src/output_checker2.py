@@ -7,14 +7,7 @@ import os
 from typing import Optional
 
 from src.chat_data import ChatData
-from src.chat_data2 import (
-    Chat2,
-    ChatData2,
-    ChatFile2,
-    ChatName2,
-    Message2,
-    OutputFile2,
-)
+from src.chat_data2 import Chat2, ChatData2, ChatFile2, ChatName2, Message2, OutputFile2
 
 
 def convert_to_chat_data2(old_data: ChatData) -> ChatData2:
