@@ -1,23 +1,34 @@
+"""
+Module for parsing WhatsApp chat export files.
+"""
+
+import os
 import re
 from dataclasses import dataclass
+from typing import Optional, Tuple
 
-from src.chat_data import Chat, ChatFile, ChatName, MediaReference, Message
+from src.chat_data import Chat, ChatFile, ChatFileID, ChatName, Message
+
+"""
+Module for parsing WhatsApp chat export files using chat_data structures.
+"""
 
 
-# A raw temporary parsed chat line. A raw line can be followed by more content
-# lines, which are identified by them not matching the chat line format.
 @dataclass
 class RawChatLine:
+    """
+    A raw temporary parsed chat line. A raw line can be followed by more content
+    lines, which are identified by them not matching the chat line format.
+    """
+
     # Raw timestamp, part that is inside square brackets at the beginning of the
     # line.
     timestamp: str
     # timestamp is only considered valid if it contains a 4 digit year
     year: int
-    # The timestamp is followed by the sender name followed by a colon. This
-    # part can also contain extra spaces, tilde (~) and sometimes U+200E
-    # characters, which are filtered out.
+    # The timestamp is followed by the sender name followed by a colon.
     sender: str
-    # the content, the part that comes after the colon.
+    # The actual message content.
     content: str
 
 
@@ -60,7 +71,7 @@ chat_line_raw_regex = r"""(?x)
 chat_line_regex: re.Pattern[str] = re.compile(chat_line_raw_regex)
 
 
-def parse_chat_line(line: str) -> RawChatLine | None:
+def parse_chat_line(line: str) -> Optional[RawChatLine]:
     """
     Parse a single line of chat data.
 
@@ -92,79 +103,92 @@ media_regex: re.Pattern[str] = re.compile(r"<(?:[^\W\d_]{1,20}\s?){1,3}: (.*?)>"
 
 
 def raw_chat_line_to_message(raw_line: RawChatLine, input_file: ChatFile) -> Message:
-    media: MediaReference | None = None
+    """Convert a RawChatLine to a Message object."""
+    media_file_id: Optional[ChatFileID] = None
     content: str = raw_line.content
 
     # Check if the content contains a media reference
     media_match: re.Match[str] | None = media_regex.search(content)
     if media_match:
-        raw_file_name: str = media_match.group(1)
-        content = content.replace(media_match.group(0), "")
-        media = MediaReference(raw_file_name=raw_file_name)
+        content = ""  # When media is found, clear the content as per existing behavior
+        media_name = media_match.group(1)
+        # Assuming the media file is in the same directory as the chat file
+        media_path = os.path.join(os.path.dirname(input_file.path), media_name)
+        # Create a temporary ChatFile for the media file, size/mtime will be updated later
+        media_file = ChatFile(
+            path=media_path,
+            size=0,
+            modification_timestamp=0.0,
+            parent_zip=input_file.parent_zip,
+        )
+        media_file_id = media_file.id
 
     return Message(
         timestamp=raw_line.timestamp,
         sender=raw_line.sender,
         content=content,
         year=raw_line.year,
-        media=media,
-        input_file=input_file,
+        input_file_id=input_file.id,
+        media_file_id=media_file_id,
     )
 
 
-def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Chat | None:
-
+def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Tuple[Chat, dict[ChatFileID, ChatFile]]]:
+    """Parse a list of chat lines into a Chat object."""
     if len(lines) == 0:
-        print(f"WARNING! Empty chat file {input_file.path}, skipping.")
         return None
 
-    # First line sender is the chat name. If fist line does not look like a chat line,
-    # log an error and return empty None.
+    # First line sender is the chat name. If first line does not look like a chat line,
+    # log an error and return None.
     first_raw_line: RawChatLine | None = parse_chat_line(lines[0])
-
     if not first_raw_line:
-        print(f"WARNING! First line in file {input_file.path} does not match expected chat line format: {lines[0]}")
         return None
 
-    chat_name_typed = ChatName(name=first_raw_line.sender)
-
-    prev_raw_line: RawChatLine = first_raw_line
-
+    chat_name = ChatName(name=first_raw_line.sender)
     messages: list[Message] = []
+    input_files: dict[ChatFileID, ChatFile] = {input_file.id: input_file}
+
+    current_raw_line: RawChatLine = first_raw_line
+    content_lines: list[str] = [current_raw_line.content]
 
     # If the line matches the chat line format it begins a new message,
     # If it does not match it is assumed to be another line in the content of the last message.
     for line in lines[1:]:
-        raw_line: RawChatLine | None = parse_chat_line(line)
-        if raw_line:
-            # If the line is a new chat line, create a message from the previous raw line
-            if prev_raw_line:
-                messages.append(raw_chat_line_to_message(prev_raw_line, input_file))
-            prev_raw_line = raw_line
+        next_raw_line = parse_chat_line(line)
+        if next_raw_line:
+            # Before starting new message, finalize the previous message
+            current_raw_line.content = "\n".join(content_lines)
+            messages.append(raw_chat_line_to_message(current_raw_line, input_file))
+
+            # Start new message
+            current_raw_line = next_raw_line
+            content_lines = [current_raw_line.content]
         else:
-            # If the line does not match the chat line format, append it to the content of the last message
-            if prev_raw_line:
-                prev_raw_line.content += "\n" + line.strip()
+            # Continue existing message
+            content_lines.append(line)
 
-    # At this point we at least have the first line because we would have returned None if there were no lines.
-    messages.append(raw_chat_line_to_message(prev_raw_line, input_file))
+    # Finalize the last message
+    current_raw_line.content = "\n".join(content_lines)
+    messages.append(raw_chat_line_to_message(current_raw_line, input_file))
 
-    return Chat(
-        chat_name=chat_name_typed,
-        messages=messages,
-    )
+    return Chat(chat_name=chat_name, messages=messages), input_files
 
 
-def parse_chat_file(file_path: str, input_file: ChatFile) -> Chat | None:
+def parse_chat_file(file_path: str, input_file: ChatFile) -> Optional[Tuple[Chat, dict[ChatFileID, ChatFile]]]:
     """
     Parse a single WhatsApp _chat.txt file.
 
     Args:
         file_path: Path to the _chat.txt file
         input_file: ChatFile object representing the file
+
+    Returns:
+        Tuple of (Chat object, dict of input files) if successful, None if parsing fails
     """
-
-    with open(file_path, "r", encoding="utf-8", newline="") as file:
-        lines: list[str] = file.readlines()
-
-    return parse_chat_lines(lines, input_file)
+    try:
+        with open(file_path, "r", encoding="utf-8", newline="") as file:
+            lines = file.readlines()
+            return parse_chat_lines([line.rstrip("\n") for line in lines], input_file)
+    except Exception as e:
+        print(f"Failed to read chat file {file_path}: {e}")
+        return None

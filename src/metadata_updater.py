@@ -1,9 +1,5 @@
 """
-This module handles updating metadata JSON files in the output directory.
-The update process is designed to be safe against interruptions by:
-1. Writing new data to a separate file
-2. Making backup of existing data
-3. Only then replacing the main file
+This module handles updating metadata JSON files in the output directory for ChatData.
 """
 
 import os
@@ -14,11 +10,6 @@ from src.chat_data import ChatData
 def update_metadata(chat_data: ChatData, output_dir: str) -> None:
     """
     Safely update the metadata JSON in the output directory.
-
-    The update process:
-    1. Write new data to browseability-generator-chat-data-NEW.json
-    2. If main JSON exists, rename it to BACKUP
-    3. Rename NEW to be the main JSON
     """
     # Ensure the directory exists
     os.makedirs(output_dir, exist_ok=True)
@@ -41,5 +32,3 @@ def update_metadata(chat_data: ChatData, output_dir: str) -> None:
     # Move new file to main
     os.rename(new_json, main_json)
     print("Updating metadata")
-    # No-op implementation
-    return None

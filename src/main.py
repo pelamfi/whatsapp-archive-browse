@@ -1,3 +1,7 @@
+"""
+Entry point for the whatsapp-archive-browse tool using ChatData.
+"""
+
 import argparse
 import os
 from typing import Sequence
@@ -27,9 +31,6 @@ Examples:
     # Generate HTML from a WhatsApp export folder
     %(prog)s --input path/to/whatsapp/export --output path/to/html/output
 
-    # Use a specific locale (default: FI)
-    %(prog)s --input path/to/whatsapp/export --output path/to/html/output --locale FI
-
 Notes:
     - Input folder should contain WhatsApp chat exports (_chat.txt files)
     - Can handle both expanded and .zip WhatsApp exports
@@ -53,39 +54,28 @@ Notes:
         metavar="DIR",
         help="Output folder for generated browseable HTML files",
     )
-    parser.add_argument(
-        "--locale",
-        default="FI",
-        metavar="LOCALE",
-        help="Locale for parsing timestamps (currently only FI supported)",
-    )
 
     args = parser.parse_args(argv)
 
     # Create output directory if it doesn't exist
     os.makedirs(args.output_folder, exist_ok=True)
 
-    # Step 1: Check output directory
-    # This step loads existing metadata from the output directory.
-    # In the future, this data will be passed to the input scanner to enable incremental parsing.
+    # Step 1: Check output directory for existing data
     output_data = check_output_directory(args.output_folder)
 
     # Step 2: Scan input directory
-    # The input scanner will eventually use the output_data to detect unchanged input files
-    # and reuse data from the output directory instead of re-parsing or unzipping files.
-    input_data = scan_input_directory(args.input_folder)  # TODO: Add output_data support later
+    input_data = scan_input_directory(args.input_folder, output_data)
 
-    # Step 3: Compare and merge data: Detects which YYYY.html files need to be (re)generated.
-    # This information is embedded in ChatData for simplicity.
+    # Step 3: Compare and merge data
     merged_data = merge_chat_data(input_data, output_data)
 
     # Set timestamp
     merged_data.timestamp = timestamp
 
-    # Step 4: Generate HTML: Generate per chat folders, copy media files, and create per chat and top level index.htmls.
+    # Step 4: Generate HTML
     generate_html(merged_data, args.input_folder, args.output_folder)
 
-    # Step 5: Update metadata: safely rewrites browseability-generator-chat-data.json, old JSON becomes backup.
+    # Step 5: Update metadata
     update_metadata(merged_data, args.output_folder)
 
 

@@ -34,49 +34,38 @@ import html
 import logging
 import os
 import shutil
-from typing import Dict, List, Set
+from typing import Dict, Set, Tuple
 
-from src.chat_data import Chat, ChatData, MediaReference, Message
+from src.chat_data import Chat, ChatData, ChatFile, Message, OutputFile
 
 
-def load_css_content() -> str:
-    """Load CSS content from the browseability-generator.css file."""
+def load_css_content() -> Tuple[str, ChatFile]:
+    """Load CSS content and return with its ChatFile."""
     css_path = os.path.join(os.path.dirname(__file__), "browseability-generator.css")
     with open(css_path, "r", encoding="utf-8") as f:
-        return f.read()
+        content = f.read()
+
+    css_file = ChatFile(
+        path="browseability-generator.css",
+        size=os.path.getsize(css_path),
+        modification_timestamp=os.path.getmtime(css_path),
+    )
+
+    return content, css_file
 
 
-def copy_media_file(input_dir: str, chat_dir: str, media_ref: MediaReference) -> bool:
-    """
-    Copy a media file from input to output directory and update its output path.
-
-    Args:
-        input_dir: Root input directory
-        chat_dir: Output directory for the chat
-        media_ref: MediaReference to process
-
-    Returns:
-        bool: True if file was copied successfully, False if file is missing
-    """
-    if not media_ref.input_path:
-        return False
-
-    # Construct paths
-    src_path = os.path.join(input_dir, media_ref.input_path.path)
+def copy_media_file(input_dir: str, chat_dir: str, media_file: ChatFile) -> bool:
+    """Copy a media file from input to output directory."""
+    src_path = os.path.join(input_dir, media_file.path)
     if not os.path.exists(src_path):
         logging.warning(f"Media file not found: {src_path}")
         return False
 
-    # Use the original filename for the output
-    dst_path = os.path.join(chat_dir, "media", media_ref.raw_file_name)
+    dst_path = os.path.join(chat_dir, "media", os.path.basename(media_file.path))
 
     try:
-        # Create media directory if it doesn't exist
         os.makedirs(os.path.dirname(dst_path), exist_ok=True)
-
-        # Copy the file and update the reference
-        shutil.copy2(src_path, dst_path)
-        media_ref.output_path = f"media/{media_ref.raw_file_name}"
+        shutil.copy(src_path, dst_path)
         return True
     except (IOError, OSError) as e:
         logging.error(f"Failed to copy media file {src_path}: {e}")
@@ -91,14 +80,13 @@ def format_content_html(text: str) -> str:
     return escaped.replace("\n", "<br>\n")
 
 
-def format_message_html(message: Message) -> str:
+def format_message_html(message: Message, chat_data: ChatData) -> str:
     """Format a single message as HTML."""
     media_html = ""
-    if message.media:
-        if message.media.output_path:
-            media_html = f'<div class="media"><img src="{message.media.output_path}" alt="Media"></div>'
-        else:
-            media_html = '<div class="media">[Media file not available]</div>'
+    if message.media_file_id is not None and message.media_file_id in chat_data.input_files:
+        media_file = chat_data.input_files[message.media_file_id]
+        media_filename = os.path.basename(media_file.path)
+        media_html = f'<div class="media"><img src="media/{html.escape(media_filename)}"></div>'
 
     return f"""
     <div class="message">
@@ -112,10 +100,10 @@ def format_message_html(message: Message) -> str:
     """
 
 
-def create_year_html(chat: Chat, year: int, messages: List[Message]) -> str:
+def create_year_html(chat: Chat, year: int, messages: list[Message], chat_data: ChatData, css_content: str) -> str:
     """Generate HTML for a specific year of chat messages."""
-    css_content = load_css_content()
-    messages_html = "\n".join(format_message_html(msg) for msg in messages)
+    messages_html = "\n".join(format_message_html(msg, chat_data) for msg in messages if msg.year == year)
+
     return f"""<!DOCTYPE html>
 <html>
 <head>
@@ -136,10 +124,10 @@ def create_year_html(chat: Chat, year: int, messages: List[Message]) -> str:
 </html>"""
 
 
-def create_chat_index_html(chat: Chat, years: Set[int]) -> str:
+def create_chat_index_html(chat: Chat, years: Set[int], css_content: str) -> str:
     """Generate index.html for a specific chat directory."""
-    css_content = load_css_content()
     years_html = "\n".join(f'<li><a href="{year}.html">{year}</a></li>' for year in sorted(years))
+
     return f"""<!DOCTYPE html>
 <html>
 <head>
@@ -160,12 +148,12 @@ def create_chat_index_html(chat: Chat, years: Set[int]) -> str:
 </html>"""
 
 
-def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str) -> str:
+def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str, css_content: str) -> str:
     """Generate main index.html listing all chats."""
-    css_content = load_css_content()
     chats_html = "\n".join(
         f'<li><a href="{html.escape(name)}/index.html">{html.escape(name)}</a></li>' for name in sorted(chats.keys())
     )
+
     return f"""<!DOCTYPE html>
 <html>
 <head>
@@ -186,52 +174,66 @@ def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str) -> str:
 
 
 def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
-    """
-    Generate HTML files for chats based on OutputFile flags in chat_data.
-    Always regenerates index.html files. CSS is now embedded in HTML files.
-    """
+    """Generate HTML files for chats using ChatData."""
     # Prepare output directory
     os.makedirs(output_dir, exist_ok=True)
 
-    # Track which chats have which years for index generation
+    # Load CSS content and add to input files
+    css_content, css_file = load_css_content()
+    chat_data.input_files[css_file.id] = css_file
+
+    # Track which chats have which years
     chat_years: Dict[str, Set[int]] = {}
 
-    # First, copy all referenced media files for each chat
-    print("Copying media files...")
+    # Process each chat
     for chat_name, chat in chat_data.chats.items():
         chat_dir = os.path.join(output_dir, chat_name.name)
         os.makedirs(chat_dir, exist_ok=True)
         os.makedirs(os.path.join(chat_dir, "media"), exist_ok=True)
-        for msg in chat.messages:
-            if msg.media:
-                copy_media_file(input_dir, chat_dir, msg.media)
 
-    # Now generate HTML files for each chat
-    for chat_name, chat in chat_data.chats.items():
-        chat_dir = os.path.join(output_dir, chat_name.name)
+        # Track years and copy media for this chat
         years: set[int] = set()
-        for year, output_file in chat.output_files.items():
-            years.add(year)
-            if not output_file.generate:
-                continue
 
-            # Filter messages for this year
-            year_messages = [msg for msg in chat.messages if msg.year == year]
-            if not year_messages:
-                continue
+        # Copy media files for each message
+        for msg in chat.messages:
+            if msg.media_file_id is not None and msg.media_file_id in chat_data.input_files:
+                media_file = chat_data.input_files[msg.media_file_id]
+                if copy_media_file(input_dir, chat_dir, media_file):
+                    # Update output file dependencies
+                    year = msg.year
+                    if year not in chat.output_files:
+                        chat.output_files[year] = OutputFile(year=year)
+                    output_file = chat.output_files[year]
+                    output_file.media_dependencies[os.path.basename(media_file.path)] = msg.media_file_id
 
-            # Generate YYYY.html
-            year_html = create_year_html(chat, year, year_messages)
-            with open(os.path.join(chat_dir, f"{year}.html"), "w", encoding="utf-8") as f:
-                f.write(year_html)
+            years.add(msg.year)
 
-        # Generate chat index.html
-        chat_years[chat_name.name] = years
-        chat_index = create_chat_index_html(chat, years)
+        # Generate year files that need updating
+        for year in years:
+            if year not in chat.output_files:
+                chat.output_files[year] = OutputFile(year=year)
+
+            output_file = chat.output_files[year]
+            if output_file.generate:
+                year_content = create_year_html(chat, year, chat.messages, chat_data, css_content)
+                with open(os.path.join(chat_dir, f"{year}.html"), "w", encoding="utf-8") as f:
+                    f.write(year_content)
+
+                # Update dependencies
+                # Add chat_dependencies for every message
+                for msg in chat.messages:
+                    if msg.input_file_id and msg.year == year:
+                        output_file.chat_dependencies.append(msg.input_file_id)
+                output_file.css_dependency = css_file.id
+
+        # Create chat index
+        chat_index = create_chat_index_html(chat, years, css_content)
         with open(os.path.join(chat_dir, "index.html"), "w", encoding="utf-8") as f:
             f.write(chat_index)
 
-    # Generate main index.html
-    main_index = create_main_index_html(chat_years, chat_data.timestamp)
+        chat_years[chat_name.name] = years
+
+    # Create main index
+    main_index = create_main_index_html(chat_years, chat_data.timestamp, css_content)
     with open(os.path.join(output_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(main_index)

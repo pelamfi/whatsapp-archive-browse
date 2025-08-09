@@ -1,3 +1,7 @@
+"""
+Tests for data comparator module.
+"""
+
 from typing import Set
 
 from src.chat_data import Chat, ChatName, Message, OutputFile
@@ -51,9 +55,8 @@ def test_find_years_needing_update_with_changes() -> None:
             Message(timestamp="12:00", sender="Alice", content="Hi", year=2022),
             Message(timestamp="13:00", sender="Bob", content="Different", year=2023),
         ],
-        output_files={2022: OutputFile(year=2022, generate=False)},
+        output_files={2022: OutputFile(year=2022)},
     )
 
     needs_update: Set[int] = find_years_needing_update(input_chat, output_chat)
-    assert needs_update == {2023}  # Both different content and missing output file
     assert needs_update == {2023}  # Both different content and missing output file

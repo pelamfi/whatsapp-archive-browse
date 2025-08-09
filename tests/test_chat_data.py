@@ -1,6 +1,6 @@
 import os
 
-from src.chat_data import Chat, ChatData, ChatFile, ChatFileDict, ChatName, MediaReference, Message
+from src.chat_data import Chat, ChatData, ChatFile, ChatFileDict, ChatName, Message, OutputFile
 
 
 def test_deserialization_from_file() -> None:
@@ -18,25 +18,59 @@ def test_deserialization_from_file() -> None:
 
 
 def test_serialization() -> None:
-    media = MediaReference(
-        raw_file_name="input.jpg",
-        input_path=ChatFile(path="inputfolder/input.jpg"),
-        output_path="outputfolder/input.jpg",
+    # Create a chat file with known metadata
+    chat_file = ChatFile(
+        path="_chat.txt",
+        size=100,
+        modification_timestamp=1647093600.0,  # 2022-03-12 14:00:00 UTC
     )
+    chat_file_id = chat_file.id
+
+    # Create a media file with known metadata
+    media_file = ChatFile(
+        path="inputfolder/input.jpg",
+        size=12345,
+        modification_timestamp=1647093600.0,  # 2022-03-12 14:00:00 UTC
+    )
+    media_file_id = media_file.id
+
+    # Create message with file IDs
     message = Message(
         timestamp="2022-03-12T14:08:18",
         sender="Matias Virtanen",
         content="Hello World",
         year=2022,
-        media=media,
-        input_file=ChatFile(path="_chat.txt"),
-        html_file="2022.html",
+        input_file_id=chat_file_id,
+        media_file_id=media_file_id,
     )
+
+    # Create chat data with output file dependencies
+    output_file = OutputFile(
+        year=2022, generate=True, media_dependencies={"input.jpg": media_file_id}, chat_dependencies=[chat_file_id]
+    )
+
     chat_data = ChatData(
-        chats={ChatName(name="Space Rocket"): Chat(chat_name=ChatName(name="Space Rocket"), messages=[message])}
+        chats={
+            ChatName(name="Space Rocket"): Chat(
+                chat_name=ChatName(name="Space Rocket"), messages=[message], output_files={2022: output_file}
+            )
+        },
+        input_files={chat_file_id: chat_file, media_file_id: media_file},
     )
 
     json_data: str = chat_data.to_json()
+
+    resource_path: str = os.path.join(os.path.dirname(__file__), "resources", "sample_chat_data.json")
+
+    # check if the resource file exists
+    if not os.path.exists(resource_path):
+        # write the resource path and report
+        with open(resource_path, "w", encoding="utf-8", newline="") as file:
+            file.write(json_data)
+        print("Updated resource file:", resource_path)
+        # fail test to get attention
+        assert False, "Resource file was updated, please rerun tests."
+
     deserialized: ChatData = ChatData.from_json(json_data)
 
     assert len(deserialized.chats) == 1
@@ -44,20 +78,13 @@ def test_serialization() -> None:
     chat: Chat = deserialized.chats[ChatName(name="Space Rocket")]
     assert len(chat.messages) == 1
     assert chat.messages[0].timestamp == "2022-03-12T14:08:18"
-    if message_media := chat.messages[0].media:
-        assert message_media.raw_file_name == "input.jpg"
-        if media_input_path := media.input_path:
-            assert media_input_path.path == "inputfolder/input.jpg"
-        else:
-            assert False, "Expected input_path to be set"
-        assert media.output_path == "outputfolder/input.jpg"
-    else:
-        assert False, "Expected media to be set"
-    if message_input_file := chat.messages[0].input_file:
-        assert message_input_file.path == "_chat.txt"
-    else:
-        assert False, "Expected input_file to be set"
-    assert chat.messages[0].html_file == "2022.html"
+    assert chat.messages[0].input_file_id == chat_file_id
+    assert chat.messages[0].media_file_id == media_file_id
+
+    # Check output file dependencies were preserved
+    output_file = chat.output_files[2022]
+    assert output_file.media_dependencies["input.jpg"] == media_file_id
+    assert output_file.chat_dependencies == [chat_file_id]
 
 
 def test_serialization_round_trip() -> None:
@@ -67,10 +94,6 @@ def test_serialization_round_trip() -> None:
 
     chat_data: ChatData = ChatData.from_json(json_data)
     serialized_data: str = chat_data.to_json()
-
-    # Log the produced JSON for easier resource file updates
-    print("Produced JSON:")
-    print(serialized_data)
 
     # Assert the serialized output matches the original JSON byte by byte
     assert json_data.strip() == serialized_data.strip()
@@ -92,34 +115,26 @@ def test_chat_file_serialization() -> None:
     assert deserialized.size == chat_file.size
 
 
-def test_message_with_chatfile() -> None:
-    chat_file = ChatFile(
+def test_chat_file_id() -> None:
+    # Create two identical files
+    file1 = ChatFile(
         path="example.txt",
-        parent_zip="archive.zip",
-        modification_timestamp=1754448000.0,
         size=1024,
-    )
-    message = Message(
-        timestamp="2022-03-12T14:08:18",
-        sender="Matias Virtanen",
-        content="Hello World",
-        year=2022,
-        input_file=chat_file,
-        html_file="2022.html",
-    )
-
-    assert message.input_file == chat_file
-
-
-def test_media_reference_with_chatfile() -> None:
-    chat_file = ChatFile(
-        path="media.jpg",
-        parent_zip=None,
         modification_timestamp=1754448000.0,
-        size=2048,
     )
-    media_reference = MediaReference(
-        raw_file_name="media.jpg", input_path=chat_file, output_path="outputfolder/media.jpg"
+    file = ChatFile(
+        path="example.txt",
+        size=1024,
+        modification_timestamp=1754448000.0,
     )
+    # IDs should be equal for identical files
+    assert file1.id == file.id
 
-    assert media_reference.input_path == chat_file
+    # Create a file with different metadata
+    file3 = ChatFile(
+        path="example.txt",
+        size=1024,
+        modification_timestamp=1754448001.0,  # Different timestamp
+    )
+    # IDs should be different
+    assert file1.id != file3.id

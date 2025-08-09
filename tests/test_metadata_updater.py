@@ -1,9 +1,9 @@
 """
-Unit tests for metadata updater. Focus on the atomic update process.
-Full integration tests will be added in step 10.
+Tests for metadata updater module.
 """
 
 import os
+import time
 from pathlib import Path
 
 from src.chat_data import Chat, ChatData, ChatName, Message
@@ -13,13 +13,10 @@ from src.metadata_updater import update_metadata
 def test_metadata_update(tmp_path: Path) -> None:
     """Test the atomic update process for metadata files"""
     # Create test data
-    chat_data = ChatData(
-        chats={
-            ChatName("Test"): Chat(
-                chat_name=ChatName("Test"),
-                messages=[Message(timestamp="12:00", sender="Alice", content="Hi", year=2025)],
-            )
-        }
+    chat_data = ChatData()
+    chat_data.chats[ChatName("Test")] = Chat(
+        chat_name=ChatName("Test"),
+        messages=[Message(timestamp="12:00", sender="Alice", content="Hi", year=2025)],
     )
 
     # First update - creates new file
@@ -33,8 +30,6 @@ def test_metadata_update(tmp_path: Path) -> None:
     )
 
     # Sleep for a moment to ensure file timestamps will be different
-    import time
-
     time.sleep(0.1)
     update_metadata(chat_data, str(tmp_path))
 
@@ -48,8 +43,6 @@ def test_metadata_update(tmp_path: Path) -> None:
     )
 
     # Sleep for a moment to ensure file timestamps will be different
-    import time
-
     time.sleep(0.1)
     update_metadata(chat_data, str(tmp_path))
 
@@ -57,7 +50,7 @@ def test_metadata_update(tmp_path: Path) -> None:
     assert new_backup_time > old_backup_time
 
     # Verify the final content
-    with open(os.path.join(tmp_path, "browseability-generator-chat-data.json"), "r") as f:
+    with open(os.path.join(tmp_path, "browseability-generator-chat-data.json"), "r", encoding="utf-8") as f:
         final_json = f.read()
     final_data = ChatData.from_json(final_json)
     assert len(final_data.chats[ChatName("Test")].messages) == 3

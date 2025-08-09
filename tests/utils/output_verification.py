@@ -73,7 +73,7 @@ def compare_or_update_reference(output_path: str, reference_path: str) -> bool:
 
     if not os.path.exists(reference_path):
         # Reference doesn't exist - create it
-        shutil.copy2(output_path, reference_path)
+        shutil.copy(output_path, reference_path)
         warnings.warn(
             f"\nReference file created: {reference_path}\n" f"Please verify its contents before committing.",
             RuntimeWarning,

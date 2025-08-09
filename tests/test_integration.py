@@ -14,7 +14,7 @@ def test_basic_run(test_env: ChatTestEnvironment) -> None:
     test_env.copy_demo_chat(input_dir, TIMESTAMPS["BASE"])
 
     # Run the main function
-    main_args = ["--input", str(input_dir), "--output", str(output_dir), "--locale", "FI"]
+    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
     main(main_args, timestamp="2025-08-03 14:28:38")
 
     # Verify output against reference
@@ -39,7 +39,7 @@ def test_duplicated_chat(test_env: ChatTestEnvironment) -> None:
     test_env.copy_demo_chat(chat2_dir, TIMESTAMPS["BACKUP2"])
 
     # Run the main function
-    main_args = ["--input", str(input_dir), "--output", str(output_dir), "--locale", "FI"]
+    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
     main(main_args, timestamp="2025-08-03 14:28:38")
 
     # Verify output against reference - should handle duplicates and produce clean output
@@ -66,7 +66,7 @@ def test_overlapping_chat_history(test_env: ChatTestEnvironment) -> None:
     test_env.filter_chat_lines(backup2_dir, 12, 21, TIMESTAMPS["BACKUP2"])
 
     # Run the main function
-    main_args = ["--input", str(input_dir), "--output", str(output_dir), "--locale", "FI"]
+    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
     main(main_args, timestamp="2025-08-03 14:28:38")
 
     # Verify output against reference
@@ -94,7 +94,7 @@ def test_invalid_chat_syntax(test_env: ChatTestEnvironment) -> None:
     test_env.insert_chat_lines(chat_dir, 5, invalid_lines, TIMESTAMPS["BASE"])
 
     # Run the main function
-    main_args = ["--input", str(input_dir), "--output", str(output_dir), "--locale", "FI"]
+    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
     main(main_args, timestamp="2025-08-03 14:28:38")
 
     # Verify output against reference

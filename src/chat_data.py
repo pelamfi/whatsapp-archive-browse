@@ -1,48 +1,67 @@
+import base64
+import hashlib
 import json
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, NotRequired, Optional, TypedDict, Union
 
 
+@dataclass(frozen=True)
+class ChatFileID:
+    """Unique identifier for a file based on its path, size, and modification time."""
+
+    value: str
+
+    @staticmethod
+    def create(mtime: float, size: int, path: str) -> "ChatFileID":
+        """Creates a ChatFileID by hashing the file's metadata."""
+        key = f"{mtime}:{size}:{path}"
+        hash_obj = hashlib.sha1(key.encode(), usedforsecurity=False)
+        return ChatFileID(base64.b64encode(hash_obj.digest()).decode())
+
+
 class ChatFileDict(TypedDict):
     path: str
+    size: int
+    modification_timestamp: float
     parent_zip: NotRequired[Optional[str]]
-    modification_timestamp: NotRequired[Optional[float]]
-    size: NotRequired[Optional[int]]
+    exists: NotRequired[bool]
 
 
 @dataclass
 class ChatFile:
-    path: str  # Relative path to the file
+    path: str  # Relative path to the file within the containing directory or zip
+    size: int  # Size of the file in bytes
+    modification_timestamp: float  # Timestamp of last modification
     parent_zip: Optional[str] = None  # Path to the parent zip file, if any
-    modification_timestamp: Optional[float] = None  # Timestamp of last modification
-    size: Optional[int] = None  # Size of the file in bytes
+    exists: bool = True  # Whether the file currently exists
+
+    @property
+    def id(self) -> ChatFileID:
+        """Returns a unique identifier for this file based on its metadata."""
+        return ChatFileID.create(
+            mtime=self.modification_timestamp,
+            size=self.size,
+            path=self.path,
+        )
 
     def to_dict(self) -> ChatFileDict:
         return {
             "path": self.path,
-            "parent_zip": self.parent_zip,
-            "modification_timestamp": self.modification_timestamp,
             "size": self.size,
+            "modification_timestamp": self.modification_timestamp,
+            "parent_zip": self.parent_zip,
+            "exists": self.exists,
         }
 
     @staticmethod
     def from_dict(data: ChatFileDict) -> "ChatFile":
         return ChatFile(
             path=data["path"],
+            size=data["size"],
+            modification_timestamp=data["modification_timestamp"],
             parent_zip=data.get("parent_zip"),
-            modification_timestamp=data.get("modification_timestamp"),
-            size=data.get("size"),
+            exists=data.get("exists", True),
         )
-
-
-@dataclass
-class MediaReference:
-    # The raw file name extracted from the content.
-    raw_file_name: str
-    # The input path of the media file, if known. Input file can be lost to time, so it is optional.
-    input_path: Optional[ChatFile] = None
-    # The output path of the media file, if known.
-    output_path: Optional[str] = None
 
 
 @dataclass
@@ -55,12 +74,10 @@ class Message:
     content: str
     # The year extracted from the timestamp, used to determine the output HTML file.
     year: int
-    # Optional media reference associated with the message.
-    media: Optional[MediaReference] = None
-    # The input file where the message was found. Input file can be lost to time, so it is optional.
-    input_file: Optional[ChatFile] = None
-    # Relative path to the possible per year HTML file where the message is placed.
-    html_file: Optional[str] = None
+    # The input file ID where the message was found.
+    input_file_id: Optional[ChatFileID] = None
+    # The ID of the media file reference, if found.
+    media_file_id: Optional[ChatFileID] = None
 
 
 @dataclass
@@ -79,24 +96,52 @@ class ChatName:
 class OutputFileDict(TypedDict):
     year: int
     generate: NotRequired[bool]
+    media_dependencies: NotRequired[Dict[str, Optional[str]]]  # basename -> ChatFileID value
+    chat_dependencies: NotRequired[List[str]]  # List of ChatFileID values
+    css_dependency: NotRequired[str]  # ChatFileID value
 
 
 @dataclass
 class OutputFile:
     """
-    Represents a YYYY.html file in the output directory.
-    Used to track which files need to be regenerated on each run.
+    Represents a YYYY.html file in the output directory and tracks its dependencies.
+    Dependencies are used to determine if the file needs to be regenerated.
     """
 
     year: int  # The year this file contains messages for
     generate: bool = False  # Whether this file needs to be regenerated this run
+    media_dependencies: Dict[str, Optional[ChatFileID]] = field(default_factory=dict)  # basename -> ID
+    chat_dependencies: List[ChatFileID] = field(default_factory=list)  # _chat.txt files
+    css_dependency: Optional[ChatFileID] = None  # CSS resource dependency
 
     def to_dict(self) -> OutputFileDict:
-        return {"year": self.year, "generate": self.generate}
+        result: OutputFileDict = {
+            "year": self.year,
+            "generate": self.generate,
+        }
+        # Only include dependency fields if they have values
+        if self.media_dependencies:
+            result["media_dependencies"] = {
+                basename: id.value if id else None for basename, id in self.media_dependencies.items()
+            }
+        if self.chat_dependencies:
+            result["chat_dependencies"] = [id.value for id in self.chat_dependencies]
+        if self.css_dependency:
+            result["css_dependency"] = self.css_dependency.value
+        return result
 
     @staticmethod
     def from_dict(data: OutputFileDict) -> "OutputFile":
-        return OutputFile(year=data["year"], generate=data.get("generate", False))
+        return OutputFile(
+            year=data["year"],
+            generate=data.get("generate", False),
+            media_dependencies={
+                basename: ChatFileID(value=id_value) if id_value else None
+                for basename, id_value in data.get("media_dependencies", {}).items()
+            },
+            chat_dependencies=[ChatFileID(value=id_value) for id_value in data.get("chat_dependencies", [])],
+            css_dependency=ChatFileID(value=css_id) if (css_id := data.get("css_dependency")) else None,
+        )
 
 
 def messages_factory() -> List[Message]:
@@ -108,6 +153,10 @@ def output_files_factory() -> Dict[int, OutputFile]:
 
 
 def chats_factory() -> Dict[ChatName, "Chat"]:
+    return {}
+
+
+def input_files_factory() -> Dict[ChatFileID, ChatFile]:
     return {}
 
 
@@ -127,6 +176,7 @@ class ChatDict(TypedDict):
 class ChatData:
     chats: Dict[ChatName, Chat] = field(default_factory=chats_factory)
     timestamp: str = "1970-01-01T00:00:00"  # Default timestamp, can be updated later
+    input_files: Dict[ChatFileID, ChatFile] = field(default_factory=input_files_factory)  # Repository of input files
 
     def to_json(self) -> str:
         def encode_key(key: ChatName) -> str:
@@ -136,13 +186,21 @@ class ChatData:
             chat_dict: Dict[str, Any] = chat.__dict__.copy()
             del chat_dict["chat_name"]
             chat_dict["output_files"] = {str(year): file.to_dict() for year, file in chat.output_files.items()}
-            return ChatDict(messages=chat_dict["messages"], output_files=chat_dict["output_files"])
+            return ChatDict(
+                messages=chat_dict["messages"],
+                output_files=chat_dict["output_files"],
+            )
 
-        def default_serializer(obj: Union[Message, MediaReference, ChatFile]) -> dict[str, Any]:
+        def default_serializer(obj: Union[Message, ChatFile, ChatFileID]) -> Any:
+            if isinstance(obj, ChatFileID):
+                return obj.value
             return obj.__dict__
 
         return json.dumps(
-            {"chats": {encode_key(k): encode_chat(v) for k, v in self.chats.items()}},
+            {
+                "chats": {encode_key(k): encode_chat(v) for k, v in self.chats.items()},
+                "input_files": {file_id.value: file.to_dict() for file_id, file in self.input_files.items()},
+            },
             indent=4,
             sort_keys=True,
             default=default_serializer,
@@ -155,31 +213,44 @@ class ChatData:
 
         def decode_message_list(messages: List[dict[str, Any]]) -> List[Message]:
             def decode_message(msg: dict[str, Any]) -> Message:
-                # Convert input_file to ChatFile if present
+                # Create ID from legacy input_file data
                 if "input_file" in msg and msg["input_file"] is not None:
-                    if isinstance(msg["input_file"], str):  # Handle legacy format
-                        msg["input_file"] = ChatFile(path=str(msg["input_file"]))
+                    file_data = msg.pop("input_file")
+                    if isinstance(file_data, str):  # Handle legacy format
+                        meta = ChatFile(
+                            path=str(file_data),
+                            size=0,  # Legacy data doesn't have size info
+                            modification_timestamp=0.0,  # Legacy data doesn't have timestamp
+                            exists=False,  # Legacy file might not exist
+                        )
+                        msg["input_file_id"] = meta.id if meta.exists else None
                     else:
-                        input_file_data = dict(msg["input_file"])
-                        msg["input_file"] = ChatFile(**input_file_data)
+                        meta = ChatFile(**dict(file_data))
+                        msg["input_file_id"] = meta.id if meta.exists else None
+                # Direct ID in new format
+                elif isinstance(msg.get("input_file_id"), str):
+                    msg["input_file_id"] = ChatFileID(value=msg["input_file_id"])
 
                 # Handle media reference
                 if "media" in msg and msg["media"] is not None:
                     media: dict[str, Any] = dict(msg["media"])  # Make a copy to modify
 
-                    # Handle input_path
+                    # Create ID from legacy media file data
                     if "input_path" in media and media["input_path"] is not None:
-                        if isinstance(media["input_path"], str):  # Handle legacy format
-                            size = media.pop("size", None)  # Extract size if present
-                            media["input_path"] = ChatFile(path=str(media["input_path"]), size=size)
+                        file_data = media["input_path"]
+                        if isinstance(file_data, str):  # Handle legacy format
+                            meta = ChatFile(
+                                path=str(file_data),
+                                size=media.get("size", 0),  # Extract size if present
+                                modification_timestamp=0.0,  # Legacy data doesn't have timestamp
+                                exists=False,  # Legacy file might not exist
+                            )
                         else:
-                            input_path_data = dict(media["input_path"])
-                            media["input_path"] = ChatFile(**input_path_data)
-
-                    # Remove size if present (it's now in ChatFile)
-                    media.pop("size", None)
-
-                    msg["media"] = MediaReference(**media)
+                            meta = ChatFile(**dict(file_data))
+                        msg["media_file_id"] = meta.id if meta.exists else None
+                # Direct ID in new format
+                elif isinstance(msg.get("media_file_id"), str):
+                    msg["media_file_id"] = ChatFileID(value=msg["media_file_id"])
                 return Message(**msg)
 
             return [decode_message(msg) for msg in messages]
@@ -187,18 +258,14 @@ class ChatData:
         def decode_output_files(files_dict: dict[str, Any]) -> Dict[int, OutputFile]:
             if not files_dict:
                 return {}
-            return {
-                int(year): OutputFile.from_dict(
-                    OutputFileDict(
-                        year=int(file_data.get("year", 0)),
-                        generate=bool(file_data.get("generate", False)),
-                    )
-                )
-                for year, file_data in files_dict.items()
-            }
+            return {int(year): OutputFile.from_dict(file_data) for year, file_data in files_dict.items()}
 
         obj: dict[str, Any] = json.loads(data)
-        obj["chats"] = {
+        input_files = {
+            ChatFileID(value=id_value): ChatFile.from_dict(file_dict)
+            for id_value, file_dict in obj.get("input_files", {}).items()
+        }
+        chats = {
             decode_key(k): Chat(
                 chat_name=decode_key(k),
                 messages=decode_message_list(v.get("messages", [])),
@@ -206,4 +273,4 @@ class ChatData:
             )
             for k, v in obj["chats"].items()
         }
-        return ChatData(chats=obj["chats"])
+        return ChatData(chats=chats, input_files=input_files)
