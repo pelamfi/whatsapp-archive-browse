@@ -65,18 +65,6 @@ class ChatFile2:
 
 
 @dataclass
-class MediaReference2:
-    # The raw file name extracted from the content.
-    raw_file_name: str
-    # The ID of the input media file, if known.
-    input_file_id: Optional[ChatFileID] = None
-    # The input file metadata when media was serialized. Used for debugging and recovery.
-    input_file_meta: Optional[ChatFile2] = None
-    # The output path of the media file, if known.
-    output_path: Optional[str] = None
-
-
-@dataclass
 class Message2:
     # The timestamp of the message, stored verbatim without square brackets.
     timestamp: str
@@ -86,14 +74,10 @@ class Message2:
     content: str
     # The year extracted from the timestamp, used to determine the output HTML file.
     year: int
-    # Optional media reference associated with the message.
-    media: Optional[MediaReference2] = None
     # The input file ID where the message was found.
     input_file_id: Optional[ChatFileID] = None
-    # The input file metadata when message was serialized. Used for debugging and recovery.
-    input_file_meta: Optional[ChatFile2] = None
-    # Relative path to the possible per year HTML file where the message is placed.
-    html_file: Optional[str] = None
+    # The ID of the media file reference, if found.
+    media_file_id: Optional[ChatFileID] = None
 
 
 @dataclass
@@ -199,7 +183,7 @@ class ChatData2:
             chat_dict["output_files"] = {str(year): file.to_dict() for year, file in chat.output_files.items()}
             return Chat2Dict(messages=chat_dict["messages"], output_files=chat_dict["output_files"])
 
-        def default_serializer(obj: Union[Message2, MediaReference2, ChatFile2]) -> dict[str, Any]:
+        def default_serializer(obj: Union[Message2, ChatFile2]) -> dict[str, Any]:
             return obj.__dict__
 
         return json.dumps(
@@ -216,7 +200,7 @@ class ChatData2:
 
         def decode_message_list(messages: List[dict[str, Any]]) -> List[Message2]:
             def decode_message(msg: dict[str, Any]) -> Message2:
-                # Convert input_file to ChatFileID and metadata
+                # Convert input_file to ChatFileID
                 if "input_file" in msg and msg["input_file"] is not None:
                     file_data = msg.pop("input_file")
                     if isinstance(file_data, str):  # Handle legacy format
@@ -228,14 +212,13 @@ class ChatData2:
                         )
                     else:
                         meta = ChatFile2(**dict(file_data))
-                    msg["input_file_meta"] = meta
                     msg["input_file_id"] = meta.id if meta.exists else None
 
                 # Handle media reference
                 if "media" in msg and msg["media"] is not None:
                     media: dict[str, Any] = dict(msg["media"])  # Make a copy to modify
 
-                    # Handle input_path
+                    # Handle input_path (media file reference)
                     if "input_path" in media and media["input_path"] is not None:
                         file_data = media.pop("input_path")
                         if isinstance(file_data, str):  # Handle legacy format
@@ -247,12 +230,7 @@ class ChatData2:
                             )
                         else:
                             meta = ChatFile2(**dict(file_data))
-                        media["input_file_meta"] = meta
-                        media["input_file_id"] = meta.id if meta.exists else None
-                        # Remove size if present (it's now in ChatFile2)
-                    media.pop("size", None)
-
-                    msg["media"] = MediaReference2(**media)
+                        msg["media_file_id"] = meta.id if meta.exists else None
                 return Message2(**msg)
 
             return [decode_message(msg) for msg in messages]
