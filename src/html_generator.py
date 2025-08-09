@@ -83,10 +83,9 @@ def format_content_html(text: str) -> str:
 def format_message_html(message: Message, chat_data: ChatData) -> str:
     """Format a single message as HTML."""
     media_html = ""
-    if message.media_file_id is not None and message.media_file_id in chat_data.input_files:
-        media_file = chat_data.input_files[message.media_file_id]
-        media_filename = os.path.basename(media_file.path)
-        media_html = f'<div class="media"><img src="media/{html.escape(media_filename)}"></div>'
+    if message.media_name:
+        # Media file name will be used directly in the HTML
+        media_html = f'<div class="media"><img src="media/{html.escape(message.media_name)}" alt="Media"></div>'
 
     return f"""
     <div class="message">
@@ -196,15 +195,18 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
 
         # Copy media files for each message
         for msg in chat.messages:
-            if msg.media_file_id is not None and msg.media_file_id in chat_data.input_files:
-                media_file = chat_data.input_files[msg.media_file_id]
-                if copy_media_file(input_dir, chat_dir, media_file):
-                    # Update output file dependencies
-                    year = msg.year
-                    if year not in chat.output_files:
-                        chat.output_files[year] = OutputFile(year=year)
-                    output_file = chat.output_files[year]
-                    output_file.media_dependencies[os.path.basename(media_file.path)] = msg.media_file_id
+            if msg.media_name:
+                # Get the year's output file where we can find media dependencies
+                year = msg.year
+                if year not in chat.output_files:
+                    chat.output_files[year] = OutputFile(year=year)
+                output_file = chat.output_files[year]
+
+                # Check if we found this media file
+                if media_file_id := output_file.media_dependencies.get(msg.media_name):
+                    if media_file_id in chat_data.input_files:
+                        media_file = chat_data.input_files[media_file_id]
+                        copy_media_file(input_dir, chat_dir, media_file)
 
             years.add(msg.year)
 

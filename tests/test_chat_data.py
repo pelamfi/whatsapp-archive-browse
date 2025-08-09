@@ -41,7 +41,7 @@ def test_serialization() -> None:
         content="Hello World",
         year=2022,
         input_file_id=chat_file_id,
-        media_file_id=media_file_id,
+        media_name="input.jpg",
     )
 
     # Create chat data with output file dependencies
@@ -79,7 +79,7 @@ def test_serialization() -> None:
     assert len(chat.messages) == 1
     assert chat.messages[0].timestamp == "2022-03-12T14:08:18"
     assert chat.messages[0].input_file_id == chat_file_id
-    assert chat.messages[0].media_file_id == media_file_id
+    assert chat.messages[0].media_name == "input.jpg"
 
     # Check output file dependencies were preserved
     output_file = chat.output_files[2022]

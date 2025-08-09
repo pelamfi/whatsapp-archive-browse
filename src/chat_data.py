@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import json
+import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, NotRequired, Optional, TypedDict, Union
 
@@ -76,8 +77,8 @@ class Message:
     year: int
     # The input file ID where the message was found.
     input_file_id: Optional[ChatFileID] = None
-    # The ID of the media file reference, if found.
-    media_file_id: Optional[ChatFileID] = None
+    # The name of the media file referenced in this message, if any.
+    media_name: Optional[str] = None
 
 
 @dataclass
@@ -96,9 +97,9 @@ class ChatName:
 class OutputFileDict(TypedDict):
     year: int
     generate: NotRequired[bool]
-    media_dependencies: NotRequired[Dict[str, Optional[str]]]  # basename -> ChatFileID value
-    chat_dependencies: NotRequired[List[str]]  # Set of ChatFileID values serialized as a list
-    css_dependency: NotRequired[str]  # ChatFileID value
+    media_dependencies: NotRequired[Dict[str, Optional[str]]]  # basename -> ChatFileID value as string
+    chat_dependencies: NotRequired[List[str]]  # Set of ChatFileID values serialized as list of strings
+    css_dependency: NotRequired[str]  # ChatFileID value as string
 
 
 @dataclass
@@ -119,14 +120,13 @@ class OutputFile:
             "year": self.year,
             "generate": self.generate,
         }
-        # Only include dependency fields if they have values
-        if self.media_dependencies:
-            result["media_dependencies"] = {
-                basename: id.value if id else None for basename, id in self.media_dependencies.items()
-            }
-        if self.chat_dependencies:
+        # Always include dependency fields even if empty
+        result["media_dependencies"] = {
+            basename: id.value if id else None for basename, id in self.media_dependencies.items()
+        }
+        if self.chat_dependencies:  # Only add if not empty since it's a set
             result["chat_dependencies"] = sorted(id.value for id in self.chat_dependencies)
-        if self.css_dependency:
+        if self.css_dependency:  # Only add if exists since it's optional
             result["css_dependency"] = self.css_dependency.value
         return result
 
@@ -234,23 +234,18 @@ class ChatData:
                 # Handle media reference
                 if "media" in msg and msg["media"] is not None:
                     media: dict[str, Any] = dict(msg["media"])  # Make a copy to modify
-
-                    # Create ID from legacy media file data
+                    # Convert legacy media format to just the filename
                     if "input_path" in media and media["input_path"] is not None:
-                        file_data = media["input_path"]
-                        if isinstance(file_data, str):  # Handle legacy format
-                            meta = ChatFile(
-                                path=str(file_data),
-                                size=media.get("size", 0),  # Extract size if present
-                                modification_timestamp=0.0,  # Legacy data doesn't have timestamp
-                                exists=False,  # Legacy file might not exist
-                            )
+                        if isinstance(media["input_path"], str):
+                            msg["media_name"] = os.path.basename(media["input_path"])
                         else:
-                            meta = ChatFile(**dict(file_data))
-                        msg["media_file_id"] = meta.id if meta.exists else None
-                # Direct ID in new format
+                            msg["media_name"] = os.path.basename(media["input_path"]["path"])
+                # Handle new format
+                elif "media_name" in msg:
+                    msg["media_name"] = msg["media_name"]
+                # Handle old media_file_id format by converting to media_name
                 elif isinstance(msg.get("media_file_id"), str):
-                    msg["media_file_id"] = ChatFileID(value=msg["media_file_id"])
+                    msg["media_name"] = msg.get("content", "")
                 return Message(**msg)
 
             return [decode_message(msg) for msg in messages]

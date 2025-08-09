@@ -39,7 +39,7 @@ def test_format_message_html(tmp_path: Path) -> None:
         sender="Alice",
         content="",
         year=2025,
-        media_file_id=media_file.id,
+        media_name="test.jpg",
     )
     html = format_message_html(message, chat_data)
     assert 'img src="media/test.jpg"' in html

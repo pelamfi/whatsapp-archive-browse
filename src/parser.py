@@ -2,7 +2,6 @@
 Module for parsing WhatsApp chat export files.
 """
 
-import os
 import re
 from dataclasses import dataclass
 from typing import Optional, Tuple
@@ -104,24 +103,14 @@ media_regex: re.Pattern[str] = re.compile(r"<(?:[^\W\d_]{1,20}\s?){1,3}: (.*?)>"
 
 def raw_chat_line_to_message(raw_line: RawChatLine, input_file: ChatFile) -> Message:
     """Convert a RawChatLine to a Message object."""
-    media_file_id: Optional[ChatFileID] = None
     content: str = raw_line.content
+    media_name: Optional[str] = None
 
     # Check if the content contains a media reference
     media_match: re.Match[str] | None = media_regex.search(content)
     if media_match:
-        content = ""  # When media is found, clear the content as per existing behavior
+        # Store media filename, clear content as it's just a media reference
         media_name = media_match.group(1)
-        # Assuming the media file is in the same directory as the chat file
-        media_path = os.path.join(os.path.dirname(input_file.path), media_name)
-        # Create a temporary ChatFile for the media file, size/mtime will be updated later
-        media_file = ChatFile(
-            path=media_path,
-            size=0,
-            modification_timestamp=0.0,
-            parent_zip=input_file.parent_zip,
-        )
-        media_file_id = media_file.id
 
     return Message(
         timestamp=raw_line.timestamp,
@@ -129,7 +118,7 @@ def raw_chat_line_to_message(raw_line: RawChatLine, input_file: ChatFile) -> Mes
         content=content,
         year=raw_line.year,
         input_file_id=input_file.id,
-        media_file_id=media_file_id,
+        media_name=media_name,
     )
 
 

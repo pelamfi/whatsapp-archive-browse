@@ -104,7 +104,7 @@ def test_parse_chat_file_complex_scenarios(tmp_path: Path) -> None:
     assert chat.messages[1].content == expected_multiline
 
     # Check media reference
-    assert chat.messages[2].media_file_id is not None
+    assert chat.messages[2].media_name == "photo.jpg"  # Media filename extracted
     assert chat.messages[2].content == ""  # U+200E removed from the beginning of message
 
     # Check year extraction from different years

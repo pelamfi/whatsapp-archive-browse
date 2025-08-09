@@ -5,7 +5,7 @@ Scanner for WhatsApp chat exports using ChatData structures.
 import os
 from typing import List, Optional
 
-from src.chat_data import ChatData, ChatFile
+from src.chat_data import ChatData, ChatFile, OutputFile
 from src.parser import parse_chat_file
 
 
@@ -91,13 +91,23 @@ def scan_input_directory(input_dir: str, existing_data: Optional[ChatData] = Non
         else:
             chat_data.chats[chat.chat_name] = chat
 
-    # Look for media files
+    # Look for media files and update output file dependencies
     for chat in chat_data.chats.values():
         for msg in chat.messages:
-            if msg.media_file_id is not None and msg.input_file_id is not None:
+            # Process messages with media references
+            if msg.media_name and msg.input_file_id is not None:
+                if msg.year not in chat.output_files:
+                    chat.output_files[msg.year] = OutputFile(year=msg.year)
+
+                output_file = chat.output_files[msg.year]
+
                 # Try to locate the media file
-                if media_file := find_media_files(input_dir, chat_data.input_files[msg.input_file_id], msg.content):
+                if media_file := find_media_files(input_dir, chat_data.input_files[msg.input_file_id], msg.media_name):
+                    # Store the media file in input_files and link it in dependencies
                     chat_data.input_files[media_file.id] = media_file
-                    msg.media_file_id = media_file.id
+                    output_file.media_dependencies[msg.media_name] = media_file.id
+                else:
+                    # Media file not found, mark as None in dependencies
+                    output_file.media_dependencies[msg.media_name] = None
 
     return chat_data
