@@ -1,6 +1,6 @@
 ## Testing approach used in Whatsapp Archive Browse
 
-### Motivation
+### Motivation for the testing approach
 
 I've seen large projects become very expensive to refactor due to countless
 fragile low value unit tests... this is what I would like to avoid in any
@@ -14,13 +14,13 @@ breaks the tests. Moving often also would require refactoring of the tests as
 well because if is no longer a unit test by definition if for example some of
 the functions that the test is built upon are no longer in the "unit".
 
-### Inspiration
+### Inspiration for the testing approach
 
 Roughly inspired by [the testing
 trophy](https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications),
 but focusing even more on end to end tests.
 
-### Testing approach
+### Testing approach in Whatapp Archive Browse
 
 - Heavy use of type hints (static, base of the testing trophy)
 - Small number of basic simple unit tests (skimping here in this project)
