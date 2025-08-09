@@ -6,6 +6,30 @@ This document outlines the next phase of development focusing on implementing in
 - [chat-format.md](./chat-format.md) for message parsing approach
 - [testing-approach.md](./testing-approach.md) for testing strategy
 
+
+
+## Modification to plan below
+
+We will include plan steps to split the the current
+
+|"Input Directory Scan" into 3 new stages:
+
+- new stage 1, Input VFS Scan
+  - will take the input_files part of the potential Output Directory Check stage
+  - will merge new discovered input files to the old ones. ChatFile2 should have flags indicating whether the file came from the old output dir JSON and whether it was also still present input.
+
+- new stage 2, _chat.txt parsing and message dedup
+  - Simply parse all new _chat.txt files.
+  - Sort messages for modified chats in the order of the timstamps of the _chat.txt files (this can also be done for messages for which the original _chat.txt has disappeared)
+  - Remove consecutive duplicate messages in a single pass per chat that was processed in this stage
+
+- new stage 3, media file locating
+  - Identify missing (None) media files in the OutputFile2 dictionaries
+  - Try to locate missing ones in the VFS (looking for a file that has a flag that it is present in the input)
+    - As currently, prefer ones in the same folder as the _chat.txt
+    - Otherwise any file with same base name in any folder / zip
+
+
 ## 1. Model Refactoring: ChatData2
 Fundamental changes to support incremental processing and efficient file handling.
 
