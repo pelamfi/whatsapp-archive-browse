@@ -61,11 +61,14 @@ run_quietly "mypy type checker" $PYTHON -m mypy src tests
 
 # Run tests first without coverage to get fast feedback
 echo "Running pytest test suite..."
-if ! $PYTHON -m pytest 2>&1 | tee "$BUILD_DIR"/test_output.txt; then
-    echo "❌ Tests failed - see above for details"
+if ! test_output=$($PYTHON -m pytest 2>&1); then
+    echo "❌ Tests failed:"
+    echo "$test_output"
+    echo "$test_output" > "$BUILD_DIR"/test_output.txt
     exit 1
 fi
 echo "✓ All tests passed"
+echo "$test_output" > "$BUILD_DIR"/test_output.txt
 
 # Only run coverage if tests pass
 echo "Generating coverage report..."
