@@ -111,6 +111,10 @@ def raw_chat_line_to_message(raw_line: RawChatLine, input_file: ChatFile) -> Mes
     if media_match:
         # Store media filename, clear content as it's just a media reference
         media_name = media_match.group(1)
+        # Remove media reference from content. Do we actually want a place
+        # holder? I think media is always first and any "attached" text follows
+        # it.
+        content = content.replace(media_match.group(0), "")
 
     return Message(
         timestamp=raw_line.timestamp,
