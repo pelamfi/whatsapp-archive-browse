@@ -1,4 +1,4 @@
-v## Whatsapp Archive Browseability Generator
+## Whatsapp Archive Browseability Generator
 
 This tool scans a directory for exported Whatsapp archives, zipped or otherwise and
 generates a clean static HTML folder where backed up Whatsapp chats can be
@@ -332,11 +332,9 @@ All tools are configured through `pyproject.toml`, making it easy to run the sam
 
 - Top level folder, the folder given with `--output` parameter contains:
   - `index.html` - allows access to known chats
-  - `browseability-generator.css` - the common .css resource used by index.html files
   - `browseability-generator-chat-data.json` - metadata for incremental processing and maintaining chats for which archives no longer exists
   - `Chat Name` - Subdirectories for each known chat with the name of the chat as directory name
-    - `index.html` - showing the chat name and links to per year `.html` files
-    - `browseability-generator.css` - a copy of the .css to make the directory stand alone
+    - `index.html` - showing the chat name and links to per year `YYYY.html` files
     - `YYYY.html` - a per year HTML file for years for which chat messages exist for this chat
 
 
