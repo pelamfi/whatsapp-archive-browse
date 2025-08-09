@@ -196,12 +196,19 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
     # Track which chats have which years for index generation
     chat_years: Dict[str, Set[int]] = {}
 
-    # Process each chat
+    # First, copy all referenced media files for each chat
+    print("Copying media files...")
     for chat_name, chat in chat_data.chats.items():
         chat_dir = os.path.join(output_dir, chat_name.name)
         os.makedirs(chat_dir, exist_ok=True)
         os.makedirs(os.path.join(chat_dir, "media"), exist_ok=True)
+        for msg in chat.messages:
+            if msg.media:
+                copy_media_file(input_dir, chat_dir, msg.media)
 
+    # Now generate HTML files for each chat
+    for chat_name, chat in chat_data.chats.items():
+        chat_dir = os.path.join(output_dir, chat_name.name)
         years: set[int] = set()
         for year, output_file in chat.output_files.items():
             years.add(year)
@@ -228,11 +235,3 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
     main_index = create_main_index_html(chat_years, chat_data.timestamp)
     with open(os.path.join(output_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(main_index)
-
-    # Copy all referenced media files
-    print("Copying media files...")
-    for chat in chat_data.chats.values():
-        chat_dir = os.path.join(output_dir, chat.chat_name.name)
-        for msg in chat.messages:
-            if msg.media:
-                copy_media_file(input_dir, chat_dir, msg.media)
