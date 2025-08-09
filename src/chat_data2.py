@@ -68,8 +68,10 @@ class ChatFile2:
 class MediaReference2:
     # The raw file name extracted from the content.
     raw_file_name: str
-    # The input path of the media file, if known. Input file can be lost to time, so it is optional.
-    input_path: Optional[ChatFile2] = None
+    # The ID of the input media file, if known.
+    input_file_id: Optional[ChatFileID] = None
+    # The input file metadata when media was serialized. Used for debugging and recovery.
+    input_file_meta: Optional[ChatFile2] = None
     # The output path of the media file, if known.
     output_path: Optional[str] = None
 
@@ -86,8 +88,10 @@ class Message2:
     year: int
     # Optional media reference associated with the message.
     media: Optional[MediaReference2] = None
-    # The input file where the message was found. Input file can be lost to time, so it is optional.
-    input_file: Optional[ChatFile2] = None
+    # The input file ID where the message was found.
+    input_file_id: Optional[ChatFileID] = None
+    # The input file metadata when message was serialized. Used for debugging and recovery.
+    input_file_meta: Optional[ChatFile2] = None
     # Relative path to the possible per year HTML file where the message is placed.
     html_file: Optional[str] = None
 
@@ -108,24 +112,52 @@ class ChatName2:
 class OutputFile2Dict(TypedDict):
     year: int
     generate: NotRequired[bool]
+    media_dependencies: NotRequired[Dict[str, Optional[str]]]  # basename -> ChatFileID value
+    chat_dependencies: NotRequired[List[str]]  # List of ChatFileID values
+    css_dependency: NotRequired[str]  # ChatFileID value
 
 
 @dataclass
 class OutputFile2:
     """
-    Represents a YYYY.html file in the output directory.
-    Used to track which files need to be regenerated on each run.
+    Represents a YYYY.html file in the output directory and tracks its dependencies.
+    Dependencies are used to determine if the file needs to be regenerated.
     """
 
     year: int  # The year this file contains messages for
     generate: bool = False  # Whether this file needs to be regenerated this run
+    media_dependencies: Dict[str, Optional[ChatFileID]] = field(default_factory=dict)  # basename -> ID
+    chat_dependencies: List[ChatFileID] = field(default_factory=list)  # _chat.txt files
+    css_dependency: Optional[ChatFileID] = None  # CSS resource dependency
 
     def to_dict(self) -> OutputFile2Dict:
-        return {"year": self.year, "generate": self.generate}
+        result: OutputFile2Dict = {
+            "year": self.year,
+            "generate": self.generate,
+        }
+        # Only include dependency fields if they have values
+        if self.media_dependencies:
+            result["media_dependencies"] = {
+                basename: id.value if id else None for basename, id in self.media_dependencies.items()
+            }
+        if self.chat_dependencies:
+            result["chat_dependencies"] = [id.value for id in self.chat_dependencies]
+        if self.css_dependency:
+            result["css_dependency"] = self.css_dependency.value
+        return result
 
     @staticmethod
     def from_dict(data: OutputFile2Dict) -> "OutputFile2":
-        return OutputFile2(year=data["year"], generate=data.get("generate", False))
+        return OutputFile2(
+            year=data["year"],
+            generate=data.get("generate", False),
+            media_dependencies={
+                basename: ChatFileID(value=id_value) if id_value else None
+                for basename, id_value in data.get("media_dependencies", {}).items()
+            },
+            chat_dependencies=[ChatFileID(value=id_value) for id_value in data.get("chat_dependencies", [])],
+            css_dependency=ChatFileID(value=css_id) if (css_id := data.get("css_dependency")) else None,
+        )
 
 
 def messages2_factory() -> List[Message2]:
@@ -184,18 +216,20 @@ class ChatData2:
 
         def decode_message_list(messages: List[dict[str, Any]]) -> List[Message2]:
             def decode_message(msg: dict[str, Any]) -> Message2:
-                # Convert input_file to ChatFile2 if present
+                # Convert input_file to ChatFileID and metadata
                 if "input_file" in msg and msg["input_file"] is not None:
-                    if isinstance(msg["input_file"], str):  # Handle legacy format
-                        msg["input_file"] = ChatFile2(
-                            path=str(msg["input_file"]),
+                    file_data = msg.pop("input_file")
+                    if isinstance(file_data, str):  # Handle legacy format
+                        meta = ChatFile2(
+                            path=str(file_data),
                             size=0,  # Legacy data doesn't have size info
                             modification_timestamp=0.0,  # Legacy data doesn't have timestamp
                             exists=False,  # Legacy file might not exist
                         )
                     else:
-                        input_file_data = dict(msg["input_file"])
-                        msg["input_file"] = ChatFile2(**input_file_data)
+                        meta = ChatFile2(**dict(file_data))
+                    msg["input_file_meta"] = meta
+                    msg["input_file_id"] = meta.id if meta.exists else None
 
                 # Handle media reference
                 if "media" in msg and msg["media"] is not None:
@@ -203,16 +237,18 @@ class ChatData2:
 
                     # Handle input_path
                     if "input_path" in media and media["input_path"] is not None:
-                        if isinstance(media["input_path"], str):  # Handle legacy format
-                            media["input_path"] = ChatFile2(
-                                path=str(media["input_path"]),
+                        file_data = media.pop("input_path")
+                        if isinstance(file_data, str):  # Handle legacy format
+                            meta = ChatFile2(
+                                path=str(file_data),
                                 size=media.pop("size", 0),  # Extract size if present, default to 0
                                 modification_timestamp=0.0,  # Legacy data doesn't have timestamp
                                 exists=False,  # Legacy file might not exist
                             )
                         else:
-                            input_path_data = dict(media["input_path"])
-                            media["input_path"] = ChatFile2(**input_path_data)
+                            meta = ChatFile2(**dict(file_data))
+                        media["input_file_meta"] = meta
+                        media["input_file_id"] = meta.id if meta.exists else None
                         # Remove size if present (it's now in ChatFile2)
                     media.pop("size", None)
 
