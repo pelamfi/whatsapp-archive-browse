@@ -54,10 +54,27 @@ def test_serialization() -> None:
             ChatName2(name="Space Rocket"): Chat2(
                 chat_name=ChatName2(name="Space Rocket"), messages=[message], output_files={2022: output_file}
             )
-        }
+        },
+        input_files={chat_file_id: chat_file, media_file_id: media_file},
     )
 
     json_data: str = chat_data.to_json()
+
+    resource_path: str = os.path.join(os.path.dirname(__file__), "resources", "sample_chat_data2.json")
+
+    # check if the resource file exists
+    if not os.path.exists(resource_path):
+        # write the resource path and report
+        with open(resource_path, "w", encoding="utf-8", newline="") as file:
+            file.write(json_data)
+        print("Updated resource file:", resource_path)
+        # fail test to get attention
+        assert False, "Resource file was updated, please rerun tests."
+
+    # Log the produced JSON for easier resource file updates
+    print("Produced JSON:")
+    print(json_data)
+
     deserialized: ChatData2 = ChatData2.from_json(json_data)
 
     assert len(deserialized.chats) == 1
@@ -81,10 +98,6 @@ def test_serialization_round_trip() -> None:
 
     chat_data: ChatData2 = ChatData2.from_json(json_data)
     serialized_data: str = chat_data.to_json()
-
-    # Log the produced JSON for easier resource file updates
-    print("Produced JSON:")
-    print(serialized_data)
 
     # Assert the serialized output matches the original JSON byte by byte
     assert json_data.strip() == serialized_data.strip()

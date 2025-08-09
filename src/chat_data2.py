@@ -156,6 +156,10 @@ def chats2_factory() -> Dict[ChatName2, "Chat2"]:
     return {}
 
 
+def input_files_factory() -> Dict[ChatFileID, ChatFile2]:
+    return {}
+
+
 @dataclass
 class Chat2:
     chat_name: ChatName2
@@ -172,6 +176,7 @@ class Chat2Dict(TypedDict):
 class ChatData2:
     chats: Dict[ChatName2, Chat2] = field(default_factory=chats2_factory)
     timestamp: str = "1970-01-01T00:00:00"  # Default timestamp, can be updated later
+    input_files: Dict[ChatFileID, ChatFile2] = field(default_factory=input_files_factory)  # Repository of input files
 
     def to_json(self) -> str:
         def encode_key(key: ChatName2) -> str:
@@ -181,7 +186,10 @@ class ChatData2:
             chat_dict: Dict[str, Any] = chat.__dict__.copy()
             del chat_dict["chat_name"]
             chat_dict["output_files"] = {str(year): file.to_dict() for year, file in chat.output_files.items()}
-            return Chat2Dict(messages=chat_dict["messages"], output_files=chat_dict["output_files"])
+            return Chat2Dict(
+                messages=chat_dict["messages"],
+                output_files=chat_dict["output_files"],
+            )
 
         def default_serializer(obj: Union[Message2, ChatFile2, ChatFileID]) -> Any:
             if isinstance(obj, ChatFileID):
@@ -189,7 +197,10 @@ class ChatData2:
             return obj.__dict__
 
         return json.dumps(
-            {"chats": {encode_key(k): encode_chat(v) for k, v in self.chats.items()}},
+            {
+                "chats": {encode_key(k): encode_chat(v) for k, v in self.chats.items()},
+                "input_files": {file_id.value: file.to_dict() for file_id, file in self.input_files.items()},
+            },
             indent=4,
             sort_keys=True,
             default=default_serializer,
@@ -250,7 +261,11 @@ class ChatData2:
             return {int(year): OutputFile2.from_dict(file_data) for year, file_data in files_dict.items()}
 
         obj: dict[str, Any] = json.loads(data)
-        obj["chats"] = {
+        input_files = {
+            ChatFileID(value=id_value): ChatFile2.from_dict(file_dict)
+            for id_value, file_dict in obj.get("input_files", {}).items()
+        }
+        chats = {
             decode_key(k): Chat2(
                 chat_name=decode_key(k),
                 messages=decode_message_list(v.get("messages", [])),
@@ -258,4 +273,4 @@ class ChatData2:
             )
             for k, v in obj["chats"].items()
         }
-        return ChatData2(chats=obj["chats"])
+        return ChatData2(chats=chats, input_files=input_files)

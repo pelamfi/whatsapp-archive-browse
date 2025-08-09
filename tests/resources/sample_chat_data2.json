@@ -4,8 +4,8 @@
             "messages": [
                 {
                     "content": "Hello World",
-                    "input_file_id": "B64_HASH_INPUT_FILE",
-                    "media_file_id": "B64_HASH_MEDIA_FILE",
+                    "input_file_id": "HhbVaFOxwsPWJ9WLRveRwna68l0=",
+                    "media_file_id": "rjkUgNOLhhp3zJkiXPYxy+fRJg0=",
                     "sender": "Matias Virtanen",
                     "timestamp": "2022-03-12T14:08:18",
                     "year": 2022
@@ -14,15 +14,31 @@
             "output_files": {
                 "2022": {
                     "chat_dependencies": [
-                        "B64_HASH_INPUT_FILE"
+                        "HhbVaFOxwsPWJ9WLRveRwna68l0="
                     ],
                     "generate": true,
                     "media_dependencies": {
-                        "input.jpg": "B64_HASH_MEDIA_FILE"
+                        "input.jpg": "rjkUgNOLhhp3zJkiXPYxy+fRJg0="
                     },
                     "year": 2022
                 }
             }
+        }
+    },
+    "input_files": {
+        "HhbVaFOxwsPWJ9WLRveRwna68l0=": {
+            "exists": true,
+            "modification_timestamp": 1647093600.0,
+            "parent_zip": null,
+            "path": "_chat.txt",
+            "size": 100
+        },
+        "rjkUgNOLhhp3zJkiXPYxy+fRJg0=": {
+            "exists": true,
+            "modification_timestamp": 1647093600.0,
+            "parent_zip": null,
+            "path": "inputfolder/input.jpg",
+            "size": 12345
         }
     }
 }
