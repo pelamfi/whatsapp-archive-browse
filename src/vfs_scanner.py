@@ -79,6 +79,9 @@ def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -
                     # Add ZIP contents
                     zip_id = zip_file.id
                     logger.log(TRACE_LEVEL, f"Processing contents of {relative_path}")
+
+                    zip_files: list[ChatFile] = []
+                    main_chat_file: ChatFile | None = None
                     for zip_info in list_zip_contents(zip_path):
                         chat_file = ChatFile(
                             path=zip_info.filename,
@@ -87,10 +90,27 @@ def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -
                             parent_zip=zip_id,
                             exists=True,
                         )
-                        vfs.add_file(chat_file)
-                        if zip_info.filename.endswith("_chat.txt"):
+                        logger.log(
+                            TRACE_LEVEL,
+                            f"File inside ZIP: {relative_path} {chat_file.path}, size {chat_file.size} bytes",
+                        )
+                        zip_files.append(chat_file)
+                        if zip_info.filename == "_chat.txt":
+                            main_chat_file = chat_file
                             progress.chat_files += 1
-                    logger.log(TRACE_LEVEL, f"Finished processing ZIP: {relative_path}")
+                    if main_chat_file:
+                        logger.info(
+                            f"Finished processing Whatsapp ZIP: {relative_path} with {len(zip_files)} files "
+                            f"and _chat.txt size of {main_chat_file.size} bytes",
+                        )
+                        for chat_file in zip_files:
+                            vfs.add_file(chat_file)
+                    else:
+                        logger.debug(
+                            f"Finished processing ZIP: {relative_path} with {len(zip_files)} files. "
+                            f"No main chat file found! Treating as potential media file.",
+                        )
+
                 continue
 
             # Regular files
