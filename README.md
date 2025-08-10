@@ -18,10 +18,11 @@ Key points:
 - Tests use a reference file system for easy verification and updates
 - To update reference files after making changes:
   ```bash
-  rm -rf tests/resources/reference_output/*
-  pytest tests/test_integration.py
+  ./build.sh --refresh-test-resources
   ```
 - Don't try to fix reference files manually - let the automation handle it
+  - Inspect the diffs to the previous data stored in git to understand and
+    verify your changes.
 - The system makes it easy to understand what changed through git diffs
 
 ## Technical Overview

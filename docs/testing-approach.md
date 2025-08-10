@@ -41,9 +41,8 @@ but focusing even more on end to end tests.
   - Input files constructed by test using resources stored in the project
   - Top level function of the program called
   - Outputs compared to reference files stored in git, mismatches fail tests
-  - Facility within the test to regenerate reference outputs if they are missing
-    (typically deleted by programmer `rm -rf
-    tests/resources/reference_output/*`)
+  - Facility within the test to regenerate reference outputs if they are
+    missing: `./build.sh --refresh-test-resources`
   - In this relatively straightforward stateless project end to end tests are
     easy to debug and understand
 
@@ -90,8 +89,8 @@ Debug Complexity:
    - Make changes to the code
    - Run E2E tests, which generate new output
    - Git diff shows exactly what changed in the output
-   - If changes are expected, update reference files (`rm -rf
-     tests/resources/reference_output/*` and rerun tests)
+   - If changes are expected, update reference files (`./build.sh --refresh-test-resources` 
+   which will also rerun tests after the update)
 
 2. Debugging workflow:
    - When an E2E test fails, examine the diff between expected and actual output
