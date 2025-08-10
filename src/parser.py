@@ -132,12 +132,14 @@ def raw_chat_line_to_message(raw_line: RawChatLine, input_file: ChatFile) -> Mes
 def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Chat]:
     """Parse a list of chat lines into a Chat object."""
     if len(lines) == 0:
+        logger.error(f"Chat file {input_file.path} is empty")
         return None
 
     # First line sender is the chat name. If first line does not look like a chat line,
     # log an error and return None.
     first_raw_line: RawChatLine | None = parse_chat_line(lines[0])
     if not first_raw_line:
+        logger.error(f"First line in chat file {input_file.path} has first line that does not match format: {lines[0]}")
         return None
 
     chat_name = ChatName(name=first_raw_line.sender)
@@ -187,10 +189,10 @@ def parse_chat_file(vfs: VFS, chat_file: ChatFile) -> Optional[Chat]:
         lines = content.splitlines(keepends=True)
 
         if not lines:
-            logger.error("Chat file is empty")
+            logger.error(f"Chat file {chat_file.path} is empty")
             return None
 
         return parse_chat_lines(lines, chat_file)
     except Exception as e:
-        logger.error("Failed to parse chat file: %s", str(e))
+        logger.error(f"Failed to parse chat file {chat_file.path}: {str(e)}")
         return None

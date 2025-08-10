@@ -4,8 +4,10 @@ Process WhatsApp chat files from VFS into ChatData.
 
 import os
 from typing import Dict, List, Set, Tuple
+from venv import logger
 
 from src.chat_data import Chat, ChatData, ChatFile, ChatName
+from src.logging_util import TRACE_LEVEL
 from src.parser import parse_chat_file
 from src.vfs import VFS
 
@@ -45,6 +47,7 @@ def process_messages(vfs: VFS, old_chat_data: ChatData) -> ChatData:
             if any(old_file.id == file_id for chats in chat_files_by_name.values() for _, old_file, _ in chats):
                 continue
 
+            logger.log(TRACE_LEVEL, f"Parsing chat file: {file.path}")
             chat: Chat | None = parse_chat_file(vfs, file)
             if chat:
                 if chat.chat_name not in chat_files_by_name:
