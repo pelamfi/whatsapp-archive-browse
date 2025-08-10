@@ -213,11 +213,16 @@ The project's `pyproject.toml` configuration supports common CI practices, but a
 CI has not been set up. All tools are configured through `pyproject.toml`,
 making it in theory easy to run the same checks locally that will run in CI.
 
-# TODOs
+# TODOs / Issues
 
-- Test incremental features
-- Update technical documents (stages in `main.py` are different)
-- Avoid copying media files that already exist in output folder
+- Test and debug the incremental conversion
+- Update the technical documents (stages in `main.py` have changed)
+- Issue with senders / chats with colon `:` in the name
+- Avoid copying media files that already exist in the output folder
+- Identifying 2 party chats and rendering the speakers differently
+  - IDEA: Command line option to give the name of "our user"
+- Use a pattern to turn link looking things into a href links in the HTML output
+- Identifying different media types
 - Use uv
 - Use ruff
-- packaging as a stand alone tool
+- Packaging as a stand alone tool
