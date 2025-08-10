@@ -51,7 +51,12 @@ class VFS:
     def add_file(self, chat_file: ChatFile) -> None:
         """Add a ChatFile to the VFS with all necessary indexing."""
         self.files_by_id[chat_file.id] = chat_file
-        self.files_by_path[chat_file.path] = chat_file
+
+        if chat_file.parent_zip:
+            parent_file = self.files_by_id[chat_file.parent_zip]
+            self.files_by_path[os.path.join(parent_file.path, chat_file.path)] = chat_file
+        else:
+            self.files_by_path[chat_file.path] = chat_file
 
         # Add to filename index
         basename = os.path.basename(chat_file.path)
