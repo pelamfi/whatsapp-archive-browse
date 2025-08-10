@@ -4,13 +4,17 @@ Entry point for the whatsapp-archive-browse tool using ChatData.
 
 import argparse
 import os
+from pathlib import Path
 from typing import Sequence
 
-from src.data_comparator import merge_chat_data
+from src.chat_data import ChatData
+from src.chat_vfs_merge import merge_chat_files_into_vfs
 from src.html_generator import generate_html
-from src.input_scanner import scan_input_directory
+from src.media_locator import process_media_dependencies
+from src.message_processor import process_messages
 from src.metadata_updater import update_metadata
 from src.output_checker import check_output_directory
+from src.vfs_scanner import scan_directory_to_vfs
 
 
 def get_current_time() -> str:
@@ -61,22 +65,26 @@ Notes:
     os.makedirs(args.output_folder, exist_ok=True)
 
     # Step 1: Check output directory for existing data
-    output_data = check_output_directory(args.output_folder)
+    output_data = check_output_directory(args.output_folder) or ChatData()
 
-    # Step 2: Scan input directory
-    input_data = scan_input_directory(args.input_folder, output_data)
+    # Step 2: Build VFS from input directory
+    vfs = scan_directory_to_vfs(Path(args.input_folder))
 
-    # Step 3: Compare and merge data
-    merged_data = merge_chat_data(input_data, output_data)
+    # Step 3: Merge in historical files from output data
+    merge_chat_files_into_vfs(output_data, vfs)
+
+    # Step 4: Process messages and media
+    chat_data = process_messages(vfs, output_data)
+    process_media_dependencies(chat_data, vfs)
 
     # Set timestamp
-    merged_data.timestamp = timestamp
+    chat_data.timestamp = timestamp
 
-    # Step 4: Generate HTML
-    generate_html(merged_data, args.input_folder, args.output_folder)
+    # Step 5: Generate HTML
+    generate_html(chat_data, args.input_folder, args.output_folder)
 
-    # Step 5: Update metadata
-    update_metadata(merged_data, args.output_folder)
+    # Step 6: Update metadata
+    update_metadata(chat_data, args.output_folder)
 
 
 if __name__ == "__main__":
