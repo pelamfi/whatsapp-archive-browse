@@ -34,6 +34,7 @@ import html
 import logging
 import os
 import shutil
+import time
 from typing import Dict, Set, Tuple
 
 from src.chat_data import Chat, ChatData, ChatFile, ChatName, Message
@@ -57,9 +58,11 @@ def copy_media_file(vfs: VFS, chat_dir: str, media_file: ChatFile) -> bool:
     os.makedirs(os.path.dirname(dst_path), exist_ok=True)
 
     try:
+        logging.debug(f"Copying media file: {media_file.path}")
         source, _ = vfs.open_file(media_file)
         with open(dst_path, "wb") as dest:
             shutil.copyfileobj(source, dest)
+        logging.debug(f"Successfully copied: {media_file.path}")
         return True
     except (IOError, OSError) as e:
         logging.error(f"Failed to copy media file {media_file.path}: {e}")
@@ -169,10 +172,46 @@ def create_main_index_html(chats: Dict[ChatName, Set[int]], timestamp: str, css_
 </html>"""
 
 
+class GenerationProgress:
+    def __init__(self) -> None:
+        self.chats_processed = 0
+        self.total_chats = 0
+        self.years_processed = 0
+        self.total_years = 0
+        self.media_files_processed = 0
+        self.total_media_files = 0
+        self.last_log_time = 0.0
+
+    def log_progress(self, message: str) -> None:
+        current_time = time.time()
+        if current_time - self.last_log_time >= 1.0:  # Log at most once per second
+            self.last_log_time = current_time
+            logging.info(
+                f"{message} - "
+                f"Chats: {self.chats_processed}/{self.total_chats}, "
+                f"Years: {self.years_processed}/{self.total_years}, "
+                f"Media: {self.media_files_processed}/{self.total_media_files}"
+            )
+
+
 def generate_html(chat_data: ChatData, vfs: VFS, output_dir: str) -> None:
     """Generate HTML files for chats using ChatData."""
     # Prepare output directory
     os.makedirs(output_dir, exist_ok=True)
+
+    # Initialize progress tracking
+    progress = GenerationProgress()
+    progress.total_chats = len(chat_data.chats)
+    progress.total_years = sum(len(chat.output_files) for chat in chat_data.chats.values())
+    progress.total_media_files = sum(
+        sum(len(output_file.media_dependencies) for output_file in chat.output_files.values())
+        for chat in chat_data.chats.values()
+    )
+
+    logging.info(
+        f"Starting HTML generation for {progress.total_chats} chats, "
+        f"{progress.total_years} year files, and {progress.total_media_files} media files"
+    )
 
     # Load CSS content and add to input files
     css_content, css_file = load_css_content()
@@ -184,12 +223,19 @@ def generate_html(chat_data: ChatData, vfs: VFS, output_dir: str) -> None:
 
     # Process each chat
     for chat_name, chat in chat_data.chats.items():
+        progress.log_progress("Processing chat")
+        logging.info(f"Processing chat: {chat_name.name}")
+
         chat_dir = os.path.join(output_dir, chat_name.name)
         os.makedirs(chat_dir, exist_ok=True)
         os.makedirs(os.path.join(chat_dir, "media"), exist_ok=True)
 
         for year, output_file in chat.output_files.items():
+            logging.debug(f"Processing year {year} for chat {chat_name.name}")
+
             if not output_file.generate:
+                logging.debug(f"Skipping year {year} - no updates needed")
+                progress.years_processed += 1
                 continue
 
             # copy media files for files that need updating
@@ -198,21 +244,37 @@ def generate_html(chat_data: ChatData, vfs: VFS, output_dir: str) -> None:
                 if media_file_id in chat_data.input_files:
                     media_file = chat_data.input_files[media_file_id]
                     copy_media_file(vfs, chat_dir, media_file)
+                    progress.media_files_processed += 1
+                    progress.log_progress("Copying media files")
 
             # Generate year files that need updating
+            logging.debug(f"Generating HTML for year {year}")
             year_html = create_year_html(chat, year, chat.messages, chat_data, css_content)
             with open(os.path.join(chat_dir, f"{year}.html"), "w", encoding="utf-8") as f:
                 f.write(year_html)
+            progress.years_processed += 1
+            progress.log_progress("Generating year files")
 
         # Create chat index
+        logging.debug(f"Creating index for chat {chat_name.name}")
         year_set: set[int] = set(chat.output_files.keys())
         chat_index = create_chat_index_html(chat, year_set, css_content)
         with open(os.path.join(chat_dir, "index.html"), "w", encoding="utf-8") as f:
             f.write(chat_index)
 
         chat_years[chat_name] = year_set
+        progress.chats_processed += 1
+        progress.log_progress("Processing chats")
 
     # Create main index
+    logging.info("Creating main index.html")
     main_index = create_main_index_html(chat_years, chat_data.timestamp, css_content)
     with open(os.path.join(output_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(main_index)
+
+    logging.info(
+        f"HTML generation complete - "
+        f"Processed {progress.chats_processed} chats, "
+        f"{progress.years_processed} year files, and "
+        f"{progress.media_files_processed} media files"
+    )
