@@ -31,4 +31,3 @@ def update_metadata(chat_data: ChatData, output_dir: str) -> None:
 
     # Move new file to main
     os.rename(new_json, main_json)
-    print("Updating metadata")
