@@ -93,7 +93,7 @@ def scan_input_directory(input_dir: str, existing_data: Optional[ChatData] = Non
     for chat in chat_data.chats.values():
         for msg in chat.messages:
             # Process messages with media references
-            if msg.media_name and msg.input_file_id is not None:
+            if msg.media_name:
                 if msg.year not in chat.output_files:
                     chat.output_files[msg.year] = OutputFile(year=msg.year)
 
