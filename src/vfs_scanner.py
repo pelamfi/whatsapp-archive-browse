@@ -65,7 +65,7 @@ def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -
                 zip_path = Path(full_path)
                 if is_whatsapp_archive(zip_path):
                     progress.zip_files += 1
-                    logger.debug(f"Found WhatsApp archive: {relative_path}")
+                    logger.debug(f"Found ZIP archive: {relative_path}")
 
                     # Add ZIP file itself
                     zip_file = ChatFile(
