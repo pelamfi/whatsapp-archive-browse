@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pytest
@@ -12,17 +13,28 @@ def test_basic_run(test_env: ChatTestEnvironment) -> None:
     Test complete HTML generation against reference files using demo chat data.
     If reference files don't exist, they will be created.
     """
-    # Set up test directories and copy demo data
+    # Set up directories and copy files
     input_dir = test_env.create_input_dir()
     output_dir = test_env.create_output_dir()
     test_env.copy_demo_chat(input_dir, TIMESTAMPS["BASE"])
 
-    # Run the main function
-    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
-    main(main_args, timestamp="2025-08-03 14:28:38")
+    # Copy CSS file with fixed timestamp
+    test_env.copy_css_to_workspace(TIMESTAMPS["BASE"])
 
-    # Verify output against reference
-    verify_output_directory(str(output_dir), "basic_test")
+    # Change to test environment directory so CSS is found
+    original_cwd = os.getcwd()
+    os.chdir(test_env.path)
+
+    try:
+        # Run the main function
+        main_args = ["--input", str(input_dir), "--output", str(output_dir)]
+        main(main_args, timestamp="2025-08-03 14:28:38")
+
+        # Verify output against reference
+        verify_output_directory(str(output_dir), "basic_test")
+    finally:
+        # Restore original working directory
+        os.chdir(original_cwd)
 
 
 def test_duplicated_chat(test_env: ChatTestEnvironment) -> None:
@@ -42,12 +54,23 @@ def test_duplicated_chat(test_env: ChatTestEnvironment) -> None:
     chat2_dir = input_dir / "chat2"
     test_env.copy_demo_chat(chat2_dir, TIMESTAMPS["BACKUP2"])
 
-    # Run the main function
-    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
-    main(main_args, timestamp="2025-08-03 14:28:38")
+    # Copy CSS file with fixed timestamp
+    test_env.copy_css_to_workspace(TIMESTAMPS["BASE"])
 
-    # Verify output against reference - should handle duplicates and produce clean output
-    verify_output_directory(str(output_dir), "duplicated_chat_test")
+    # Change to test environment directory so CSS is found
+    original_cwd = os.getcwd()
+    os.chdir(test_env.path)
+
+    try:
+        # Run the main function
+        main_args = ["--input", str(input_dir), "--output", str(output_dir)]
+        main(main_args, timestamp="2025-08-03 14:28:38")
+
+        # Verify output against reference - should handle duplicates and produce clean output
+        verify_output_directory(str(output_dir), "duplicated_chat_test")
+    finally:
+        # Restore original working directory
+        os.chdir(original_cwd)
 
 
 def test_overlapping_chat_history(test_env: ChatTestEnvironment) -> None:
@@ -69,12 +92,23 @@ def test_overlapping_chat_history(test_env: ChatTestEnvironment) -> None:
     test_env.copy_demo_chat(backup2_dir, TIMESTAMPS["BACKUP2"])
     test_env.filter_chat_lines(backup2_dir, 12, 21, TIMESTAMPS["BACKUP2"])
 
-    # Run the main function
-    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
-    main(main_args, timestamp="2025-08-03 14:28:38")
+    # Copy CSS file with fixed timestamp
+    test_env.copy_css_to_workspace(TIMESTAMPS["BASE"])
 
-    # Verify output against reference
-    verify_output_directory(str(output_dir), "overlapping_chat_test")
+    # Change to test environment directory so CSS is found
+    original_cwd = os.getcwd()
+    os.chdir(test_env.path)
+
+    try:
+        # Run the main function
+        main_args = ["--input", str(input_dir), "--output", str(output_dir)]
+        main(main_args, timestamp="2025-08-03 14:28:38")
+
+        # Verify output against reference
+        verify_output_directory(str(output_dir), "overlapping_chat_test")
+    finally:
+        # Restore original working directory
+        os.chdir(original_cwd)
 
 
 def test_zip_input(test_env: ChatTestEnvironment) -> None:
@@ -93,12 +127,23 @@ def test_zip_input(test_env: ChatTestEnvironment) -> None:
     # Create ZIP in input directory with fixed timestamp for consistent ChatFileIDs
     test_env.create_zip_archive(staging_dir, input_dir / "chat_backup.zip", timestamp=TIMESTAMPS["BASE"])
 
-    # Run the main function
-    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
-    main(main_args, timestamp="2025-08-03 14:28:38")
+    # Copy CSS file with fixed timestamp
+    test_env.copy_css_to_workspace(TIMESTAMPS["BASE"])
 
-    # Should produce identical output to basic test
-    verify_output_directory(str(output_dir), "zip_test")
+    # Change to test environment directory so CSS is found
+    original_cwd = os.getcwd()
+    os.chdir(test_env.path)
+
+    try:
+        # Run the main function
+        main_args = ["--input", str(input_dir), "--output", str(output_dir)]
+        main(main_args, timestamp="2025-08-03 14:28:38")
+
+        # Should produce identical output to basic test
+        verify_output_directory(str(output_dir), "zip_test")
+    finally:
+        # Restore original working directory
+        os.chdir(original_cwd)
 
 
 def test_invalid_chat_syntax(test_env: ChatTestEnvironment) -> None:
@@ -121,12 +166,23 @@ def test_invalid_chat_syntax(test_env: ChatTestEnvironment) -> None:
     ]
     test_env.insert_chat_lines(chat_dir, 5, invalid_lines, TIMESTAMPS["BASE"])
 
-    # Run the main function
-    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
-    main(main_args, timestamp="2025-08-03 14:28:38")
+    # Copy CSS file with fixed timestamp
+    test_env.copy_css_to_workspace(TIMESTAMPS["BASE"])
 
-    # Verify output against reference
-    verify_output_directory(str(output_dir), "invalid_chat_test")
+    # Change to test environment directory so CSS is found
+    original_cwd = os.getcwd()
+    os.chdir(test_env.path)
+
+    try:
+        # Run the main function
+        main_args = ["--input", str(input_dir), "--output", str(output_dir)]
+        main(main_args, timestamp="2025-08-03 14:28:38")
+
+        # Verify output against reference
+        verify_output_directory(str(output_dir), "invalid_chat_test")
+    finally:
+        # Restore original working directory
+        os.chdir(original_cwd)
 
 
 @pytest.mark.dependency(

@@ -2,9 +2,7 @@
 Generate OutputFile records for each chat based on message years and dependencies.
 """
 
-import os
-
-from src.chat_data import ChatData, ChatFile, ChatFileID, OutputFile
+from src.chat_data import ChatData, ChatFileID, OutputFile
 
 
 def generate_output_files(chat_data: ChatData) -> None:
@@ -16,13 +14,9 @@ def generate_output_files(chat_data: ChatData) -> None:
         chat_data: ChatData to generate output files for
     """
 
-    css_path: str = os.path.join(os.path.dirname(__file__), "browseability-generator.css")
-    css_file = ChatFile(
-        path="browseability-generator.css",
-        size=os.path.getsize(css_path),
-        modification_timestamp=os.path.getmtime(css_path),
-    )
+    from src.css import get_css_file
 
+    _, css_file = get_css_file()
     chat_data.input_files[css_file.id] = css_file
 
     # First clear any existing output files

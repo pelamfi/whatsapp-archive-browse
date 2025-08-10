@@ -42,17 +42,9 @@ from src.vfs import VFS
 
 def load_css_content() -> Tuple[str, ChatFile]:
     """Load CSS content and return with its ChatFile."""
-    css_path: str = os.path.join(os.path.dirname(__file__), "browseability-generator.css")
-    with open(css_path, "r", encoding="utf-8") as f:
-        content = f.read()
+    from src.css import get_css_file
 
-    css_file = ChatFile(
-        path="browseability-generator.css",
-        size=os.path.getsize(css_path),
-        modification_timestamp=os.path.getmtime(css_path),
-    )
-
-    return content, css_file
+    return get_css_file()
 
 
 def copy_media_file(vfs: VFS, chat_dir: str, media_file: ChatFile) -> bool:

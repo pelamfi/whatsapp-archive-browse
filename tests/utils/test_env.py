@@ -174,6 +174,32 @@ class ChatTestEnvironment:
             with open(file_path, "w", encoding="utf-8", newline="") as f:
                 f.write(normalized_content)
 
+    def copy_css_to_workspace(self, timestamp: float) -> None:
+        """
+        Copy the CSS file to src/resources in the test environment
+        with a fixed timestamp.
+
+        Args:
+            timestamp: Unix timestamp to set for the CSS file
+        """
+        # Create src/resources in test environment
+        resources_dir = self.base_dir / "src" / "resources"
+        resources_dir.mkdir(parents=True, exist_ok=True)
+        self._created_dirs.add(resources_dir)
+
+        # Get source CSS file path
+        source_css = Path(__file__).parent.parent.parent / "src" / "resources" / "browseability-generator.css"
+
+        if not source_css.exists():
+            raise FileNotFoundError(f"CSS file not found at {source_css}")
+
+        # Copy to test environment
+        dest_css = resources_dir / "browseability-generator.css"
+        shutil.copy2(source_css, dest_css)
+
+        # Set fixed timestamp
+        self.set_file_timestamps(dest_css, timestamp)
+
     def create_zip_archive(
         self, source_dir: Path, zip_path: Optional[Path] = None, timestamp: float = TIMESTAMPS["BASE"]
     ) -> Path:

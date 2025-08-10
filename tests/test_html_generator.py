@@ -96,11 +96,11 @@ def test_load_css_content(tmp_path: Path) -> None:
     """Test loading CSS content and ChatFile creation"""
     css_content, css_file = load_css_content()
     assert "body {" in css_content
-    assert css_file.path == "browseability-generator.css"
+    assert css_file.path == "src/resources/browseability-generator.css"
     assert css_file.size > 0
-    assert css_file.modification_timestamp > 0
+    assert css_file.modification_timestamp == 1620000000.0  # Check for fixed timestamp
     css_content, css_file = load_css_content()
     assert "body {" in css_content
-    assert css_file.path == "browseability-generator.css"
+    assert css_file.path == "src/resources/browseability-generator.css"
     assert css_file.size > 0
     assert css_file.modification_timestamp > 0

@@ -136,7 +136,7 @@
                     "chat_dependencies": [
                         "RT6wBoGhW93QE1XRHsb5EZo8uEk="
                     ],
-                    "css_dependency": "UQROW9xjO871WWFaoVLTcw0aan8=",
+                    "css_dependency": "nSBorzG39jz2x2PMsyDGrsjyN6s=",
                     "generate": true,
                     "media_dependencies": {
                         "00000074-PHOTO-2022-03-13-14-17-25.jpg": "oK9BMeQIREtYmoi4pt/nTzmkv6Q="
@@ -147,7 +147,7 @@
                     "chat_dependencies": [
                         "RT6wBoGhW93QE1XRHsb5EZo8uEk="
                     ],
-                    "css_dependency": "UQROW9xjO871WWFaoVLTcw0aan8=",
+                    "css_dependency": "nSBorzG39jz2x2PMsyDGrsjyN6s=",
                     "generate": true,
                     "media_dependencies": {},
                     "year": 2024
@@ -163,11 +163,11 @@
             "path": "_chat.txt",
             "size": 1161
         },
-        "UQROW9xjO871WWFaoVLTcw0aan8=": {
+        "nSBorzG39jz2x2PMsyDGrsjyN6s=": {
             "exists": true,
-            "modification_timestamp": 1754720414.1230996,
+            "modification_timestamp": 1620000000.0,
             "parent_zip": null,
-            "path": "browseability-generator.css",
+            "path": "src/resources/browseability-generator.css",
             "size": 2481
         },
         "oK9BMeQIREtYmoi4pt/nTzmkv6Q=": {
