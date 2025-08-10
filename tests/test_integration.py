@@ -1,3 +1,7 @@
+from pathlib import Path
+
+import pytest
+
 from src.main import main
 from tests.utils.output_verification import verify_output_directory
 from tests.utils.test_env import TIMESTAMPS, ChatTestEnvironment
@@ -123,3 +127,38 @@ def test_invalid_chat_syntax(test_env: ChatTestEnvironment) -> None:
 
     # Verify output against reference
     verify_output_directory(str(output_dir), "invalid_chat_test")
+
+
+@pytest.mark.dependency(
+    depends=[
+        "test_basic_run",
+        "test_duplicated_chat",
+        "test_overlapping_chat_history",
+        "test_zip_input",
+        "test_invalid_chat_syntax",
+    ]
+)
+def test_all_html_outputs_match() -> None:
+    """
+    Meta test that verifies all integration tests produce identical HTML output.
+    This helps ensure that different input scenarios (duplicates, overlapping messages,
+    zip files, etc.) all produce consistent output.
+    """
+    # Get the reference output directory
+    test_root = Path(__file__).parent
+    reference_dir = test_root / "resources" / "reference_output"
+
+    # List of all test reference directories
+    test_dirs = ["basic_test", "duplicated_chat_test", "overlapping_chat_test", "zip_test", "invalid_chat_test"]
+
+    # Get path to HTML file in first test dir to use as reference
+    first_html = reference_dir / test_dirs[0] / "index.html"
+
+    # Compare HTML files from each test directory to the first one
+    for test_dir in test_dirs[1:]:
+        test_html = reference_dir / test_dir / "index.html"
+        with (
+            open(first_html, "r", encoding="utf-8") as f1,
+            open(test_html, "r", encoding="utf-8") as f2,
+        ):
+            assert f1.read().strip() == f2.read().strip(), f"HTML output from {test_dir} differs from {test_dirs[0]}"
