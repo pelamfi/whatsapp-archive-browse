@@ -73,6 +73,30 @@ def test_overlapping_chat_history(test_env: ChatTestEnvironment) -> None:
     verify_output_directory(str(output_dir), "overlapping_chat_test")
 
 
+def test_zip_input(test_env: ChatTestEnvironment) -> None:
+    """
+    Test HTML generation with input files in a ZIP archive.
+    Should work identically to regular directory input.
+    """
+    # Create staging directory with demo chat
+    staging_dir = test_env.create_input_dir("staging")
+    test_env.copy_demo_chat(staging_dir, TIMESTAMPS["BASE"])
+
+    # Create input directory for the ZIP file
+    input_dir = test_env.create_input_dir()
+    output_dir = test_env.create_output_dir()
+
+    # Create ZIP in input directory
+    test_env.create_zip_archive(staging_dir, input_dir / "chat_backup.zip")
+
+    # Run the main function
+    main_args = ["--input", str(input_dir), "--output", str(output_dir)]
+    main(main_args, timestamp="2025-08-03 14:28:38")
+
+    # Should produce identical output to basic test
+    verify_output_directory(str(output_dir), "basic_test")
+
+
 def test_invalid_chat_syntax(test_env: ChatTestEnvironment) -> None:
     """
     Test HTML generation with invalid syntax in chat file.

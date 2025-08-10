@@ -6,6 +6,7 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Generator, Optional
+from zipfile import ZipFile
 
 import pytest
 
@@ -172,6 +173,28 @@ class ChatTestEnvironment:
         if normalized_content != original_content:
             with open(file_path, "w", encoding="utf-8", newline="") as f:
                 f.write(normalized_content)
+
+    def create_zip_archive(self, source_dir: Path, zip_path: Optional[Path] = None) -> Path:
+        """
+        Create a ZIP archive from a directory with preserved timestamps.
+
+        Args:
+            source_dir: Directory to archive
+            zip_path: Optional path for the ZIP file. If None, creates in base_dir.
+
+        Returns:
+            Path to the created ZIP file
+        """
+        if zip_path is None:
+            zip_path = self.base_dir / f"{source_dir.name}.zip"
+
+        with ZipFile(zip_path, "w") as zf:
+            for path in source_dir.rglob("*"):
+                if path.is_file():
+                    rel_path = path.relative_to(source_dir)
+                    zf.write(path, rel_path)
+
+        return zip_path
 
     @property
     def path(self) -> Path:

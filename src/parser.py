@@ -2,11 +2,15 @@
 Module for parsing WhatsApp chat export files.
 """
 
+import logging
 import re
 from dataclasses import dataclass
 from typing import Optional
 
 from src.chat_data import Chat, ChatFile, ChatName, Message
+from src.vfs import VFS
+
+logger = logging.getLogger(__name__)
 
 """
 Module for parsing WhatsApp chat export files using chat_data structures.
@@ -148,7 +152,7 @@ def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Chat]:
         next_raw_line = parse_chat_line(line)
         if next_raw_line:
             # Before starting new message, finalize the previous message
-            current_raw_line.content = "".join(content_lines)  # \n is included in content
+            current_raw_line.content = "\n".join(content_lines) + "\n"  # Add newlines back
             messages.append(raw_chat_line_to_message(current_raw_line, input_file))
 
             # Start new message
@@ -159,27 +163,34 @@ def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Chat]:
             content_lines.append(line)
 
     # Finalize the last message
-    current_raw_line.content = "".join(content_lines)
+    current_raw_line.content = "\n".join(content_lines) + "\n"  # Add newlines back
     messages.append(raw_chat_line_to_message(current_raw_line, input_file))
 
     return Chat(chat_name=chat_name, messages=messages)
 
 
-def parse_chat_file(file_path: str, input_file: ChatFile) -> Optional[Chat]:
+def parse_chat_file(vfs: VFS, chat_file: ChatFile) -> Optional[Chat]:
     """
-    Parse a single WhatsApp _chat.txt file.
+    Parse chat file and return list of messages.
 
     Args:
-        file_path: Path to the _chat.txt file
-        input_file: ChatFile object representing the file
+        vfs: Virtual File System instance
+        chat_file: ChatFile object to parse
 
     Returns:
-        Tuple of (Chat object, dict of input files) if successful, None if parsing fails
+        Chat object containing parsed messages and chat name,
+        or None if parsing fails
     """
     try:
-        with open(file_path, "r", encoding="utf-8", newline="") as file:
-            lines = file.readlines()
-            return parse_chat_lines(lines, input_file)
+        file_obj, _ = vfs.open_file(chat_file)
+        content = file_obj.read().decode("utf-8")
+        lines = content.splitlines()
+
+        if not lines:
+            logger.error("Chat file is empty")
+            return None
+
+        return parse_chat_lines(lines, chat_file)
     except Exception as e:
-        print(f"Failed to read chat file {file_path}: {e}")
+        logger.error("Failed to parse chat file: %s", str(e))
         return None

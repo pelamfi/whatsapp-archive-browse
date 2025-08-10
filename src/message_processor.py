@@ -45,7 +45,7 @@ def process_messages(vfs: VFS, old_chat_data: ChatData) -> ChatData:
             if any(old_file.id == file_id for chats in chat_files_by_name.values() for _, old_file, _ in chats):
                 continue
 
-            chat: Chat | None = parse_chat_file(vfs.abs_path(file), file)
+            chat: Chat | None = parse_chat_file(vfs, file)
             if chat:
                 if chat.chat_name not in chat_files_by_name:
                     chat_files_by_name[chat.chat_name] = []

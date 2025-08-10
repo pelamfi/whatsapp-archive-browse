@@ -6,6 +6,7 @@ from pathlib import Path
 
 from src.chat_data import ChatFile, ChatName
 from src.parser import parse_chat_file
+from src.vfs import VFS
 
 
 def test_parse_chat_file_smoke_test(tmp_path: Path) -> None:
@@ -16,13 +17,16 @@ def test_parse_chat_file_smoke_test(tmp_path: Path) -> None:
         f.write("[12.3.2022 klo 14.08.18] Space Rocket: Test chat\n")
         f.write("[12.3.2022 klo 14.09.09] Matias Virtanen: Hello world\n")
 
+    # Set up VFS
     input_file = ChatFile(
         path="test_chat.txt",
         size=chat_path.stat().st_size,
         modification_timestamp=chat_path.stat().st_mtime,
     )
+    vfs = VFS(tmp_path)
+    vfs.add_file(input_file)
 
-    chat = parse_chat_file(str(chat_path), input_file)
+    chat = parse_chat_file(vfs, input_file)
     assert chat is not None
 
     assert chat.chat_name == ChatName(name="Space Rocket")
@@ -50,8 +54,10 @@ def test_parse_chat_file_u00e_and_tilde_handling(tmp_path: Path) -> None:
         size=chat_path.stat().st_size,
         modification_timestamp=chat_path.stat().st_mtime,
     )
+    vfs = VFS(tmp_path)
+    vfs.add_file(input_file)
 
-    chat = parse_chat_file(str(chat_path), input_file)
+    chat = parse_chat_file(vfs, input_file)
     assert chat is not None
     assert len(chat.messages) == 3
 
@@ -87,8 +93,10 @@ def test_parse_chat_file_complex_scenarios(tmp_path: Path) -> None:
         size=chat_path.stat().st_size,
         modification_timestamp=chat_path.stat().st_mtime,
     )
+    vfs = VFS(tmp_path)
+    vfs.add_file(input_file)
 
-    chat = parse_chat_file(str(chat_path), input_file)
+    chat = parse_chat_file(vfs, input_file)
     assert chat is not None
     assert len(chat.messages) == 4
 

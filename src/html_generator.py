@@ -37,6 +37,7 @@ import shutil
 from typing import Dict, Set, Tuple
 
 from src.chat_data import Chat, ChatData, ChatFile, ChatName, Message
+from src.vfs import VFS
 
 
 def load_css_content() -> Tuple[str, ChatFile]:
@@ -54,21 +55,22 @@ def load_css_content() -> Tuple[str, ChatFile]:
     return content, css_file
 
 
-def copy_media_file(input_dir: str, chat_dir: str, media_file: ChatFile) -> bool:
+def copy_media_file(vfs: VFS, chat_dir: str, media_file: ChatFile) -> bool:
     """Copy a media file from input to output directory."""
-    src_path = os.path.join(input_dir, media_file.path)
-    if not os.path.exists(src_path):
-        logging.warning(f"Media file not found: {src_path}")
+    if not media_file.exists:
+        logging.warning(f"Media file not found: {media_file.path}")
         return False
 
     dst_path = os.path.join(chat_dir, "media", os.path.basename(media_file.path))
+    os.makedirs(os.path.dirname(dst_path), exist_ok=True)
 
     try:
-        os.makedirs(os.path.dirname(dst_path), exist_ok=True)
-        shutil.copy(src_path, dst_path)
+        source, _ = vfs.open_file(media_file)
+        with open(dst_path, "wb") as dest:
+            shutil.copyfileobj(source, dest)
         return True
     except (IOError, OSError) as e:
-        logging.error(f"Failed to copy media file {src_path}: {e}")
+        logging.error(f"Failed to copy media file {media_file.path}: {e}")
         return False
 
 
@@ -175,7 +177,7 @@ def create_main_index_html(chats: Dict[ChatName, Set[int]], timestamp: str, css_
 </html>"""
 
 
-def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
+def generate_html(chat_data: ChatData, vfs: VFS, output_dir: str) -> None:
     """Generate HTML files for chats using ChatData."""
     # Prepare output directory
     os.makedirs(output_dir, exist_ok=True)
@@ -183,6 +185,7 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
     # Load CSS content and add to input files
     css_content, css_file = load_css_content()
     chat_data.input_files[css_file.id] = css_file
+    vfs.add_file(css_file)
 
     # Track which chats have which years
     chat_years: Dict[ChatName, Set[int]] = {}
@@ -202,7 +205,7 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
             for media_file_id in output_file.media_dependencies.values():
                 if media_file_id in chat_data.input_files:
                     media_file = chat_data.input_files[media_file_id]
-                    copy_media_file(input_dir, chat_dir, media_file)
+                    copy_media_file(vfs, chat_dir, media_file)
 
             # Generate year files that need updating
             year_html = create_year_html(chat, year, chat.messages, chat_data, css_content)

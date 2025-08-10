@@ -91,7 +91,7 @@ Notes:
     check_output_dependencies(chat_data, output_data)
 
     # Step 8: Generate HTML
-    generate_html(chat_data, args.input_folder, args.output_folder)
+    generate_html(chat_data, vfs, args.output_folder)
 
     # Step 9: Update metadata
     update_metadata(chat_data, args.output_folder)
