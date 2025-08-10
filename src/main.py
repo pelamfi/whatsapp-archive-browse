@@ -14,11 +14,12 @@ import argparse
 import logging
 import os
 from pathlib import Path
-from typing import Sequence, cast
+from typing import Sequence
 
 from src.chat_data import ChatData
 from src.chat_vfs_merge import merge_chat_files_into_vfs
 from src.html_generator import generate_html
+from src.logging_util import setup_logging
 from src.media_locator import process_media_dependencies
 from src.message_processor import process_messages
 from src.metadata_updater import update_metadata
@@ -85,28 +86,11 @@ Notes:
 
     args = parser.parse_args(argv)
 
-    # Set up logging based on verbosity
-    TRACE_LEVEL = 5  # Custom level below DEBUG
-    log_level: int
+    verbose = args.verbose
     if args.quiet:
-        log_level = cast(int, logging.ERROR)  # Only errors in quiet mode
-    else:
-        log_levels: list[int] = [
-            logging.ERROR,  # 0 (quiet)
-            logging.INFO,  # 1 (default)
-            logging.DEBUG,  # 2
-            TRACE_LEVEL,  # 3 (trace level)
-        ]
-        level_index = min(args.verbose, len(log_levels) - 1)
-        log_level = cast(int, log_levels[level_index])
+        verbose = 0
 
-    # Register our custom level name
-    if not hasattr(logging, "TRACE"):
-        logging.addLevelName(TRACE_LEVEL, "TRACE")
-
-    # Configure root logger
-    logging.basicConfig(level=logging.NOTSET, format="%(levelname)s: %(message)s")  # Reset first
-    logging.getLogger().setLevel(log_level)
+    setup_logging(verbose)
 
     logger = logging.getLogger(__name__)
 

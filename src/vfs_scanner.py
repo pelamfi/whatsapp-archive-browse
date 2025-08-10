@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Optional
 
 from src.chat_data import ChatFile
+from src.logging_util import TRACE_LEVEL
 from src.vfs import VFS
 from src.zip_utils import is_whatsapp_archive, list_zip_contents
 
@@ -53,7 +54,7 @@ def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -
             full_path = os.path.join(root, filename)
             relative_path = os.path.relpath(full_path, base_path)
 
-            logger.debug(f"Processing file: {relative_path}")
+            logger.log(TRACE_LEVEL, f"Processing file: {relative_path}")
 
             # Track chat files
             if filename == "_chat.txt":
@@ -77,7 +78,7 @@ def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -
 
                     # Add ZIP contents
                     zip_id = zip_file.id
-                    logger.debug(f"Processing contents of {relative_path}")
+                    logger.log(TRACE_LEVEL, f"Processing contents of {relative_path}")
                     for zip_info in list_zip_contents(zip_path):
                         chat_file = ChatFile(
                             path=zip_info.filename,
@@ -89,7 +90,7 @@ def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -
                         vfs.add_file(chat_file)
                         if zip_info.filename.endswith("_chat.txt"):
                             progress.chat_files += 1
-                    logger.debug(f"Finished processing ZIP: {relative_path}")
+                    logger.log(TRACE_LEVEL, f"Finished processing ZIP: {relative_path}")
                 continue
 
             # Regular files
