@@ -38,6 +38,7 @@ import time
 from typing import Dict, Set, Tuple
 
 from src.chat_data import Chat, ChatData, ChatFile, ChatName, Message
+from src.logging_util import TRACE_LEVEL
 from src.vfs import VFS
 
 
@@ -58,11 +59,11 @@ def copy_media_file(vfs: VFS, chat_dir: str, media_file: ChatFile) -> bool:
     os.makedirs(os.path.dirname(dst_path), exist_ok=True)
 
     try:
-        logging.debug(f"Copying media file: {media_file.path}")
+        logging.log(TRACE_LEVEL, f"Copying media file: {media_file.path}")
         source, _ = vfs.open_file(media_file)
         with open(dst_path, "wb") as dest:
             shutil.copyfileobj(source, dest)
-        logging.debug(f"Successfully copied: {media_file.path}")
+        logging.log(TRACE_LEVEL, f"Successfully copied: {media_file.path}")
         return True
     except (IOError, OSError) as e:
         logging.error(f"Failed to copy media file {media_file.path}: {e}")
