@@ -4,14 +4,14 @@ This tool scans a directory for exported Whatsapp archives, zipped or otherwise
 and generates a clean static HTML folder where backed up Whatsapp chats can be
 viewed.
 
-NOTE: This project is partially generated with the help of Claude Sonnet 3.5 /
+This project is partially generated with the help of Claude Sonnet 3.5 /
 GPT-4o / Copilot.
 
 ## IMPORTANT DISCLAIMER!
 
 **⚠️THIS IS EXPERIMENTAL SOFTWARE!!⚠️**
 
-This softwre is very quickly put together and not tested very much!
+This software is very quickly put together and not tested very much!
 
 **⚠️This software can contain serious bugs! Usage may result in loss of Whatsapp
 archives and other files. ⚠️**
