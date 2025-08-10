@@ -5,6 +5,7 @@ Provides efficient lookup and management of ChatFile objects.
 
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, Optional, Set
 
 from src.chat_data import ChatFile, ChatFileID
@@ -32,6 +33,10 @@ class ChatFileSet:
 @dataclass
 class VFS:
     """Virtual File System for managing ChatFile objects with efficient lookups."""
+
+    # The base path that all files in the VFS are relative to.
+    # The input path of the program.
+    base_path: Path = field(default_factory=Path)
 
     # Main repository of all files indexed by their ChatFileID
     files_by_id: Dict[ChatFileID, ChatFile] = field(default_factory=dict)
@@ -111,3 +116,7 @@ class VFS:
                     else:
                         new_set.add(f)
                 self.files_by_name[basename] = new_set
+
+    def abs_path(self, chat_file: ChatFile) -> str:
+        """Combine with base path"""
+        return str(self.base_path / chat_file.path)

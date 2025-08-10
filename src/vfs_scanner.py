@@ -3,13 +3,14 @@ Scanner module that builds a VFS by scanning directories and zip files.
 """
 
 import os
+from pathlib import Path
 from typing import Optional
 
 from src.chat_data import ChatFile
 from src.vfs import VFS
 
 
-def scan_directory_to_vfs(directory: str, preserve_vfs: Optional[VFS] = None) -> VFS:
+def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -> VFS:
     """
     Scan directory and build a VFS containing all discovered files.
 
@@ -20,13 +21,13 @@ def scan_directory_to_vfs(directory: str, preserve_vfs: Optional[VFS] = None) ->
     Returns:
         VFS containing all discovered files
     """
-    vfs = VFS()
+    vfs = VFS(base_path)
 
     # First pass: scan physical files
-    for root, _, files in os.walk(directory):
+    for root, _, files in os.walk(base_path):
         for filename in files:
             full_path = os.path.join(root, filename)
-            relative_path = os.path.relpath(full_path, directory)
+            relative_path = os.path.relpath(full_path, base_path)
 
             chat_file = ChatFile(
                 path=relative_path,

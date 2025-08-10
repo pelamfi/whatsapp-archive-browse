@@ -77,7 +77,8 @@ def format_content_html(text: str) -> str:
     # First escape HTML special characters
     escaped = html.escape(text)
     # Then convert newlines to HTML line breaks with newlines for readable source
-    return escaped.replace("\n", "<br>\n")
+    # Don't add <br> for final new line.
+    return escaped.rstrip("\n").replace("\n", "<br>\n")
 
 
 def format_message_html(message: Message, chat_data: ChatData) -> str:

@@ -81,7 +81,7 @@ class Message:
     # The year extracted from the timestamp, used to determine the output HTML file.
     year: int
     # The input file ID where the message was found.
-    input_file_id: Optional[ChatFileID] = None
+    input_file_id: ChatFileID = ChatFileID(value="")
     # The name of the media file referenced in this message, if any.
     media_name: Optional[str] = None
 

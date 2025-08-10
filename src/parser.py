@@ -4,9 +4,9 @@ Module for parsing WhatsApp chat export files.
 
 import re
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Optional
 
-from src.chat_data import Chat, ChatFile, ChatFileID, ChatName, Message
+from src.chat_data import Chat, ChatFile, ChatName, Message
 
 """
 Module for parsing WhatsApp chat export files using chat_data structures.
@@ -41,7 +41,7 @@ class RawChatLine:
 # This way we either get a match and know all components are present or we assume
 # the line is a continuation of content (or some kind of line we don't have
 # support for ATM).
-chat_line_raw_regex = r"""(?x)
+chat_line_raw_regex = r"""(?xs)
     (?# This regex matches a single line of WhatsApp chat data)    (?# Match the start of the line)
     ^
 
@@ -63,8 +63,7 @@ chat_line_raw_regex = r"""(?x)
     (?# Match the content, which is everything after the colon, allowing for any characters)
     (?P<content> .*)
 
-    (?# Match end of line)
-    $
+    (?# \n is included in content)
     """
 
 chat_line_regex: re.Pattern[str] = re.compile(chat_line_raw_regex)
@@ -126,7 +125,7 @@ def raw_chat_line_to_message(raw_line: RawChatLine, input_file: ChatFile) -> Mes
     )
 
 
-def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Tuple[Chat, dict[ChatFileID, ChatFile]]]:
+def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Chat]:
     """Parse a list of chat lines into a Chat object."""
     if len(lines) == 0:
         return None
@@ -139,7 +138,6 @@ def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Tuple[C
 
     chat_name = ChatName(name=first_raw_line.sender)
     messages: list[Message] = []
-    input_files: dict[ChatFileID, ChatFile] = {input_file.id: input_file}
 
     current_raw_line: RawChatLine = first_raw_line
     content_lines: list[str] = [current_raw_line.content]
@@ -150,7 +148,7 @@ def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Tuple[C
         next_raw_line = parse_chat_line(line)
         if next_raw_line:
             # Before starting new message, finalize the previous message
-            current_raw_line.content = "\n".join(content_lines)
+            current_raw_line.content = "".join(content_lines)  # \n is included in content
             messages.append(raw_chat_line_to_message(current_raw_line, input_file))
 
             # Start new message
@@ -161,13 +159,13 @@ def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Tuple[C
             content_lines.append(line)
 
     # Finalize the last message
-    current_raw_line.content = "\n".join(content_lines)
+    current_raw_line.content = "".join(content_lines)
     messages.append(raw_chat_line_to_message(current_raw_line, input_file))
 
-    return Chat(chat_name=chat_name, messages=messages), input_files
+    return Chat(chat_name=chat_name, messages=messages)
 
 
-def parse_chat_file(file_path: str, input_file: ChatFile) -> Optional[Tuple[Chat, dict[ChatFileID, ChatFile]]]:
+def parse_chat_file(file_path: str, input_file: ChatFile) -> Optional[Chat]:
     """
     Parse a single WhatsApp _chat.txt file.
 
@@ -181,7 +179,7 @@ def parse_chat_file(file_path: str, input_file: ChatFile) -> Optional[Tuple[Chat
     try:
         with open(file_path, "r", encoding="utf-8", newline="") as file:
             lines = file.readlines()
-            return parse_chat_lines([line.rstrip("\n") for line in lines], input_file)
+            return parse_chat_lines(lines, input_file)
     except Exception as e:
         print(f"Failed to read chat file {file_path}: {e}")
         return None

@@ -17,7 +17,7 @@ def temp_dir() -> Generator[str, None, None]:
         yield tmp_dir
 
 
-def test_scan_directory_basic(temp_dir: str) -> None:
+def test_scan_directory_basic(temp_dir: Path) -> None:
     """Test basic directory scanning with file preservation."""
     test_files = {
         "file1.txt": b"content1",

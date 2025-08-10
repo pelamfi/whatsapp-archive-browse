@@ -74,15 +74,13 @@ def scan_input_directory(input_dir: str, existing_data: Optional[ChatData] = Non
     # Parse each chat file
     for chat_file in chat_files:
         full_path = os.path.join(input_dir, chat_file.path)
-        result = parse_chat_file(full_path, chat_file)
+        chat = parse_chat_file(full_path, chat_file)
 
-        if not result:
+        if not chat:
             continue
 
-        chat, input_files = result
-
-        # Add input files to global repository
-        chat_data.input_files.update(input_files)
+        # Add chat_file to per chat dictionary
+        chat_data.input_files[chat_file.id] = chat_file
 
         # Merge into existing chat or create new one
         if chat.chat_name in chat_data.chats:

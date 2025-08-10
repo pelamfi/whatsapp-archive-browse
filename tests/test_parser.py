@@ -22,20 +22,15 @@ def test_parse_chat_file_smoke_test(tmp_path: Path) -> None:
         modification_timestamp=chat_path.stat().st_mtime,
     )
 
-    result = parse_chat_file(str(chat_path), input_file)
-    assert result is not None
-    chat, input_files = result
+    chat = parse_chat_file(str(chat_path), input_file)
+    assert chat is not None
 
     assert chat.chat_name == ChatName(name="Space Rocket")
     assert len(chat.messages) == 2
-    assert chat.messages[0].content == "Test chat"
+    assert chat.messages[0].content == "Test chat\n"
     assert chat.messages[0].year == 2022
     assert chat.messages[1].sender == "Matias Virtanen"
-    assert chat.messages[1].content == "Hello world"
-
-    # Verify input files are tracked
-    assert len(input_files) == 1
-    assert input_file.id in input_files
+    assert chat.messages[1].content == "Hello world\n"
 
 
 def test_parse_chat_file_u00e_and_tilde_handling(tmp_path: Path) -> None:
@@ -56,20 +51,19 @@ def test_parse_chat_file_u00e_and_tilde_handling(tmp_path: Path) -> None:
         modification_timestamp=chat_path.stat().st_mtime,
     )
 
-    result = parse_chat_file(str(chat_path), input_file)
-    assert result is not None
-    chat, _ = result
+    chat = parse_chat_file(str(chat_path), input_file)
+    assert chat is not None
     assert len(chat.messages) == 3
 
     # First message: U+200E removed from start and after colon, content preserved
-    assert chat.messages[0].content == "Messages are encrypted"
+    assert chat.messages[0].content == "Messages are encrypted\n"
 
     # Second message: tilde stripped from sender, U+200E after colon removed
     assert chat.messages[1].sender == "Juuso Kivi"  # Tilde stripped
-    assert chat.messages[1].content == "Juuso Kivi lisättiin"  # Content preserved
+    assert chat.messages[1].content == "Juuso Kivi lisättiin\n"  # Content preserved
 
     # Third message: U+200E in middle of content should be preserved
-    assert chat.messages[2].content == "Content with ‎U+200E in middle"
+    assert chat.messages[2].content == "Content with ‎U+200E in middle\n"
 
 
 def test_parse_chat_file_complex_scenarios(tmp_path: Path) -> None:
@@ -84,7 +78,7 @@ def test_parse_chat_file_complex_scenarios(tmp_path: Path) -> None:
         f.write("https://example.com/test\n")
         f.write("Third line\n")
         # Media reference
-        f.write("[13.3.2022 klo 14.17.25] Sami Ström: ‎<attached: photo.jpg>\n")
+        f.write("[13.3.2022 klo 14.17.25] Sami Ström: ‎<attached: photo.jpg>foobar\n")
         # Different year
         f.write("[31.1.2024 klo 8.56.58] Matias Virtanen: Message from 2024\n")
 
@@ -94,18 +88,17 @@ def test_parse_chat_file_complex_scenarios(tmp_path: Path) -> None:
         modification_timestamp=chat_path.stat().st_mtime,
     )
 
-    result = parse_chat_file(str(chat_path), input_file)
-    assert result is not None
-    chat, input_files = result
+    chat = parse_chat_file(str(chat_path), input_file)
+    assert chat is not None
     assert len(chat.messages) == 4
 
     # Check multiline content is properly joined
-    expected_multiline = "First line\nSecond line with link\nhttps://example.com/test\nThird line"
+    expected_multiline = "First line\nSecond line with link\nhttps://example.com/test\nThird line\n"
     assert chat.messages[1].content == expected_multiline
 
     # Check media reference
     assert chat.messages[2].media_name == "photo.jpg"  # Media filename extracted
-    assert chat.messages[2].content == ""  # U+200E removed from the beginning of message
+    assert chat.messages[2].content == "foobar\n"  # U+200E removed from the beginning of message, linefeed preserved
 
     # Check year extraction from different years
     assert chat.messages[0].year == 2022
