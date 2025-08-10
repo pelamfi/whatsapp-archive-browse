@@ -152,7 +152,7 @@ def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Chat]:
         next_raw_line = parse_chat_line(line)
         if next_raw_line:
             # Before starting new message, finalize the previous message
-            current_raw_line.content = "\n".join(content_lines) + "\n"  # Add newlines back
+            current_raw_line.content = "".join(content_lines)
             messages.append(raw_chat_line_to_message(current_raw_line, input_file))
 
             # Start new message
@@ -163,7 +163,7 @@ def parse_chat_lines(lines: list[str], input_file: ChatFile) -> Optional[Chat]:
             content_lines.append(line)
 
     # Finalize the last message
-    current_raw_line.content = "\n".join(content_lines) + "\n"  # Add newlines back
+    current_raw_line.content = "".join(content_lines)
     messages.append(raw_chat_line_to_message(current_raw_line, input_file))
 
     return Chat(chat_name=chat_name, messages=messages)
@@ -184,7 +184,7 @@ def parse_chat_file(vfs: VFS, chat_file: ChatFile) -> Optional[Chat]:
     try:
         file_obj, _ = vfs.open_file(chat_file)
         content = file_obj.read().decode("utf-8")
-        lines = content.splitlines()
+        lines = content.splitlines(keepends=True)
 
         if not lines:
             logger.error("Chat file is empty")

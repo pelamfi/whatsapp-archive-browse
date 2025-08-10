@@ -94,7 +94,7 @@ def test_zip_input(test_env: ChatTestEnvironment) -> None:
     main(main_args, timestamp="2025-08-03 14:28:38")
 
     # Should produce identical output to basic test
-    verify_output_directory(str(output_dir), "basic_test")
+    verify_output_directory(str(output_dir), "zip_test")
 
 
 def test_invalid_chat_syntax(test_env: ChatTestEnvironment) -> None:
