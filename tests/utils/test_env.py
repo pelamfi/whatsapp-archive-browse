@@ -174,13 +174,16 @@ class ChatTestEnvironment:
             with open(file_path, "w", encoding="utf-8", newline="") as f:
                 f.write(normalized_content)
 
-    def create_zip_archive(self, source_dir: Path, zip_path: Optional[Path] = None) -> Path:
+    def create_zip_archive(
+        self, source_dir: Path, zip_path: Optional[Path] = None, timestamp: float = TIMESTAMPS["BASE"]
+    ) -> Path:
         """
-        Create a ZIP archive from a directory with preserved timestamps.
+        Create a ZIP archive from a directory with consistent timestamps.
 
         Args:
             source_dir: Directory to archive
             zip_path: Optional path for the ZIP file. If None, creates in base_dir.
+            timestamp: Unix timestamp to set for both zip file and entries (use TIMESTAMPS)
 
         Returns:
             Path to the created ZIP file
@@ -188,11 +191,22 @@ class ChatTestEnvironment:
         if zip_path is None:
             zip_path = self.base_dir / f"{source_dir.name}.zip"
 
+        # Convert Unix timestamp to DOS date_time tuple for ZIP entries
+        date = datetime.fromtimestamp(timestamp)
+        date_time = (date.year, date.month, date.day, date.hour, date.minute, date.second)
+
         with ZipFile(zip_path, "w") as zf:
             for path in source_dir.rglob("*"):
                 if path.is_file():
                     rel_path = path.relative_to(source_dir)
-                    zf.write(path, rel_path)
+                    zinfo = zf.getinfo(str(rel_path)) if str(rel_path) in zf.namelist() else None
+                    if zinfo is None:
+                        zf.write(path, rel_path)
+                        zinfo = zf.getinfo(str(rel_path))
+                    zinfo.date_time = date_time
+
+        # Set the timestamp on the ZIP file itself
+        os.utime(zip_path, (timestamp, timestamp))
 
         return zip_path
 

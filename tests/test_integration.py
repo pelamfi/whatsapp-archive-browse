@@ -86,8 +86,8 @@ def test_zip_input(test_env: ChatTestEnvironment) -> None:
     input_dir = test_env.create_input_dir()
     output_dir = test_env.create_output_dir()
 
-    # Create ZIP in input directory
-    test_env.create_zip_archive(staging_dir, input_dir / "chat_backup.zip")
+    # Create ZIP in input directory with fixed timestamp for consistent ChatFileIDs
+    test_env.create_zip_archive(staging_dir, input_dir / "chat_backup.zip", timestamp=TIMESTAMPS["BASE"])
 
     # Run the main function
     main_args = ["--input", str(input_dir), "--output", str(output_dir)]
