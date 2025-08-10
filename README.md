@@ -13,8 +13,8 @@ GPT-4o / Copilot.
 
 This softwre is very quickly put together and not tested very much!
 
-**⚠️This software can contain horrible bugs that may result in you losing your
-Whatsapp archives and other files. ⚠️**
+**⚠️This software can contain serious bugs! Usage may result in loss of Whatsapp
+archives and other files. ⚠️**
 
 **⚠️USE AT YOUR OWN RISK!!⚠️**
 
