@@ -14,6 +14,7 @@ from src.media_locator import process_media_dependencies
 from src.message_processor import process_messages
 from src.metadata_updater import update_metadata
 from src.output_checker import check_output_directory
+from src.output_dependency_checker import check_output_dependencies
 from src.vfs_scanner import scan_directory_to_vfs
 
 
@@ -80,10 +81,13 @@ Notes:
     # Set timestamp
     chat_data.timestamp = timestamp
 
-    # Step 5: Generate HTML
+    # Step 5: Check which files need regeneration
+    check_output_dependencies(chat_data, output_data)
+
+    # Step 6: Generate HTML
     generate_html(chat_data, args.input_folder, args.output_folder)
 
-    # Step 6: Update metadata
+    # Step 7: Update metadata
     update_metadata(chat_data, args.output_folder)
 
 
