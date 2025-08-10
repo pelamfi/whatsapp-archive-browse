@@ -4,6 +4,7 @@ Scanner module that builds a VFS by scanning directories and zip files.
 
 import logging
 import os
+import re
 import time
 from pathlib import Path
 from typing import Optional
@@ -29,6 +30,11 @@ class ScanProgress:
             self.last_log_time = current_time
             logger.debug(f"Scanning {current_dir}")
             logger.debug(f"Found {self.chat_files} chat files and {self.zip_files} zip archives")
+
+
+# .zip followed by either string end or something that is not a letter (dot or parenthesis typically)
+zip_file_raw_regex = r"(?i)^.*\.zip(?:[^a-zA-Z0-9]+.*)?$"
+zip_file_pattern = re.compile(zip_file_raw_regex)
 
 
 def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -> VFS:
@@ -60,8 +66,7 @@ def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -
             if filename == "_chat.txt":
                 progress.chat_files += 1
 
-            # Handle ZIP files
-            if filename.endswith(".zip"):
+            if zip_file_pattern.match(filename):
                 zip_path = Path(full_path)
                 if is_whatsapp_archive(zip_path):
                     progress.zip_files += 1
