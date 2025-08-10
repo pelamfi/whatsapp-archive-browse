@@ -36,7 +36,7 @@ import os
 import shutil
 from typing import Dict, Set, Tuple
 
-from src.chat_data import Chat, ChatData, ChatFile, Message, OutputFile
+from src.chat_data import Chat, ChatData, ChatFile, Message
 
 
 def load_css_content() -> Tuple[str, ChatFile]:
@@ -199,9 +199,9 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
             if msg.media_name:
                 # Get the year's output file where we can find media dependencies
                 year = msg.year
-                if year not in chat.output_files:
-                    chat.output_files[year] = OutputFile(year=year)
-                output_file = chat.output_files[year]
+                output_file = chat.output_files.get(year)
+                if not output_file:  # Skip if no output file exists
+                    continue
 
                 # Check if we found this media file
                 if media_file_id := output_file.media_dependencies.get(msg.media_name):
@@ -213,10 +213,9 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
 
         # Generate year files that need updating
         for year in years:
-            if year not in chat.output_files:
-                chat.output_files[year] = OutputFile(year=year)
-
-            output_file = chat.output_files[year]
+            output_file = chat.output_files.get(year)
+            if not output_file:  # Skip if no output file exists
+                continue
             if output_file.generate:
                 year_content = create_year_html(chat, year, chat.messages, chat_data, css_content)
                 with open(os.path.join(chat_dir, f"{year}.html"), "w", encoding="utf-8") as f:

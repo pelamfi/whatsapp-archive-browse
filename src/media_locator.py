@@ -5,7 +5,7 @@ Media file discovery and matching for WhatsApp chat archives.
 from pathlib import Path
 from typing import Dict, Optional
 
-from src.chat_data import ChatData, ChatFile, ChatFileID, OutputFile
+from src.chat_data import ChatData, ChatFile, ChatFileID
 from src.vfs import VFS
 
 
@@ -65,6 +65,5 @@ def process_media_dependencies(chat_data: ChatData, vfs: VFS) -> None:
 
         # Update output file dependencies
         for year, media_deps in media_by_year.items():
-            if year not in chat.output_files:
-                chat.output_files[year] = OutputFile(year=year)
-            chat.output_files[year].media_dependencies.update(media_deps)
+            if output_file := chat.output_files.get(year):
+                output_file.media_dependencies.update(media_deps)
