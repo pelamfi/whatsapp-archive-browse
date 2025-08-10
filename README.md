@@ -108,7 +108,7 @@ pip install -e ".[dev]"
 ./build.sh
 ```
 
-## Testing Approach
+### Testing Approach
 
 This project uses a pragmatic testing approach focused on end-to-end tests. See
 our detailed [testing approach documentation](./docs/testing-approach.md).
@@ -126,11 +126,11 @@ Key points:
     verify your changes.
 - The system makes it easy to understand what changed through git diffs
 
-#### Code Quality Tools
+### Code Quality Tools
 
 The project uses several tools to maintain code quality:
 
-##### Type Checking (mypy)
+### Type Checking (mypy)
 
 Static type checking with strict settings:
 
@@ -138,7 +138,7 @@ Static type checking with strict settings:
 mypy src tests
 ```
 
-##### Code Formatting (black)
+### Code Formatting (black)
 
 Consistent code formatting:
 
@@ -150,7 +150,7 @@ black --check src tests
 black src tests
 ```
 
-##### Import Sorting (isort)
+### Import Sorting (isort)
 
 Consistent import ordering:
 
@@ -162,7 +162,7 @@ isort --check-only src tests
 isort src tests
 ```
 
-##### Code Linting (flake8)
+### Code Linting (flake8)
 
 Style guide enforcement:
 
@@ -170,7 +170,7 @@ Style guide enforcement:
 flake8 src tests
 ```
 
-#### Running Tests
+### Running Tests
 
 Tests are written using pytest. Run:
 
@@ -188,7 +188,7 @@ xdg-open htmlcov/index.html
 pytest tests/test_specific.py
 ```
 
-#### Running All Checks
+### Running All Checks
 
 The project includes a build script that runs all quality checks:
 
@@ -207,28 +207,17 @@ The script uses bash strict mode (`set -euo pipefail`) and will stop on the firs
 
 See above for how to run individual checks.
 
-#### IDE Integration
-
-The project is configured to work well with modern IDEs through `pyproject.toml`:
-
-- **VS Code**: Will automatically pick up:
-  - Python version requirements
-  - Type checking settings
-  - Test configuration
-  - Development dependencies
-
-- **PyCharm**: Will recognize:
-  - Project structure
-  - Test configuration
-  - Type checking settings
-
 ### Continuous Integration
 
 The project's `pyproject.toml` configuration supports common CI practices, but a
 CI has not been set up. All tools are configured through `pyproject.toml`,
 making it in theory easy to run the same checks locally that will run in CI.
 
-# Misc TODOs / Ideas
+# TODOs
 
+- Test incremental features
+- Update technical documents (stages in `main.py` are different)
+- Avoid copying media files that already exist in output folder
 - Use uv
 - Use ruff
+- packaging as a stand alone tool
