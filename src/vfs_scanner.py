@@ -3,11 +3,13 @@ Scanner module that builds a VFS by scanning directories and zip files.
 """
 
 import os
+import time
 from pathlib import Path
 from typing import Optional
 
 from src.chat_data import ChatFile
 from src.vfs import VFS
+from src.zip_utils import is_whatsapp_archive, list_zip_contents
 
 
 def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -> VFS:
@@ -29,6 +31,33 @@ def scan_directory_to_vfs(base_path: Path, preserve_vfs: Optional[VFS] = None) -
             full_path = os.path.join(root, filename)
             relative_path = os.path.relpath(full_path, base_path)
 
+            # Handle ZIP files
+            if filename.endswith(".zip"):
+                zip_path = Path(full_path)
+                if is_whatsapp_archive(zip_path):
+                    # Add ZIP file itself
+                    zip_file = ChatFile(
+                        path=relative_path,
+                        size=os.path.getsize(full_path),
+                        modification_timestamp=os.path.getmtime(full_path),
+                        exists=True,
+                    )
+                    vfs.add_file(zip_file)
+
+                    # Add ZIP contents
+                    zip_id = zip_file.id
+                    for zip_info in list_zip_contents(zip_path):
+                        chat_file = ChatFile(
+                            path=zip_info.filename,
+                            size=zip_info.file_size,
+                            modification_timestamp=time.mktime(zip_info.date_time + (0, 0, -1)),
+                            parent_zip=zip_id,
+                            exists=True,
+                        )
+                        vfs.add_file(chat_file)
+                continue
+
+            # Regular files
             chat_file = ChatFile(
                 path=relative_path,
                 size=os.path.getsize(full_path),

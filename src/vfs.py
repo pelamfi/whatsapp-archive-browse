@@ -6,9 +6,10 @@ Provides efficient lookup and management of ChatFile objects.
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Optional, Set
+from typing import BinaryIO, Dict, Optional, Set, Tuple
 
 from src.chat_data import ChatFile, ChatFileID
+from src.zip_utils import get_file_from_zip
 
 
 @dataclass(frozen=True)
@@ -120,3 +121,14 @@ class VFS:
     def abs_path(self, chat_file: ChatFile) -> str:
         """Combine with base path"""
         return str(self.base_path / chat_file.path)
+
+    def open_file(self, chat_file: ChatFile) -> Tuple[BinaryIO, Optional[int]]:
+        """Open a file from either the filesystem or a zip archive."""
+        if chat_file.parent_zip:
+            zip_file = self.get_by_id(chat_file.parent_zip)
+            if not zip_file:
+                raise FileNotFoundError(f"Parent ZIP {chat_file.parent_zip} not found")
+            return get_file_from_zip(Path(self.abs_path(zip_file)), chat_file.path)
+
+        path = self.abs_path(chat_file)
+        return open(path, "rb"), os.path.getsize(path)
