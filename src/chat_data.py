@@ -28,13 +28,17 @@ class ChatFileDict(TypedDict):
     exists: NotRequired[bool]
 
 
-@dataclass
+@dataclass(frozen=True)
 class ChatFile:
     path: str  # Relative path to the file within the containing directory or zip
     size: int  # Size of the file in bytes
     modification_timestamp: float  # Timestamp of last modification
     parent_zip: Optional[ChatFileID] = None  # ChatFileID of the parent zip file, if any
     exists: bool = True  # Whether the file currently exists
+
+    def __hash__(self) -> int:
+        """Use the ID as hash key since the dataclass is frozen."""
+        return hash(self.id)
 
     @property
     def id(self) -> ChatFileID:

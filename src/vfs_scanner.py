@@ -40,8 +40,14 @@ def scan_directory_to_vfs(directory: str, preserve_vfs: Optional[VFS] = None) ->
     if preserve_vfs:
         for existing_file in preserve_vfs.files_by_id.values():
             if vfs.get_by_path(existing_file.path) is None:
-                # File no longer exists in input, preserve it but mark as non-existent
-                existing_file.exists = False
-                vfs.add_file(existing_file)
+                # File no longer exists in input, create new instance with exists=False
+                nonexistent_file = ChatFile(
+                    path=existing_file.path,
+                    size=existing_file.size,
+                    modification_timestamp=existing_file.modification_timestamp,
+                    parent_zip=existing_file.parent_zip,
+                    exists=False,
+                )
+                vfs.add_file(nonexistent_file)
 
     return vfs
