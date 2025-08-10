@@ -75,9 +75,8 @@ Notes:
     # Step 3: Merge in historical files from output data
     merge_chat_files_into_vfs(output_data, vfs)
 
-    # Step 4: Process messages and media
+    # Step 4: Process messages and media and merge old message data
     chat_data = process_messages(vfs, output_data)
-    process_media_dependencies(chat_data, vfs)
 
     # Set timestamp
     chat_data.timestamp = timestamp
@@ -85,13 +84,16 @@ Notes:
     # Step 5: Generate output file records
     generate_output_files(chat_data)
 
-    # Step 6: Check which files need regeneration
+    # Step 6: Locate media and update output_files with media_dependencies
+    process_media_dependencies(chat_data, vfs)
+
+    # Step 7: Check which files need regeneration
     check_output_dependencies(chat_data, output_data)
 
-    # Step 7: Generate HTML
+    # Step 8: Generate HTML
     generate_html(chat_data, args.input_folder, args.output_folder)
 
-    # Step 8: Update metadata
+    # Step 9: Update metadata
     update_metadata(chat_data, args.output_folder)
 
 

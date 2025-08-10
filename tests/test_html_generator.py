@@ -81,7 +81,7 @@ def test_create_chat_index_html(tmp_path: Path) -> None:
 
 def test_create_main_index_html(tmp_path: Path) -> None:
     """Test main index page generation"""
-    chats = {"Chat One": {2023, 2024}, "Chat Two": {2024, 2025}}
+    chats: dict[ChatName, set[int]] = {ChatName("Chat One"): {2023, 2024}, ChatName("Chat Two"): {2024, 2025}}
     css_content = "body { color: black; }"
 
     html = create_main_index_html(chats, "2025-08-03 14:28:38", css_content)

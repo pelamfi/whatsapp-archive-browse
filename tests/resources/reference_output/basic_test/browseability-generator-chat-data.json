@@ -3,234 +3,129 @@
         "Space Rocket": {
             "messages": [
                 {
-                    "content": "Viestit ja puhelut ovat t\u00e4ysin salattuja. Vain t\u00e4m\u00e4n keskustelun j\u00e4senet voivat lukea, kuunnella tai jakaa niit\u00e4.",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "Viestit ja puhelut ovat t\u00e4ysin salattuja. Vain t\u00e4m\u00e4n keskustelun j\u00e4senet voivat lukea, kuunnella tai jakaa niit\u00e4.\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Space Rocket",
                     "timestamp": "12.3.2022 klo 14.08.18",
                     "year": 2022
                 },
                 {
-                    "content": "Matias Virtanen muutti ryhm\u00e4n nimeksi Space Rocket",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "Matias Virtanen muutti ryhm\u00e4n nimeksi Space Rocket\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Matias Virtanen",
                     "timestamp": "12.3.2022 klo 14.08.18",
                     "year": 2022
                 },
                 {
-                    "content": "Juuso Kivi lis\u00e4ttiin",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "Juuso Kivi lis\u00e4ttiin\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Juuso Kivi",
                     "timestamp": "12.3.2022 klo 14.10.56",
                     "year": 2022
                 },
                 {
-                    "content": "Matias Virtanen lis\u00e4ttiin",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "Matias Virtanen lis\u00e4ttiin\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Matias Virtanen",
                     "timestamp": "12.3.2022 klo 14.10.56",
                     "year": 2022
                 },
                 {
-                    "content": "Blah blah <",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "Blah blah <\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Matias Virtanen",
                     "timestamp": "12.3.2022 klo 14.09.09",
                     "year": 2022
                 },
                 {
-                    "content": "h\u00f6p\u00f6 h\u00f6p\u00f6 &\n\nSeli seli imaginary link\nhttps://example.com/linky\n\nh\u00f6p\u00f6ti",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "h\u00f6p\u00f6 h\u00f6p\u00f6 &\n\nSeli seli imaginary link\nhttps://example.com/linky\n\nh\u00f6p\u00f6ti\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Sami Str\u00f6m",
                     "timestamp": "12.3.2022 klo 14.20.39",
                     "year": 2022
                 },
                 {
-                    "content": "Yeaah >",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "Yeaah >\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Sami Str\u00f6m",
                     "timestamp": "12.3.2022 klo 14.24.24",
                     "year": 2022
                 },
                 {
-                    "content": "Olet nyt yll\u00e4pit\u00e4j\u00e4",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "Olet nyt yll\u00e4pit\u00e4j\u00e4\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Space Rocket",
                     "timestamp": "12.3.2022 klo 14.55.01",
                     "year": 2022
                 },
                 {
-                    "content": "Juuso Kivi lis\u00e4si henkil\u00f6n ~\u202fAleksi Luoto",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "Juuso Kivi lis\u00e4si henkil\u00f6n ~\u202fAleksi Luoto\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Aleksi Luoto",
                     "timestamp": "12.3.2022 klo 14.56.47",
                     "year": 2022
                 },
                 {
-                    "content": "\ud83d\udc4b",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "\ud83d\udc4b\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Aleksi Luoto",
                     "timestamp": "12.3.2022 klo 15.35.35",
                     "year": 2022
                 },
                 {
-                    "content": "\ud83d\udc4b",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "\ud83d\udc4b\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Sami Str\u00f6m",
                     "timestamp": "12.3.2022 klo 16.24.37",
                     "year": 2022
                 },
                 {
-                    "content": "Blah Blah",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "Blah Blah\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Sami Str\u00f6m",
                     "timestamp": "13.3.2022 klo 11.46.59",
                     "year": 2022
                 },
                 {
-                    "content": "",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": {
-                        "input_path": {
-                            "modification_timestamp": 1577829600.0,
-                            "parent_zip": null,
-                            "path": "00000074-PHOTO-2022-03-13-14-17-25.jpg",
-                            "size": 13673
-                        },
-                        "output_path": "media/00000074-PHOTO-2022-03-13-14-17-25.jpg",
-                        "raw_file_name": "00000074-PHOTO-2022-03-13-14-17-25.jpg"
-                    },
+                    "content": "\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": "00000074-PHOTO-2022-03-13-14-17-25.jpg",
                     "sender": "Sami Str\u00f6m",
                     "timestamp": "13.3.2022 klo 14.17.25",
                     "year": 2022
                 },
                 {
-                    "content": "\ud83d\udcaa",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "\ud83d\udcaa\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Matias Virtanen",
                     "timestamp": "13.3.2022 klo 14.17.51",
                     "year": 2022
                 },
                 {
-                    "content": "foo bar seli seli",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "foo bar seli seli\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Sami Str\u00f6m",
                     "timestamp": "13.3.2022 klo 14.18.45",
                     "year": 2022
                 },
                 {
-                    "content": "\ud83d\ude31\ud83e\udd70",
-                    "html_file": null,
-                    "input_file": {
-                        "modification_timestamp": 1577829600.0,
-                        "parent_zip": null,
-                        "path": "_chat.txt",
-                        "size": 1161
-                    },
-                    "media": null,
+                    "content": "\ud83d\ude31\ud83e\udd70\n",
+                    "input_file_id": "RT6wBoGhW93QE1XRHsb5EZo8uEk=",
+                    "media_name": null,
                     "sender": "Matias Virtanen",
                     "timestamp": "31.1.2024 klo 8.56.58",
                     "year": 2024
@@ -238,14 +133,49 @@
             ],
             "output_files": {
                 "2022": {
+                    "chat_dependencies": [
+                        "RT6wBoGhW93QE1XRHsb5EZo8uEk="
+                    ],
+                    "css_dependency": "UQROW9xjO871WWFaoVLTcw0aan8=",
                     "generate": true,
+                    "media_dependencies": {
+                        "00000074-PHOTO-2022-03-13-14-17-25.jpg": "oK9BMeQIREtYmoi4pt/nTzmkv6Q="
+                    },
                     "year": 2022
                 },
                 "2024": {
+                    "chat_dependencies": [
+                        "RT6wBoGhW93QE1XRHsb5EZo8uEk="
+                    ],
+                    "css_dependency": "UQROW9xjO871WWFaoVLTcw0aan8=",
                     "generate": true,
+                    "media_dependencies": {},
                     "year": 2024
                 }
             }
+        }
+    },
+    "input_files": {
+        "RT6wBoGhW93QE1XRHsb5EZo8uEk=": {
+            "exists": true,
+            "modification_timestamp": 1577829600.0,
+            "parent_zip": null,
+            "path": "_chat.txt",
+            "size": 1161
+        },
+        "UQROW9xjO871WWFaoVLTcw0aan8=": {
+            "exists": true,
+            "modification_timestamp": 1754720414.1230996,
+            "parent_zip": null,
+            "path": "browseability-generator.css",
+            "size": 2481
+        },
+        "oK9BMeQIREtYmoi4pt/nTzmkv6Q=": {
+            "exists": true,
+            "modification_timestamp": 1577829600.0,
+            "parent_zip": null,
+            "path": "00000074-PHOTO-2022-03-13-14-17-25.jpg",
+            "size": 13673
         }
     }
 }

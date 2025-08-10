@@ -4,7 +4,7 @@ Tests for the media locator module.
 
 from pathlib import Path
 
-from src.chat_data import Chat, ChatData, ChatFile, ChatName, Message
+from src.chat_data import Chat, ChatData, ChatFile, ChatName, Message, OutputFile
 from src.media_locator import find_media_file, process_media_dependencies
 from src.vfs import VFS
 
@@ -106,7 +106,9 @@ def test_process_media_dependencies(tmp_path: Path) -> None:
 
     # Create chat data with messages referencing media
     chat_data = ChatData()
-    chat = Chat(chat_name=ChatName("Test Chat"))
+    chat = Chat(
+        chat_name=ChatName("Test Chat"), output_files={2022: OutputFile(year=2022), 2024: OutputFile(year=2024)}
+    )
     chat_data.chats[chat.chat_name] = chat
 
     # Add messages with media references

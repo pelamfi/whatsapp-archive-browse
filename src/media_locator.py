@@ -63,6 +63,10 @@ def process_media_dependencies(chat_data: ChatData, vfs: VFS) -> None:
                         media_file = find_media_file(vfs, msg.media_name, chat_file.path)
                         media_by_year[year][msg.media_name] = media_file.id if media_file else None
 
+                        # add found media file to chat_data.input_files
+                        if media_file:
+                            chat_data.input_files[media_file.id] = media_file
+
         # Update output file dependencies
         for year, media_deps in media_by_year.items():
             if output_file := chat.output_files.get(year):

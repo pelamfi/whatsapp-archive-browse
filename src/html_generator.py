@@ -36,12 +36,12 @@ import os
 import shutil
 from typing import Dict, Set, Tuple
 
-from src.chat_data import Chat, ChatData, ChatFile, Message
+from src.chat_data import Chat, ChatData, ChatFile, ChatName, Message
 
 
 def load_css_content() -> Tuple[str, ChatFile]:
     """Load CSS content and return with its ChatFile."""
-    css_path = os.path.join(os.path.dirname(__file__), "browseability-generator.css")
+    css_path: str = os.path.join(os.path.dirname(__file__), "browseability-generator.css")
     with open(css_path, "r", encoding="utf-8") as f:
         content = f.read()
 
@@ -148,10 +148,12 @@ def create_chat_index_html(chat: Chat, years: Set[int], css_content: str) -> str
 </html>"""
 
 
-def create_main_index_html(chats: Dict[str, Set[int]], timestamp: str, css_content: str) -> str:
+def create_main_index_html(chats: Dict[ChatName, Set[int]], timestamp: str, css_content: str) -> str:
     """Generate main index.html listing all chats."""
+
+    chat_names: list[str] = sorted(name.name for name in chats.keys())
     chats_html = "\n".join(
-        f'<li><a href="{html.escape(name)}/index.html">{html.escape(name)}</a></li>' for name in sorted(chats.keys())
+        f'<li><a href="{html.escape(name)}/index.html">{html.escape(name)}</a></li>' for name in chat_names
     )
 
     return f"""<!DOCTYPE html>
@@ -183,7 +185,7 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
     chat_data.input_files[css_file.id] = css_file
 
     # Track which chats have which years
-    chat_years: Dict[str, Set[int]] = {}
+    chat_years: Dict[ChatName, Set[int]] = {}
 
     # Process each chat
     for chat_name, chat in chat_data.chats.items():
@@ -191,49 +193,29 @@ def generate_html(chat_data: ChatData, input_dir: str, output_dir: str) -> None:
         os.makedirs(chat_dir, exist_ok=True)
         os.makedirs(os.path.join(chat_dir, "media"), exist_ok=True)
 
-        # Track years and copy media for this chat
-        years: set[int] = set()
-
-        # Copy media files for each message
-        for msg in chat.messages:
-            if msg.media_name:
-                # Get the year's output file where we can find media dependencies
-                year = msg.year
-                output_file = chat.output_files.get(year)
-                if not output_file:  # Skip if no output file exists
-                    continue
-
-                # Check if we found this media file
-                if media_file_id := output_file.media_dependencies.get(msg.media_name):
-                    if media_file_id in chat_data.input_files:
-                        media_file = chat_data.input_files[media_file_id]
-                        copy_media_file(input_dir, chat_dir, media_file)
-
-            years.add(msg.year)
-
-        # Generate year files that need updating
-        for year in years:
-            output_file = chat.output_files.get(year)
-            if not output_file:  # Skip if no output file exists
+        for year, output_file in chat.output_files.items():
+            if not output_file.generate:
                 continue
-            if output_file.generate:
-                year_content = create_year_html(chat, year, chat.messages, chat_data, css_content)
-                with open(os.path.join(chat_dir, f"{year}.html"), "w", encoding="utf-8") as f:
-                    f.write(year_content)
 
-                # Update dependencies
-                # Add chat_dependencies for every message
-                for msg in chat.messages:
-                    if msg.input_file_id and msg.year == year:
-                        output_file.chat_dependencies.add(msg.input_file_id)
-                output_file.css_dependency = css_file.id
+            # copy media files for files that need updating
+            # TODO: Avoid copying media files that exist in old data too. Need additional flag for that.
+            for media_file_id in output_file.media_dependencies.values():
+                if media_file_id in chat_data.input_files:
+                    media_file = chat_data.input_files[media_file_id]
+                    copy_media_file(input_dir, chat_dir, media_file)
+
+            # Generate year files that need updating
+            year_html = create_year_html(chat, year, chat.messages, chat_data, css_content)
+            with open(os.path.join(chat_dir, f"{year}.html"), "w", encoding="utf-8") as f:
+                f.write(year_html)
 
         # Create chat index
-        chat_index = create_chat_index_html(chat, years, css_content)
+        year_set: set[int] = set(chat.output_files.keys())
+        chat_index = create_chat_index_html(chat, year_set, css_content)
         with open(os.path.join(chat_dir, "index.html"), "w", encoding="utf-8") as f:
             f.write(chat_index)
 
-        chat_years[chat_name.name] = years
+        chat_years[chat_name] = year_set
 
     # Create main index
     main_index = create_main_index_html(chat_years, chat_data.timestamp, css_content)
