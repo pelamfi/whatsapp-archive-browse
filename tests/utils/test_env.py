@@ -5,7 +5,7 @@ import shutil
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Generator, Optional
+from typing import Any, Generator, Optional, Tuple
 from zipfile import ZipFile
 
 import pytest
@@ -107,23 +107,24 @@ class ChatTestEnvironment:
                 file_path = Path(root) / file
                 self.set_file_timestamps(file_path, timestamp)
 
-    def filter_chat_lines(self, chat_dir: Path, start_line: int, end_line: int, timestamp: float) -> None:
-        """
-        Filter the _chat.txt file to keep 2 first lines (chat name) and the specified line range.
-        Updates the file modification time after editing.
-
+    def pick_chat_lines(self, chat_dir: Path, line_ranges: list[Tuple[int, int]], timestamp: float) -> None:
+        """Pick specific line ranges from the _chat.txt file in a chat directory.
         Args:
             chat_dir: Directory containing the _chat.txt file
-            start_line: First line to keep (1-based, excluding the chat name line)
-            end_line: Last line to keep (1-based, excluding the chat name line)
+            line_ranges: List of tuples specifying line ranges to keep (1-based index), excluding the end
             timestamp: Unix timestamp to set after modifying (use TIMESTAMPS)
         """
         chat_file = chat_dir / "_chat.txt"
         with open(chat_file, "r", encoding="utf-8", newline="") as f:
             lines = f.readlines()
 
-        # Always keep first line (chat name) and the specified range
-        selected_lines = lines[0:2] + lines[start_line - 1 : end_line]
+        # select the kept lines
+        selected_lines: list[str] = []
+        for start, end in line_ranges:
+            # Convert 1-based to 0-based index
+            start_index = start - 1
+            end_index = end if end <= len(lines) else len(lines)
+            selected_lines.extend(lines[start_index:end_index])
 
         with open(chat_file, "w", encoding="utf-8", newline="") as f:
             f.writelines(selected_lines)
