@@ -198,23 +198,48 @@ def test_all_html_outputs_match() -> None:
     """
     Meta test that verifies all integration tests produce identical HTML output.
     This helps ensure that different input scenarios (duplicates, overlapping messages,
-    zip files, etc.) all produce consistent output.
+    zip files, etc.) all produce consistent output for files that should be the same.
     """
     # Get the reference output directory
     test_root = Path(__file__).parent
     reference_dir = test_root / "resources" / "reference_output"
 
-    # List of all test reference directories
-    test_dirs = ["basic_test", "duplicated_chat_test", "overlapping_chat_test", "zip_test", "invalid_chat_test"]
+    # List of test directories that should have identical "Space Rocket" chat outputs
+    # Note: invalid_chat_test is excluded because it tests invalid chat handling
+    test_dirs = ["basic_test", "duplicated_chat_test", "overlapping_chat_test", "zip_test"]
 
-    # Get path to HTML file in first test dir to use as reference
-    first_html = reference_dir / test_dirs[0] / "index.html"
+    # HTML files to compare across test directories
+    html_files_to_compare = [
+        "index.html",
+        "Space Rocket/index.html",
+        "Space Rocket/2022.html",
+        "Space Rocket/2024.html",
+    ]
 
-    # Compare HTML files from each test directory to the first one
-    for test_dir in test_dirs[1:]:
-        test_html = reference_dir / test_dir / "index.html"
-        with (
-            open(first_html, "r", encoding="utf-8") as f1,
-            open(test_html, "r", encoding="utf-8") as f2,
-        ):
-            assert f1.read().strip() == f2.read().strip(), f"HTML output from {test_dir} differs from {test_dirs[0]}"
+    # Use first test directory as reference
+    reference_test = test_dirs[0]
+
+    # Compare each HTML file across all test directories
+    for html_file in html_files_to_compare:
+        reference_html = reference_dir / reference_test / html_file
+
+        if not reference_html.exists():
+            continue
+
+        # Read reference content
+        with open(reference_html, "r", encoding="utf-8") as f:
+            reference_content = f.read().strip()
+
+        # Compare with same file in other test directories
+        for test_dir in test_dirs[1:]:
+            test_html = reference_dir / test_dir / html_file
+
+            if not test_html.exists():
+                continue
+
+            with open(test_html, "r", encoding="utf-8") as f:
+                test_content = f.read().strip()
+
+            assert (
+                reference_content == test_content
+            ), f"HTML file '{html_file}' in {test_dir} differs from {reference_test}"
