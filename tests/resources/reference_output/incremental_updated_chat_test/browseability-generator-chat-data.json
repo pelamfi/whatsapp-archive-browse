@@ -1,0 +1,12 @@
+{
+    "chats": {},
+    "input_files": {
+        "nSBorzG39jz2x2PMsyDGrsjyN6s=": {
+            "exists": true,
+            "modification_timestamp": 1620000000.0,
+            "parent_zip": null,
+            "path": "src/resources/browseability-generator.css",
+            "size": 2481
+        }
+    }
+}
